@@ -1,0 +1,46 @@
+Example：java ListToFile.class FROMSVN
+  args1 = []|[LIST]|[FROMSVN]|[FROMCI][DIFFVER][help]
+          []       :无参数时同LIST，显示待处理文件清单和版本
+          [LIST]   :显示待处理文件清单和版本
+          [FROMSVN]:从svn库svn.tofolder导出到临时目录svn.tofolder，或者workspace
+          [FROMZIP]:从指定压缩文件war、zip、jar 导出到临时目录
+          [FROMCI] :从指定目录ci.workspace 导出到临时目录ci.tofolder;  其中的.java 将替换为.class
+          [DIFFVER]: 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单；从指定目录ci.workspace 导出到输出目录ci.tofolder;  其中的.java 将替换为.class
+          [help]   :显示这里的信息
+  args2 = []|[BATCH]|[FILE]
+          []       :默认批量BATCH处理excel，扫描目录file.excel.folder下的所有
+          [BATCH]  :批量处理excel，扫描目录file.excel.folder下的所有
+          [FILE]   :批量处理excel，扫描目录file.excel.folder下的所有
+  args3 = Properties File Name, Default is [svntools.properties]
+
+v0.7-20150901
+1、列表提示存在空目录   <<< 注意 >>> 清单包含有目录：
+
+v0.6-20150828
+1、添加日志输出时间
+2、兼容excel单行包含多个文件
+
+v0.5-20150826
+1、列表显示时，加上提交人姓名
+2、增加excel地址列容错
+3、优化排序，避免高版本被低版本覆盖
+
+v0.4-20150825
+1、增加列表显示时，文件重复报告
+
+v0.3
+1、增加zip文件提取
+2、实现输出清单按照工程名、路径名排序
+3、忽略excel文件中的空行
+4、优化keyroot处理
+   #下面代表着读取清单路径时,目录开头=/[file.keyroot]/...=/engineering/...  (包括LIST显示)
+file.keyroot=engineering
+   #下面代表着输出目录=[svn.tofolder]/[svn.keyroot]=p:/tmp/d/engineering
+svn.tofolder=p:/tmp/d
+svn.keyroot=engineering
+   #下面代表着生成版本差异清单时,目录开头=[svndiff.keyroot]/...=src/ 
+svndiff.keyroot=src
+
+v0.2-20150825   修改：
+1、增加DIFFVER 版本增量清单输出
+2、修改keyroot处理BUG
