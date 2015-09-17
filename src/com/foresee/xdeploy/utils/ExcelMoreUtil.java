@@ -1,16 +1,21 @@
 package com.foresee.xdeploy.utils;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,9 +31,15 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+
+ 
 
 /**
  * /**
@@ -43,9 +54,13 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * @param <T>
  *            generic class.
  */
-public class ExcelmoreUtil<T> {
+public class ExcelMoreUtil{
 
-	public HSSFCellStyle getCellStyle(HSSFWorkbook workbook, boolean isHeader) {
+	public static enum ExcelType {
+        xls, xlsx;
+    }
+
+    public static HSSFCellStyle getCellStyle(HSSFWorkbook workbook, boolean isHeader) {
 		HSSFCellStyle style = workbook.createCellStyle();
 		style.setBorderBottom(HSSFCellStyle.BORDER_THIN);
 		style.setBorderLeft(HSSFCellStyle.BORDER_THIN);
@@ -64,7 +79,7 @@ public class ExcelmoreUtil<T> {
 		return style;
 	}
 
-	public void generateHeader(HSSFWorkbook workbook, HSSFSheet sheet, String[] headerColumns) {
+	public static void generateHeader(HSSFWorkbook workbook, HSSFSheet sheet, String[] headerColumns) {
 		HSSFCellStyle style = getCellStyle(workbook, true);
 		Row row = sheet.createRow(0);
 		row.setHeightInPoints(30);
@@ -78,7 +93,7 @@ public class ExcelmoreUtil<T> {
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public HSSFSheet creatAuditSheet(HSSFWorkbook workbook, String sheetName, List<T> dataset, String[] headerColumns,
+	public static <T>  HSSFSheet creatAuditSheet(HSSFWorkbook workbook, String sheetName, List<T> dataset, String[] headerColumns,
 			String[] fieldColumns) throws NoSuchMethodException, IllegalAccessException, IllegalArgumentException,
 					InvocationTargetException {
 
@@ -444,7 +459,7 @@ public class ExcelmoreUtil<T> {
 //		return is;
 //	}
 	
-	private String switchCell(HSSFCell cell){
+	private static String switchCell(HSSFCell cell){
 		String value = "";
 		switch (cell.getCellType()) {
 		case HSSFCell.CELL_TYPE_NUMERIC: // 数值型
@@ -498,4 +513,359 @@ public class ExcelmoreUtil<T> {
 
 		return value;
 	}
+
+    /**
+     * Excel文件到List
+     * 
+     * @param fileName
+     * @param sheetIndex
+     *            // 工作表索引
+     * @param skipRows
+     *            // 跳过的表头
+     * @return
+     * @throws Exception
+     */
+    public static List<Object> readToList(String fileName, int sheetIndex, int skipRows) throws Exception {
+        List<Object> ls = new ArrayList<Object>();
+        Workbook wb = loadWorkbook(fileName);
+        if (null != wb) {
+            Sheet sh = wb.getSheetAt(sheetIndex);
+            int rows = sh.getPhysicalNumberOfRows();
+            for (int i = skipRows; i < rows; i++) {
+                Row row = sh.getRow(i);
+                if (null == row) {
+                    break;
+                }
+                int cells = row.getPhysicalNumberOfCells();
+                if (cells == 0) {
+                    continue;
+                }
+                List<String> r = new ArrayList<String>(cells);
+                for (int c = 0; c < cells; c++) {
+                    if (c == 0 || c == 4) {
+                        try {
+                            r.add(String.format("%.0f", row.getCell(c).getNumericCellValue()));
+                        } catch (Exception e) {
+                            throw new Exception("出现该错误请依次检查：<br>1、【序号】或【端口号】请使用数字<br>2、检查《Webservice信息》是否是第二个sheet页");
+                        }
+                    } else {
+                        r.add(row.getCell(c).getStringCellValue());
+                    }
+                }
+                ls.add(r);
+            }
+        }
+    
+        return ls;
+    }
+
+    /**
+     * 读取Excel文件，支持2000与2007格式
+     * 
+     * @param fileName
+     * @return
+     * @throws Exception
+     */
+    public static Workbook loadWorkbook(String fileName) throws Exception {
+        if (null == fileName)
+            return null;
+    
+        Workbook wb = null;
+        if (fileName.toLowerCase().endsWith(".xls")) {
+            try {
+                InputStream in = new FileInputStream(fileName);
+                POIFSFileSystem fs = new POIFSFileSystem(in);
+                wb = new HSSFWorkbook(fs);
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+    
+        } else if (fileName.toLowerCase().endsWith(".xlsx")) {
+            try {
+                InputStream in = new FileInputStream(fileName);
+                wb = new XSSFWorkbook(in);
+                in.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            throw new Exception("不是一个有效的Excel文件");
+        }
+        return wb;
+    }
+
+    /**
+     * 将workbook对象，写回文件
+     * 
+     * @param wb
+     * @param sfilename
+     */
+    public static void writeWorkbookToExcel(Workbook wb, String sfilename) {
+        FileOutputStream fileOutputStream = null;
+        try {
+            fileOutputStream = new FileOutputStream(sfilename);
+            writeWorkbookToExcel(wb, fileOutputStream);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+    
+    }
+
+    public static void writeWorkbookToExcel(Workbook wb, OutputStream out) {
+        try {
+            wb.write(out);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * 从列表生成Workbook对象
+     * 
+     * @param rows
+     * @param type
+     * @return
+     */
+    public static Workbook listToWorkbook(List<?> rows, ExcelType type) {
+        Workbook wb = null;
+        if (ExcelType.xls.equals(type)) {
+            wb = new HSSFWorkbook();
+        } else if (ExcelType.xlsx.equals(type)) {
+            wb = new XSSFWorkbook();
+        } else {
+            return null;
+        }
+    
+        Sheet sh = wb.createSheet();
+        if (null != rows) {
+            for (int i = 0; i < rows.size(); i++) {
+                Object obj = rows.get(i);
+                Row row = sh.createRow(i);
+    
+                if (obj instanceof Collection) {
+                    Collection<?> r = (Collection<?>) obj;
+                    Iterator<?> it = r.iterator();
+                    int j = 0;
+                    while (it.hasNext()) {
+                        Cell cell = row.createCell(j++);
+                        cell.setCellValue(String.valueOf(it.next()));
+                    }
+                } else if (obj instanceof Object[]) {
+                    Object[] r = (Object[]) obj;
+                    for (int j = 0; j < r.length; j++) {
+                        Cell cell = row.createCell(j);
+                        cell.setCellValue(String.valueOf(r[j]));
+                    }
+                } else {
+                    Cell cell = row.createCell(0);
+                    cell.setCellValue(String.valueOf(obj));
+                }
+            }
+        }
+    
+        return wb;
+    }
+
+    /**
+     * 列表数据添加到Workbook对象 only xls
+     * 
+     * @param rows
+     * @param type
+     * @return
+     */
+    public static Workbook listToWorkbook(List<?> rows, Workbook tobook, int sheetIndex) {
+        // Workbook wb = null;
+        // if (ExcelType.xls.equals(type)) {
+        // wb = new HSSFWorkbook();
+        // } else if (ExcelType.xlsx.equals(type)) {
+        // wb = new XSSFWorkbook();
+        // } else {
+        // return null;
+        // }
+        Sheet sh = tobook.getSheetAt(sheetIndex);
+    
+        int iStartRow = sh.getPhysicalNumberOfRows();
+    
+        if (null != rows) {
+            for (int i = 0; i < rows.size(); i++) {
+                Object obj = rows.get(i);
+                Row row = sh.createRow(i + iStartRow);
+    
+                if (obj instanceof Collection) {
+                    Collection<?> r = (Collection<?>) obj;
+                    Iterator<?> it = r.iterator();
+                    int j = 0;
+                    while (it.hasNext()) {
+                        Cell cell = row.createCell(j++);
+                        cell.setCellValue(String.valueOf(it.next()));
+                    }
+                } else if (obj instanceof Object[]) {
+                    Object[] r = (Object[]) obj;
+                    for (int j = 0; j < r.length; j++) {
+                        Cell cell = row.createCell(j);
+                        cell.setCellValue(String.valueOf(r[j]));
+                    }
+                } else {
+                    Cell cell = row.createCell(0);
+                    cell.setCellValue(String.valueOf(obj));
+                }
+            }
+        }
+    
+        return tobook;
+    }
+
+    /**
+     * 从列表直接生成excel文件
+     * 
+     * @param rows
+     * @param sfilename
+     * @param type
+     */
+    public static void listToExcelFile(List<?> rows, String sfilename, ExcelType type) {
+    
+        // File xfile = new File(sfilename);
+        // if(xfile.exists()){
+        // System.err.println("文件已经存在"+sfilename);
+        //
+        // }
+        try {
+            FileOutputStream fileOutputStream = new FileOutputStream(sfilename);
+    
+            writeWorkbookToExcel(listToWorkbook(rows, type), fileOutputStream);
+        } catch (FileNotFoundException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
+    public static void listToExcelFile(List<?> rows, String sfilename) {
+        listToExcelFile(rows, sfilename, ExcelType.xls);
+    }
+
+    public static void WriteListToExcelFile(List<?> rows, String sfilename) {
+        FileOutputStream fileOutputStream = null;
+        try {
+            Workbook towb = loadWorkbook(sfilename);
+            listToWorkbook(rows, towb, 0);
+    
+            fileOutputStream = new FileOutputStream(sfilename);
+    
+            writeWorkbookToExcel(towb, fileOutputStream);
+    
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            if (fileOutputStream != null) {
+                try {
+                    fileOutputStream.close();
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            }
+        }
+    
+    }
+
+    public static void copyExcelDataToFile(String excelfile1, String excelfile2) throws IOException {
+        int skipRows1 = 2;
+        // int skipRows2 = 2;
+        Workbook fromWB = null, toWB = null;
+    
+        try {
+            // 读取file1的内容
+            fromWB = loadWorkbook(excelfile1);
+            Sheet sh1 = fromWB.getSheet("功能清单");
+            int rows1 = sh1.getPhysicalNumberOfRows();
+    
+            // 添加保存到file2中
+            toWB = loadWorkbook(excelfile2);
+            Sheet sh2 = toWB.getSheet("功能清单");
+            int rows2 = sh2.getPhysicalNumberOfRows();
+    
+            for (int i1 = 0; i1 < rows1 - skipRows1; i1++) {
+    
+                Row row1 = sh1.getRow(i1 + skipRows1); // 获取一行from
+                if (row1 != null) {
+                    // 判断这一行是否空数据
+                    Cell cell1 = row1.getCell(1);
+                    if (cell1 != null && !POIExcelMakerUtil.getCellValue(row1.getCell(1)).toString().equals("")) {
+    
+                        Row row2 = sh2.createRow(rows2 + i1); // 创建一行to
+    
+                        copyRow((HSSFRow) row2, (HSSFRow) row1, (HSSFWorkbook) toWB,
+                                (HSSFWorkbook) fromWB, ((HSSFSheet) sh2).createDrawingPatriarch(), null);
+    
+                    }
+                }
+    
+                // int i2 =0;
+                // Iterator<Cell> iter1 = row1.iterator();
+                // while(iter1.hasNext()){
+                // Cell cell = iter1.next();
+                // Cell tocell = row2.createCell(i2);
+                //
+                // tocell.setCellValue(convertString(POIExcelMakerUtil.getCellValue(cell)));
+                //
+                // i2++;
+                // }
+    
+            }
+    
+            //System.out.println(excelfile1);
+    
+            writeWorkbookToExcel(toWB, excelfile2);
+    
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            if (toWB != null)
+                toWB.close();
+            if (fromWB != null)
+                fromWB.close();
+    
+        }
+    
+    }
+
+    public static void main(String[] args) {
+        List<Object> rows = new ArrayList<Object>();
+    
+        List<Object> row = new ArrayList<Object>();
+        row.add("字符串");
+        row.add(11);
+        row.add(new Date());
+        row.add(1.0);
+        rows.add(((Object) row));
+    
+        rows.add("中文");
+        rows.add(new Date());
+    
+        // listToWorkbook(rows, ExcelType.xls);
+        // listToWorkbook(rows, ExcelType.xlsx);
+    
+        WriteListToExcelFile(rows, "p:/bbb.xls");
+    
+        try {
+            copyExcelDataToFile("p:/workspace/xls/因开发所致环境变更记录表模版-20150828-黄健-基础办税.xls", "p:/因开发所致环境变更记录表模版 - 副本.xls");
+            copyExcelDataToFile("p:/workspace/xls/因开发所致环境变更记录表模版-20150828-杜英恒-产品线.xls", "p:/因开发所致环境变更记录表模版 - 副本.xls");
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
 }

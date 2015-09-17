@@ -29,10 +29,8 @@ public class ListToFile {
         System.out.println("  args3 = Properties File Name, Default is [svntools.properties]");
 
     }
-
-    public static void main(String[] args) {
-        
-        
+    
+    public static void actionOptions(String[] args){
         // 根据参数设置Properties文件
         ToFileHelper listTofileHelper =  args.length > 2 ? new ToFileHelper(args[2]) : new ToFileHelper();
         
@@ -72,6 +70,12 @@ public class ListToFile {
                 
         }else
           echoCommandInfo();
+
+    }
+
+    public static void main(String[] args) {
+        
+        actionOptions(args);
         
         System.out.println("Run at >>> "+DateUtil.getCurrentDate("yyyy-MM-dd HH:mm:ss"));
         

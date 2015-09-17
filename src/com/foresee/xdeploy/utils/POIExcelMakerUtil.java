@@ -241,7 +241,7 @@ public class POIExcelMakerUtil {
 	 * @param cell 单元格
 	 * @return
 	 */
-	private static Object getCellValue(Cell cell) {
+	public static Object getCellValue(Cell cell) {
 		int type = cell.getCellType();
 		switch (type) {
 		case Cell.CELL_TYPE_STRING:
@@ -361,7 +361,7 @@ public class POIExcelMakerUtil {
 		}
 	}
 
-	private static String convertString(Object value) {
+	public static String convertString(Object value) {
 		if (value == null) {
 			return "";
 		} else {

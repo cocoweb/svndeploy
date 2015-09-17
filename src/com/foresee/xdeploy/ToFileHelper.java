@@ -8,9 +8,10 @@ import org.tmatesoft.svn.core.SVNException;
 
 import com.foresee.test.util.exfile.ExtProperties;
 import com.foresee.test.util.io.FileUtil;
+import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.ExcelHelper;
 import com.foresee.xdeploy.file.PropFile;
-import com.foresee.xdeploy.file.ScanIncrementFiles;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.SvnClient;
 import com.foresee.xdeploy.utils.ZipFileUtils;
@@ -20,6 +21,7 @@ public class ToFileHelper {
     static ExtProperties xprop = null;
     String excelfile = "";
     String excelFolder = "";
+    String excelfiletemplate = "";
     String svnurl = "";
     String svntofolder = "";
     String keyRootFolder = "";
@@ -46,10 +48,19 @@ public class ToFileHelper {
         excelFolder = xprop.getProperty("file.excel.folder");
         excelFolderFilter = xprop.getProperty("file.excel.filter");
         filekeyroot = xprop.getProperty("file.keyroot");
+        excelfiletemplate=xprop.getProperty("file.excel.template");
+        
     }
 
     public void scanPrintList() {
-        List<ArrayList<String>> xlist=ScanIncrementFiles.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter);
+        
+        //生成excel输出文件名
+        String sTofile=excelfiletemplate.substring(0,excelfiletemplate.indexOf("."))+"-"+ DateUtil.getCurrentDate("yyyyMMdd") +"-产品线-合并.xls";
+        FileUtil.Copy(excelfiletemplate, sTofile);
+        
+        List<ArrayList<String>> xlist=ExcelHelper
+                .scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter,sTofile)
+                .retList;
         
         String a1="";
         StringBuffer bugStr=new StringBuffer();
@@ -79,8 +90,8 @@ public class ToFileHelper {
             
         }
         System.out.println("\n共有文件数量："+Integer.toString(xlist.size()));
-        System.out.println("==空的版本号，将获取最新的版本。");
-        System.out.println("==请仔细检查清单格式，路径不对将无法从svn获取。");
+        System.out.println("==空的版本号，将获取最新的版本。==请仔细检查清单格式，路径不对将无法从svn获取。");
+        System.out.println("合并生成了EXCEL为："+sTofile);
         
         if(bugStr.length()>0){
             System.out.println("\n<<<<文件有重复>>>>请注意核对，如下：");
@@ -96,7 +107,7 @@ public class ToFileHelper {
         SvnClient xclient = SvnClient.getInstance(xprop.getProperty("svn.username"), xprop.getProperty("svn.password"));
         int fileCount = 0;
     
-        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
+        for (ArrayList<String> aRow : ExcelHelper.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
             try {
                 String sUrl = svnurl + PathUtils.autoPathRoot(aRow.get(1), "trunk");   //svn库的文件绝对路径URL
                 String sVer = aRow.get(0);
@@ -130,7 +141,7 @@ public class ToFileHelper {
     
         //扫描excel文件的清单
         //ScanIncrementFiles xx = new ScanIncrementFiles(excelfile, excelFolder, scanOption);
-        for (ArrayList<String> aRow :  ScanIncrementFiles.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
+        for (ArrayList<String> aRow :  ExcelHelper.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
             try {
                 String sPath = ciworkspace + aRow.get(1);                                   // 源文件路径citoFolder
                 String dPath = javaToclass(PathUtils.autoUrlToPath(sPath, citoFolder, cikeyroot));       // 目标路径
@@ -194,7 +205,7 @@ public class ToFileHelper {
         String zipkeyroot = xprop.getProperty("zip.keyroot");
     
         //扫描excel文件的清单
-        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
+        for (ArrayList<String> aRow : ExcelHelper.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
             try {
                 String sProject= aRow.get(2);
                 
