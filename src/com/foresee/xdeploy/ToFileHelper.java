@@ -6,60 +6,35 @@ import java.util.List;
 
 import org.tmatesoft.svn.core.SVNException;
 
-import com.foresee.test.util.exfile.ExtProperties;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExcelHelper;
-import com.foresee.xdeploy.file.PropFile;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.SvnClient;
 import com.foresee.xdeploy.utils.ZipFileUtils;
 
 public class ToFileHelper {
-
-    static ExtProperties xprop = null;
-    String excelfile = "";
-    String excelFolder = "";
-    String excelfiletemplate = "";
-    String svnurl = "";
-    String svntofolder = "";
-    String keyRootFolder = "";
-    String filekeyroot = "";
-    String propFileName = "";
-    String excelFolderFilter="";
-    String scanOption = ""; // 清单文件选项 默认BATCH为file.excel.folder目录下的批量，
+	PropValue pv =null;
 
     public ToFileHelper() {
         this("/svntools.properties");
     }
     public ToFileHelper(String strFileName) {
-        propFileName = strFileName;
-        initProp();
+    	pv = new PropValue(strFileName);
+       
+        //initProp();
     }
 
-    private void initProp() {
-        xprop = PropFile.getExtPropertiesInstance(propFileName);
-        svnurl = xprop.getProperty("svn.url");
-        svntofolder = xprop.getProperty("svn.tofolder");
-        keyRootFolder = xprop.getProperty("svn.keyroot");
-    
-        excelfile = xprop.getProperty("file.excel");
-        excelFolder = xprop.getProperty("file.excel.folder");
-        excelFolderFilter = xprop.getProperty("file.excel.filter");
-        filekeyroot = xprop.getProperty("file.keyroot");
-        excelfiletemplate=xprop.getProperty("file.excel.template");
-        
-    }
 
     public void scanPrintList() {
         
         //生成excel输出文件名
-        String sTofile=excelfiletemplate.substring(0,excelfiletemplate.indexOf("."))+"-"+ DateUtil.getCurrentDate("yyyyMMdd") +"-产品线-合并.xls";
-        FileUtil.Copy(excelfiletemplate, sTofile);
+        String sTofile=pv.excelfiletemplate.substring(0,pv.excelfiletemplate.indexOf("."))+"-"+ DateUtil.getCurrentDate("yyyyMMdd") +"-产品线-合并.xls";
+        FileUtil.Copy(pv.excelfiletemplate, sTofile);
         
         List<ArrayList<String>> xlist=ExcelHelper
-                .scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter,sTofile)
+                .scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,pv.excelFolderFilter,sTofile)
                 .retList;
         
         String a1="";
@@ -67,7 +42,7 @@ public class ToFileHelper {
         String lastStr="";
     
         for (ArrayList<String> aRow : xlist) {
-            String sPath = PathUtils.autoPathRoot(aRow.get(1), filekeyroot);
+            String sPath = PathUtils.autoPathRoot(aRow.get(1), pv.filekeyroot);
             String printStr = "Ver:[" + aRow.get(0) + "] |" +aRow.get(2)+"| "+sPath+ "  " +aRow.get(3)+" << "+aRow.get(4)+"\n";
             
             // 判断是否目录，目录就不操作
@@ -104,20 +79,20 @@ public class ToFileHelper {
      * 扫描清单文件， 从svn导出每一个文件到 指定目录
      */
     public void scanSvnToPath() {
-        SvnClient xclient = SvnClient.getInstance(xprop.getProperty("svn.username"), xprop.getProperty("svn.password"));
+        SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
         int fileCount = 0;
     
-        for (ArrayList<String> aRow : ExcelHelper.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
+        for (ArrayList<String> aRow : ExcelHelper.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,pv.excelFolderFilter)) {
             try {
-                String sUrl = svnurl + PathUtils.autoPathRoot(aRow.get(1), "trunk");   //svn库的文件绝对路径URL
+                String sUrl = pv.svnurl + PathUtils.autoPathRoot(aRow.get(1), "trunk");   //svn库的文件绝对路径URL
                 String sVer = aRow.get(0);
-                String toPath =  PathUtils.autoUrlToPath(sUrl, svntofolder, keyRootFolder);
+                String toPath =  PathUtils.autoUrlToPath(sUrl, pv.svntofolder, pv.keyRootFolder);
                 
                 // 判断是否目录，目录就不操作
                 if (PathUtils.isFolder(sUrl)) {
                     System.out.println("目录不处理" + sUrl);
                 }else{
-                    xclient.svnExport(sUrl, sVer,toPath, keyRootFolder);
+                    xclient.svnExport(sUrl, sVer,toPath, pv.keyRootFolder);
                     
                 }
                 fileCount++;
@@ -127,7 +102,7 @@ public class ToFileHelper {
             }
         }
         
-        System.out.println("\nTotal "+ Integer.toString(fileCount) +" Files, Exported to path ="+PathUtils.addFolderEnd(svntofolder)+keyRootFolder);
+        System.out.println("\nTotal "+ Integer.toString(fileCount) +" Files, Exported to path ="+PathUtils.addFolderEnd(pv.svntofolder)+pv.keyRootFolder);
     
     }
 
@@ -135,13 +110,13 @@ public class ToFileHelper {
      * 扫描清单文件，从指定目录 导出文件到 临时输出目录
      */
     public void scanWorkspaceToPath() {
-        String ciworkspace = xprop.getProperty("ci.workspace");
-        String citoFolder = xprop.getProperty("ci.tofolder");
-        String cikeyroot = xprop.getProperty("ci.keyroot");
+        String ciworkspace = pv.getProperty("ci.workspace");
+        String citoFolder = pv.getProperty("ci.tofolder");
+        String cikeyroot = pv.getProperty("ci.keyroot");
     
         //扫描excel文件的清单
         //ScanIncrementFiles xx = new ScanIncrementFiles(excelfile, excelFolder, scanOption);
-        for (ArrayList<String> aRow :  ExcelHelper.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
+        for (ArrayList<String> aRow :  ExcelHelper.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,pv.excelFolderFilter)) {
             try {
                 String sPath = ciworkspace + aRow.get(1);                                   // 源文件路径citoFolder
                 String dPath = javaToclass(PathUtils.autoUrlToPath(sPath, citoFolder, cikeyroot));       // 目标路径
@@ -171,14 +146,14 @@ public class ToFileHelper {
      * 根据起始版本号，获取文件清单；从指定目录 导出到输出目录
      */
     public void svnDiffToPath(){
-        String svnurl = xprop.getProperty("svndiff.url");
-        String startversion = xprop.getProperty("svndiff.startversion");
-        String endversion = xprop.getProperty("svndiff.endversion");
-        String svndiffkeyroot = xprop.getProperty("svndiff.keyroot");
+        String svnurl = pv.getProperty("svndiff.url");
+        String startversion = pv.getProperty("svndiff.startversion");
+        String endversion = pv.getProperty("svndiff.endversion");
+        String svndiffkeyroot = pv.getProperty("svndiff.keyroot");
         
         System.out.println("startversion="+startversion+": endversion="+endversion+": svnURL="+svnurl);
         
-        SvnClient xclient = SvnClient.getInstance(xprop.getProperty("svn.username"), xprop.getProperty("svn.password")) ;       
+        SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password")) ;       
         try {
             ArrayList<String> alist = xclient.svnDiff(svnurl, startversion, endversion,svndiffkeyroot);
             Collections.sort(alist);  //排序
@@ -198,14 +173,14 @@ public class ToFileHelper {
     }
     
     public void scanZipToPath() {
-        String zipfile = xprop.getProperty("zip.file");
-        String zipfoler = xprop.getProperty("zip.folder");
-        String zipfolderfilter = xprop.getProperty("zip.folder.filter");
-        String ziptofolder = xprop.getProperty("zip.tofolder");
-        String zipkeyroot = xprop.getProperty("zip.keyroot");
+        String zipfile = pv.getProperty("zip.file");
+        String zipfoler = pv.getProperty("zip.folder");
+        String zipfolderfilter = pv.getProperty("zip.folder.filter");
+        String ziptofolder = pv.getProperty("zip.tofolder");
+        String zipkeyroot = pv.getProperty("zip.keyroot");
     
         //扫描excel文件的清单
-        for (ArrayList<String> aRow : ExcelHelper.scanListfile(excelfile, excelFolder, scanOption,excelFolderFilter)) {
+        for (ArrayList<String> aRow : ExcelHelper.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,pv.excelFolderFilter)) {
             try {
                 String sProject= aRow.get(2);
                 
@@ -276,6 +251,7 @@ public class ToFileHelper {
     
     public static void main(String[] args) {
         // TODO Auto-generated method stub
+    	System.out.print( 	new ToFileHelper().pv.pkgmap);
     
     }
 

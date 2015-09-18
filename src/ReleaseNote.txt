@@ -12,6 +12,11 @@ Example：java ListToFile.class FROMSVN
           [BATCH]  :批量处理excel，扫描目录file.excel.folder下的所有
           [FILE]   :批量处理excel，扫描目录file.excel.folder下的所有
   args3 = Properties File Name, Default is [svntools.properties]
+  
+  
+v0.8-20150909
+1、自动按照模板合并excel文件 
+配置文件需要加入 file.excel.template=p:/因开发所致环境变更记录表模版.xls
 
 v0.7-20150901
 1、列表提示存在空目录   <<< 注意 >>> 清单包含有目录：

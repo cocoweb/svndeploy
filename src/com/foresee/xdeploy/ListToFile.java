@@ -35,7 +35,7 @@ public class ListToFile {
         ToFileHelper listTofileHelper =  args.length > 2 ? new ToFileHelper(args[2]) : new ToFileHelper();
         
         if ((args.length == 0) || "LIST".equals(args[0].toUpperCase())) {
-            listTofileHelper.scanOption = args.length > 1 ? args[1] : ScanIncrementFiles.BATCH;
+            listTofileHelper.pv.scanOption = args.length > 1 ? args[1] : ScanIncrementFiles.BATCH;
             
             System.out.println("===========显示待处理文件清单=================");
             // xListtofile.scanOption = "FILE";
@@ -46,7 +46,7 @@ public class ListToFile {
         } else if (args.length > 0) {
             String cmdOption = args[0];
 
-            listTofileHelper.scanOption = args.length > 1 ? args[1] : ScanIncrementFiles.BATCH;  //单文件or 批量
+            listTofileHelper.pv.scanOption = args.length > 1 ? args[1] : ScanIncrementFiles.BATCH;  //单文件or 批量
 
             if (cmdOption.toUpperCase().equals("FROMSVN")) { // 从svn库导出到临时目录，或者workspace
 
