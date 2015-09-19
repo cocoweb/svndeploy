@@ -66,8 +66,8 @@ public class PathUtils {
      * 根据指定root目录, 去掉路径头, 返回相对路径
      * 并且不包含root 和 /
      * 
-     * @param string
-     * @param zipkeyroot
+     * @param xPath
+     * @param xKeyRoot
      * @param string2
      * @return
      */
