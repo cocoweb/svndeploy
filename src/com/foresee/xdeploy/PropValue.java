@@ -37,15 +37,15 @@ public class PropValue {
 
     private void initProp() {
         xprop = getExtPropertiesInstance(propFileName);
-        svnurl = xprop.getProperty("svn.url");
-        svntofolder = xprop.getProperty("svn.tofolder");
-        keyRootFolder = xprop.getProperty("svn.keyroot");
+        svnurl = getProperty("svn.url");
+        svntofolder = getProperty("svn.tofolder");
+        keyRootFolder = getProperty("svn.keyroot");
 
-        excelfile = xprop.getProperty("file.excel");
-        excelFolder = xprop.getProperty("file.excel.folder");
-        excelFolderFilter = xprop.getProperty("file.excel.filter");
-        filekeyroot = xprop.getProperty("file.keyroot");
-        excelfiletemplate = xprop.getProperty("file.excel.template");
+        excelfile = getProperty("file.excel");
+        excelFolder = getProperty("file.excel.folder");
+        excelFolderFilter = getProperty("file.excel.filter");
+        filekeyroot = getProperty("file.keyroot");
+        excelfiletemplate = getProperty("file.excel.template");
 
         pkgmap = xprop.getSectionItems("mapping");
 
@@ -98,7 +98,7 @@ public class PropValue {
     }
 
     public String getProperty(String key) {
-        return xprop.getProperty(key);
+        return StringUtil.trim( xprop.getProperty(key));
     }
 
     /**

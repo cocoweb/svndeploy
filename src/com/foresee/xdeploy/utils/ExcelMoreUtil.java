@@ -779,8 +779,29 @@ public class ExcelMoreUtil{
         }
     
     }
+    
+    /**
+     * Copy数据的注入接口
+     * 
+     */
+    public interface IHandleCopyRow{
+        public void copyRow(HSSFRow row2, HSSFRow row1, HSSFWorkbook toWB, HSSFWorkbook fromWB);
+    }
 
+    
     public static void copyExcelDataToFile(String excelfile1, String excelfile2) throws IOException {
+        copyExcelDataToFile(excelfile1,excelfile2,"功能清单",null);
+    }
+
+    /**
+     * 追加copy excel 内容到另一个excel文件
+     * 
+     * @param excelfile1   源内容excel
+     * @param excelfile2   目标excel文件
+     * @param sheetName    追加复制的sheet名
+     * @throws IOException
+     */
+    public static void copyExcelDataToFile(String excelfile1, String excelfile2,String sheetName, IHandleCopyRow xHandleCopyRow) throws IOException {
         int skipRows1 = 2;
         // int skipRows2 = 2;
         Workbook fromWB = null, toWB = null;
@@ -788,12 +809,12 @@ public class ExcelMoreUtil{
         try {
             // 读取file1的内容
             fromWB = loadWorkbook(excelfile1);
-            Sheet sh1 = fromWB.getSheet("功能清单");
+            Sheet sh1 = fromWB.getSheet(sheetName);
             int rows1 = sh1.getPhysicalNumberOfRows();
     
             // 添加保存到file2中
             toWB = loadWorkbook(excelfile2);
-            Sheet sh2 = toWB.getSheet("功能清单");
+            Sheet sh2 = toWB.getSheet(sheetName);
             int rows2 = sh2.getPhysicalNumberOfRows();
     
             for (int i1 = 0; i1 < rows1 - skipRows1; i1++) {
@@ -805,23 +826,21 @@ public class ExcelMoreUtil{
                     if (cell1 != null && !POIExcelMakerUtil.getCellValue(row1.getCell(1)).toString().equals("")) {
     
                         Row row2 = sh2.createRow(rows2 + i1); // 创建一行to
+                        
+                        if( xHandleCopyRow==null){
+                            //未传入接口，则直接用行Copy
+                            copyRow((HSSFRow) row2, (HSSFRow) row1, (HSSFWorkbook) toWB,
+                                    (HSSFWorkbook) fromWB, ((HSSFSheet) sh2).createDrawingPatriarch(), null);
+                            
+                        }else{
+                            //判断如果传入了接口，则调用接口进行处理
+                            xHandleCopyRow.copyRow((HSSFRow) row2, (HSSFRow) row1, (HSSFWorkbook) toWB,
+                                    (HSSFWorkbook) fromWB);
+                        }
     
-                        copyRow((HSSFRow) row2, (HSSFRow) row1, (HSSFWorkbook) toWB,
-                                (HSSFWorkbook) fromWB, ((HSSFSheet) sh2).createDrawingPatriarch(), null);
     
                     }
                 }
-    
-                // int i2 =0;
-                // Iterator<Cell> iter1 = row1.iterator();
-                // while(iter1.hasNext()){
-                // Cell cell = iter1.next();
-                // Cell tocell = row2.createCell(i2);
-                //
-                // tocell.setCellValue(convertString(POIExcelMakerUtil.getCellValue(cell)));
-                //
-                // i2++;
-                // }
     
             }
     

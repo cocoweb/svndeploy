@@ -15,10 +15,11 @@ import com.foresee.test.util.io.FileCopyUtil;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.file.ExcelHelper;
+import com.foresee.xdeploy.file.ScanIncrementFiles;
+import com.foresee.xdeploy.utils.ExcelMoreUtil;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.SvnClient;
-import com.foresee.xdeploy.utils.Zip4jUtil;
+import com.foresee.xdeploy.utils.Zip4jUtils;
 import com.foresee.xdeploy.utils.ZipFileUtils;
 import com.foresee.xdeploy.utils.ZipUtils;
 
@@ -34,20 +35,25 @@ public class ToFileHelper {
     }
 
     public void scanPrintList() {
+        String sTofile = ""; // 默认为""，不用合并excel
 
-        // 生成excel输出文件名
-        String sTofile = pv.excelfiletemplate.substring(0, pv.excelfiletemplate.indexOf(".")) + "-"
-                + DateUtil.getCurrentDate("yyyyMMdd") + "-产品线-合并.xls";
-        FileUtil.Copy(pv.excelfiletemplate, sTofile);
+        if (pv.getProperty("file.excel.merge").equals("true")) { // 判断是否需要合并excel
+            // 生成excel输出文件名
+            sTofile = pv.excelfiletemplate.substring(0, pv.excelfiletemplate.indexOf(".")) + "-"
+                    + DateUtil.getCurrentDate("yyyyMMdd") + "-产品线-合并.xls";
+            // 生成合并的excel文件
+            FileUtil.Copy(pv.excelfiletemplate, sTofile);
+        }
 
-        List<ArrayList<String>> xlist = ExcelHelper.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
-                pv.excelFolderFilter, sTofile).retList;
+        // 扫描并获取全部excel内容
+        ScanIncrementFiles scanFiles = ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
+                pv.excelFolderFilter, sTofile);
 
-        String a1 = "";
         StringBuffer bugStr = new StringBuffer();
+        String a1_Path = ""; //用来比较上下路径的标记
         String lastStr = "";
 
-        for (ArrayList<String> aRow : xlist) {
+        for (ArrayList<String> aRow : scanFiles.retList) {
             String sPath = PathUtils.autoPathRoot(aRow.get(1), pv.filekeyroot);
             String printStr = "Ver:[" + aRow.get(0) + "] |" + aRow.get(2) + "| " + sPath + "  " + aRow.get(3) + " << "
                     + aRow.get(4) + "\n";
@@ -61,23 +67,23 @@ public class ToFileHelper {
             }
 
             // 比较两个相邻的文件,相同标识重复
-            if (sPath.equals(a1)) {
+            if (sPath.equals(a1_Path)) {
                 bugStr.append(lastStr);
                 bugStr.append(printStr);
                 lastStr = "";
             }
 
             lastStr = printStr;
-            a1 = sPath;
+            a1_Path = sPath;
 
         }
-        System.out.println("\n共有文件数量：" + Integer.toString(xlist.size()));
+        System.out.println("\n共有文件数量：" + Integer.toString(scanFiles.retList.size()));
         System.out.println("==空的版本号，将获取最新的版本。==请仔细检查清单格式，路径不对将无法从svn获取。");
         System.out.println("合并生成了EXCEL为：" + sTofile);
 
         if (bugStr.length() > 0) {
-            System.out.println("\n<<<<文件有重复>>>>请注意核对，如下：");
-            System.out.println(bugStr);
+            System.err.println("\n<<<<文件有重复>>>>请注意核对，如下：");
+            System.err.println(bugStr);
         }
 
     }
@@ -89,7 +95,7 @@ public class ToFileHelper {
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
         int fileCount = 0;
 
-        for (ArrayList<String> aRow : ExcelHelper.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
                 pv.excelFolderFilter)) {
             try {
                 String fromPath = PathUtils.autoPathRoot(aRow.get(1), "trunk");
@@ -102,21 +108,14 @@ public class ToFileHelper {
                     System.out.println("目录不处理" + sUrl);
                 } else {
                     xclient.svnExport(sUrl, sVer, toPath, pv.keyRootFolder);
-                    
+
                     if (pv.getProperty("svn.tozip.enabled").equals("true")) {
                         // 将文件添加到zip文件
-                        try {
-                            Zip4jUtil.zipFile(toPath
-                                    , PathUtils.addFolderEnd( pv.getProperty("zip.tofolder"))+
-                                         "QGTG-YHCS"+ DateUtil.getCurrentDate("yyyymmdd") + ".zip"
-                                    , FileUtil.getFolderPath(pv.exchangePath(fromPath)));
-                            
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        }
-                    }
+                        Zip4jUtils.zipFile(toPath, PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"))
+                                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyymmdd HHMM") + ".zip",
+                                FileUtil.getFolderPath(pv.exchangePath(fromPath)));
 
+                    }
 
                 }
                 fileCount++;
@@ -130,7 +129,7 @@ public class ToFileHelper {
                 + PathUtils.addFolderEnd(pv.svntofolder) + pv.keyRootFolder);
 
     }
-    
+
     /**
      * 复制整个文件夹的内容
      * 
@@ -141,8 +140,7 @@ public class ToFileHelper {
      *            指定绝对路径的新目录
      * @return void
      */
-    public static void copyFolderExchange(String strOldFolderPath,
-            String strNewFolderPath) {
+    public static void copyFolderExchange(String strOldFolderPath, String strNewFolderPath) {
         FileInputStream fileInputStream = null;
         FileOutputStream fileOutputStream = null;
         File file = null;
@@ -152,20 +150,18 @@ public class ToFileHelper {
         int intIndex = 0;
         try {
             new File(strNewFolderPath).mkdirs(); // 如果文件夹不存在 则建立新文件夹
-    
+
             file = new File(strOldFolderPath);
             strArrayFile = file.list();
             for (int i = 0; i < strArrayFile.length; i++) {
                 if (strOldFolderPath.endsWith(File.separator)) {
                     fileTemp = new File(strOldFolderPath + strArrayFile[i]);
                 } else {
-                    fileTemp = new File(strOldFolderPath + File.separator
-                            + strArrayFile[i]);
+                    fileTemp = new File(strOldFolderPath + File.separator + strArrayFile[i]);
                 }
                 if (fileTemp.isFile() && (!fileTemp.isHidden())) {
                     fileInputStream = new FileInputStream(fileTemp);
-                    fileOutputStream = new FileOutputStream(strNewFolderPath
-                            + "/" + (fileTemp.getName()).toString());
+                    fileOutputStream = new FileOutputStream(strNewFolderPath + "/" + (fileTemp.getName()).toString());
                     byteArray = new byte[1024 * 5];
                     while ((intIndex = fileInputStream.read(byteArray)) != -1) {
                         fileOutputStream.write(byteArray, 0, intIndex);
@@ -176,9 +172,8 @@ public class ToFileHelper {
                     intIndex = 0;
                 }
                 if (fileTemp.isDirectory() && (!fileTemp.isHidden())) {// 如果是子文件夹
-    
-                    copyFolderExchange(strOldFolderPath + File.separator
-                            + strArrayFile[i], strNewFolderPath
+
+                    copyFolderExchange(strOldFolderPath + File.separator + strArrayFile[i], strNewFolderPath
                             + File.separator + strArrayFile[i]);
                 }
             }
@@ -196,12 +191,12 @@ public class ToFileHelper {
         strNewFolderPath = null;
         strOldFolderPath = null;
     }
-    
+
     public void copyFiletoZip(String fromPath, String toPath) {
         if (pv.getProperty("svn.tozip.enabled").equals("true")) {
             // 将文件copy到临时目录
-            copyFolderExchange(toPath, "p:/tmp/zz/" );
-// FileUtil.getFolderPath(pv.exchangePath(fromPath))
+            copyFolderExchange(toPath, "p:/tmp/zz/");
+            // FileUtil.getFolderPath(pv.exchangePath(fromPath))
         }
 
         if (pv.getProperty("svn.tozip.enabled").equals("true")) {
@@ -227,7 +222,7 @@ public class ToFileHelper {
         // 扫描excel文件的清单
         // ScanIncrementFiles xx = new ScanIncrementFiles(excelfile,
         // excelFolder, scanOption);
-        for (ArrayList<String> aRow : ExcelHelper.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
                 pv.excelFolderFilter)) {
             try {
                 String sPath = ciworkspace + aRow.get(1); // 源文件路径citoFolder
@@ -291,7 +286,7 @@ public class ToFileHelper {
         String zipkeyroot = pv.getProperty("zip.keyroot");
 
         // 扫描excel文件的清单
-        for (ArrayList<String> aRow : ExcelHelper.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
                 pv.excelFolderFilter)) {
             try {
                 String sProject = aRow.get(2);

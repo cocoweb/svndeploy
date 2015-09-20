@@ -15,7 +15,7 @@ public class ListToFile {
         System.out.println("  args1 = []|[LIST]|[FROMSVN]|[FROMCI][DIFFVER][help]");
         System.out.println("          []       :无参数时同LIST，显示待处理文件清单和版本");
         System.out.println("          [LIST]   :显示待处理文件清单和版本");
-        System.out.println("          [FROMSVN]:从svn库svn.tofolder导出到临时目录svn.tofolder，或者workspace");
+        System.out.println("          [FROMSVN]:从svn库svn.tofolder导出到临时目录svn.tofolder，或者workspace ,or ZIP");
         System.out.println("          [FROMZIP]:从指定压缩文件war、zip、jar 导出到临时目录");
         System.out.println("          [FROMCI] :从指定目录ci.workspace 导出到临时目录ci.tofolder;  其中的.java 将替换为.class");
         System.out.println("          [DIFFVER]: 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单；从指定目录ci.workspace 导出到输出目录ci.tofolder;  其中的.java 将替换为.class");

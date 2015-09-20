@@ -8,9 +8,9 @@ import net.lingala.zip4j.exception.ZipException;
 import net.lingala.zip4j.model.ZipParameters;
 import net.lingala.zip4j.util.Zip4jConstants;
 
-public class Zip4jUtil {
+public class Zip4jUtils {
 
-    public Zip4jUtil() {
+    public Zip4jUtils() {
         // TODO Auto-generated constructor stub
     }
     public void AddFilesDeflateComp() {
