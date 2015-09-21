@@ -6,22 +6,18 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-
 import org.tmatesoft.svn.core.SVNException;
 
-import com.foresee.test.util.io.File2Util;
-import com.foresee.test.util.io.FileCopyUtil;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
-import com.foresee.xdeploy.utils.ExcelMoreUtil;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.SvnClient;
 import com.foresee.xdeploy.utils.Zip4jUtils;
 import com.foresee.xdeploy.utils.ZipFileUtils;
-import com.foresee.xdeploy.utils.ZipUtils;
+
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.*;
 
 public class ToFileHelper {
     PropValue pv = null;
@@ -54,9 +50,12 @@ public class ToFileHelper {
         String lastStr = "";
 
         for (ArrayList<String> aRow : scanFiles.retList) {
-            String sPath = PathUtils.autoPathRoot(aRow.get(1), pv.filekeyroot);
-            String printStr = "Ver:[" + aRow.get(0) + "] |" + aRow.get(2) + "| " + sPath + "  " + aRow.get(3) + " << "
-                    + aRow.get(4) + "\n";
+            String sPath = PathUtils.autoPathRoot(aRow.get( ColList_Path), pv.filekeyroot);
+            String printStr = "Ver:[" + aRow.get( ColList_Ver) + "] |" 
+                    + aRow.get( ColList_ProjPackage) + "| " 
+                    + sPath + "  " 
+                    + aRow.get( ColList_Man) + " << "
+                    + aRow.get( ColList_FileName) + "\n";
 
             // 判断是否目录，目录就不操作
             if (PathUtils.isFolder(sPath)) {
@@ -93,14 +92,17 @@ public class ToFileHelper {
      */
     public void scanSvnToPath() {
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
+        
+        String zipFileName =  PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"))
+                                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
         int fileCount = 0;
 
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
                 pv.excelFolderFilter)) {
             try {
-                String fromPath = PathUtils.autoPathRoot(aRow.get(1), "trunk");
+                String fromPath = PathUtils.autoPathRoot(aRow.get( ColList_Path), "trunk");
                 String sUrl = pv.svnurl + fromPath; // svn库的文件绝对路径URL
-                String sVer = aRow.get(0);
+                String sVer = aRow.get( ColList_Ver);
                 String toPath = PathUtils.autoUrlToPath(sUrl, pv.svntofolder, pv.keyRootFolder);
 
                 // 判断是否目录，目录就不操作
@@ -111,8 +113,7 @@ public class ToFileHelper {
 
                     if (pv.getProperty("svn.tozip.enabled").equals("true")) {
                         // 将文件添加到zip文件
-                        Zip4jUtils.zipFile(toPath, PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"))
-                                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyymmdd HHMM") + ".zip",
+                        Zip4jUtils.zipFile(toPath, zipFileName,
                                 FileUtil.getFolderPath(pv.exchangePath(fromPath)));
 
                     }
@@ -127,6 +128,8 @@ public class ToFileHelper {
 
         System.out.println("\nTotal " + Integer.toString(fileCount) + " Files, Exported to path ="
                 + PathUtils.addFolderEnd(pv.svntofolder) + pv.keyRootFolder);
+        
+        Zip4jUtils.InfoZipFile(zipFileName);
 
     }
 
@@ -225,7 +228,7 @@ public class ToFileHelper {
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
                 pv.excelFolderFilter)) {
             try {
-                String sPath = ciworkspace + aRow.get(1); // 源文件路径citoFolder
+                String sPath = ciworkspace + aRow.get( ColList_Path); // 源文件路径citoFolder
                 String dPath = javaToclass(PathUtils.autoUrlToPath(sPath, citoFolder, cikeyroot)); // 目标路径
 
                 if (sPath.indexOf(cikeyroot) > 0) {
@@ -289,12 +292,12 @@ public class ToFileHelper {
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
                 pv.excelFolderFilter)) {
             try {
-                String sProject = aRow.get(2);
+                String sProject = aRow.get( ColList_ProjPackage);
 
                 // 判断清单中的工程名，是否包含在 war包中
                 // 包含就抽取到目标路径
                 if (zipfile.contains(sProject)) {
-                    String sPath = PathUtils.autoPathRoot(aRow.get(1), zipkeyroot, "NOROOT"); // 源文件路径
+                    String sPath = PathUtils.autoPathRoot(aRow.get( ColList_Path), zipkeyroot, "NOROOT"); // 源文件路径
                     String dPath = PathUtils.addFolderEnd(ziptofolder) + sProject + PathUtils.addFolderStart(sPath); // 目标路径
                     ZipFileUtils.getZipFile(zipfile, sPath, dPath);
                     System.out.println("抽取文件:" + dPath);

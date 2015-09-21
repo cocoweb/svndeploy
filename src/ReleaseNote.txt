@@ -13,13 +13,19 @@ Example：java ListToFile.class FROMSVN
           [FILE]   :批量处理excel，扫描目录file.excel.folder下的所有
   args3 = Properties File Name, Default is [svntools.properties]
   
+v0.10-20150921
+1、增加增量包mapping配置
+2、重构excel合并处理，
+   允许开启 file.excel.merge=true 
+   重置行号、路径格式
+  
 v0.9-20150919
 1、建立路径到发布包映射配置
 2、直接生成增量发布包 zip 文件
-svn.tozip.enabled=true
-zip.tofolder=p:/tmp/e
+   svn.tozip.enabled=true
+   zip.tofolder=p:/tmp/e
 
-使用java ListToFile.class FROMSVN 时，生成zip
+   使用java ListToFile.class FROMSVN 时，生成zip
   
 v0.8-20150909
 1、自动按照模板合并excel文件 

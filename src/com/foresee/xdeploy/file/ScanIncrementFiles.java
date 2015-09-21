@@ -20,6 +20,9 @@ import com.foresee.xdeploy.utils.ExcelMoreUtil;
 import com.foresee.xdeploy.utils.ExcelMoreUtil.IHandleCopyRow;
 import com.foresee.xdeploy.utils.PathUtils;
 
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.*;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.*;
+
 /**
  * @author allan.xie 根据清单生成 版本号和路径
  *
@@ -27,15 +30,26 @@ import com.foresee.xdeploy.utils.PathUtils;
 public class ScanIncrementFiles {
     public static final String SheetName = "功能清单";
 
-    public static final int Col_ROWNo = 0;
+    public interface ListCols {
+        // List列字段序号
+        public static final int ColList_Ver = 0;
+        public static final int ColList_Path = 1;
+        public static final int ColList_ProjPackage = 2;
+        public static final int ColList_Man = 3;
+        public static final int ColList_FileName = 4;
 
-    public static final int Col_Ver = 3;
+    }
 
-    public static final int Col_Path = 6;
+    public interface ExcelCols {
 
-    public static final int Col_ProjPackage = 7;
+        // Excel列字段序号
+        public static final int ColExcel_ROWNo = 0;
+        public static final int ColExcel_Ver = 3;
+        public static final int ColExcel_Path = 6;
+        public static final int ColExcel_ProjPackage = 7;
+        public static final int ColExcel_Man = 13;
 
-    public static final int Col_Man = 13;
+    }
 
     public ArrayList<String> fileList = new ArrayList<String>();
 
@@ -97,7 +111,8 @@ public class ScanIncrementFiles {
         Collections.sort(retList, new Comparator<ArrayList<String>>() {
             @Override
             public int compare(ArrayList<String> o1, ArrayList<String> o2) {
-                return (o1.get(2) + o1.get(1) + o1.get(0)).compareTo(o2.get(2) + o2.get(1) + o2.get(0));
+                return (o1.get(ColList_ProjPackage) + o1.get(ColList_Path) + o1.get(ColList_Ver)).compareTo(o2
+                        .get(ColList_ProjPackage) + o2.get(ColList_Path) + o2.get(ColList_Ver));
             }
 
         });
@@ -123,19 +138,19 @@ public class ScanIncrementFiles {
 
         int RowNo = 0;
         for (ArrayList<String> aRow : filecontent) {
-            if (RowNo >= excelStartRow && !StringUtil.isEmpty(aRow.get(Col_Path))) {
+            if (RowNo >= excelStartRow && !StringUtil.isEmpty(aRow.get(ColExcel_Path))) {
                 // ArrayList<String> xrow = new ArrayList<String>();
 
                 // 判断是否包含多个文件分隔
-                if (aRow.get(6).contains("\n")) {
-                    for (String xfield : handlePathList(aRow.get(Col_Path))) {
-                        retList.add(handleLine(aRow.get(Col_Ver), xfield, aRow.get(Col_ProjPackage), aRow.get(Col_Man),
-                                xfile.getName()));
+                if (aRow.get(ColExcel_Path).contains("\n")) {
+                    for (String xfield : handlePathList(aRow.get(ColExcel_Path))) {
+                        retList.add(handleLine(aRow.get(ColExcel_Ver), xfield, aRow.get(ColExcel_ProjPackage),
+                                aRow.get(ColExcel_Man), xfile.getName()));
                     }
 
                 } else {
-                    retList.add(handleLine(aRow.get(Col_Ver), aRow.get(Col_Path), aRow.get(Col_ProjPackage),
-                            aRow.get(Col_Man), xfile.getName()));
+                    retList.add(handleLine(aRow.get(ColExcel_Ver), aRow.get(ColExcel_Path),
+                            aRow.get(ColExcel_ProjPackage), aRow.get(ColExcel_Man), xfile.getName()));
                 }
 
             }
@@ -219,7 +234,7 @@ public class ScanIncrementFiles {
                         // copy row 本地代码实现回调
 
                         @Override
-                        public void copyRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork,
+                        public void handleRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork,
                                 HSSFWorkbook sourceWork) {
                             for (int i = sourceRow.getFirstCellNum(); i <= sourceRow.getLastCellNum(); i++) {
                                 HSSFCell sourceCell = sourceRow.getCell(i);
@@ -231,10 +246,10 @@ public class ScanIncrementFiles {
                                     }
 
                                     switch (i) { // 根据列号进行处理
-                                    case Col_ROWNo:
+                                    case ColExcel_ROWNo:
                                         targetCell.setCellValue(iExcelRowCount);
                                         break;
-                                    case Col_Path:
+                                    case ColExcel_Path:
                                         targetCell.setCellValue(handlePath(sourceCell.getStringCellValue()));
                                         break;
                                     default:
