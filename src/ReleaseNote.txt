@@ -13,6 +13,11 @@ Example：java ListToFile.class FROMSVN
           [FILE]   :批量处理excel，扫描目录file.excel.folder下的所有
   args3 = Properties File Name, Default is [svntools.properties]
   
+v0.11-20150922
+1、优化了 FROMZIP，可以直接从多个war包提取文件，直接输出到ZIP
+2、优化ZIP文件名
+3、配置文件支持{xxx}模板变量方式
+  
 v0.10-20150921
 1、增加增量包mapping配置
 2、重构excel合并处理，

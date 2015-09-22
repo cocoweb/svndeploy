@@ -5,9 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+
 import org.tmatesoft.svn.core.SVNException;
 
+import com.foresee.test.util.io.File2Util;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
@@ -29,6 +32,7 @@ public class ToFileHelper {
     public ToFileHelper(String strFileName) {
         pv = new PropValue(strFileName);
     }
+    
 
     public void scanPrintList() {
         String sTofile = ""; // 默认为""，不用合并excel
@@ -279,6 +283,64 @@ public class ToFileHelper {
             e.printStackTrace();
         }
 
+    }
+
+    
+    class WarList{
+        Collection<File> clFiles=null;
+        
+        public WarList(String sFolderPath,String sFilter){
+            // 遍历文件夹，并过滤
+             clFiles = File2Util.getAllFiles(sFolderPath, sFilter);
+    
+        }
+        
+        public String getWar(String sProject){
+            for (File xfile : clFiles) {
+                if (xfile.getName().contains(sProject))
+                    return xfile.getPath() ;
+    
+            }
+            
+            return "";
+        }
+    }
+
+    public void scanWarToZip(){
+        String zipfile = pv.getProperty("zip.file");
+        String zipfoler = pv.getProperty("zip.folder");
+        String zipfolderfilter = pv.getProperty("zip.folder.filter");
+        String ziptofolder = PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"));
+        String zipkeyroot = pv.getProperty("zip.keyroot");
+        
+        String toZip = ziptofolder
+                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
+        
+        WarList warlist = new WarList(zipfoler,zipfolderfilter);
+        
+        
+        // 扫描excel文件的清单
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
+                pv.excelFolderFilter)) {
+            try {
+                String sProject = aRow.get( ColList_ProjPackage);
+                // 判断清单中的工程名，是否包含在 war包中
+                // 包含就抽取到目标路径
+                String sWar = warlist.getWar(sProject);
+                if (!sWar.isEmpty()) {
+                    String sPath = pv.exchangeWarPath(aRow.get( ColList_Path));
+                    String dPath = pv.exchangePath(aRow.get( ColList_Path));
+                    
+                    Zip4jUtils.ZipCopyFile2Zip(sWar, sPath, toZip, dPath);
+                    System.out.println("     抽取文件:" + dPath);
+                }
+            
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        
     }
 
     public void scanZipToPath() {

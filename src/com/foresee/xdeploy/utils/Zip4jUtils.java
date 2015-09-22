@@ -232,7 +232,7 @@ public class Zip4jUtils {
 				// Get the InputStream from the ZipFile
 				is = fromZipFile.getInputStream(fileHeader);
 
-				AddStreamToZip(toZIP, is, PathUtils.getFileNameWithExt(fromFile), PathUtils.getPath(toFile));
+				AddStreamToZip(toZIP, is, toFile, "");
 
 			}
 		} catch (Exception e) {
@@ -319,6 +319,8 @@ public class Zip4jUtils {
 			}
 
 		});
+		
+		InfoZipFile(zipFileName);
 	}
 
 	/**
@@ -371,8 +373,8 @@ public class Zip4jUtils {
 		// "www/style/images-swzj-01/atable-01/ico_fujian.gif",
 		// "p:/tmp/www/style/images-swzj-01/atable-01/ico_fujian.gif");
 
-		// ListAllFilesInZipFile("p:\\tmp\\QGTG-YHCS.20153121 1009.zip");
-		// InfoZipFile("p:\\tmp\\QGTG-YHCS.20153121 1009.zip");
+		 //ListAllFilesInZipFile("p:\\tmp\\e\\QGTG-YHCS.20150922-1100.zip");
+		 //InfoZipFile("P:\\workspace0.10\\20150921\\QGTG-YHCS.20155621 1509.zip");
 
 		ZipCopyFile2Zip("E:/Open Source/Java/zip4j_1.3.2/zip4j_examples_1.3.2.zip",
 				"Zip4jExamples/src/net/lingala/zip4j/examples/zip/CreateSplitZipFile.java", "p:/a/a.zip", "examples/zip/CreateSplitZipFile.java");

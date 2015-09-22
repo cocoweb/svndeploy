@@ -5,8 +5,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.Iterator;
 import java.util.Map;
 
+import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.exfile.ExtProperties;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
@@ -17,6 +19,9 @@ public class PropValue {
     private static ExtProperties xprop = null;
 
     // private static ExtProperties extProp = null;
+    
+    public String workspace ="";
+    public String tempPath ="";
 
     public String excelfile = "";
     public String excelFolder = "";
@@ -34,9 +39,25 @@ public class PropValue {
         propFileName = strFileName;
         initProp();
     }
+    
+    private void savePara( ExtProperties extprop){
+        
+        Iterator<Object> iter = extprop.keySet().iterator();
+        
+        while(iter.hasNext()){
+            String skey = StringUtil.trim(iter.next().toString());
+            lr.save_string(StringUtil.trim(extprop.getProperty(skey)), skey);
+        }
+        
+    }
 
     private void initProp() {
         xprop = getExtPropertiesInstance(propFileName);
+        savePara(xprop);
+        
+        workspace = getProperty("workspace");
+        tempPath = getProperty("temppath");
+        
         svnurl = getProperty("svn.url");
         svntofolder = getProperty("svn.tofolder");
         keyRootFolder = getProperty("svn.keyroot");
@@ -98,7 +119,8 @@ public class PropValue {
     }
 
     public String getProperty(String key) {
-        return StringUtil.trim( xprop.getProperty(key));
+        String sValue = lr.eval_string(StringUtil.trim( xprop.getProperty(key)));
+        return sValue;
     }
 
     /**
@@ -120,6 +142,13 @@ public class PropValue {
 	    
 	    return PathUtils.trimFolderStart(srcPath);
 	}
+    
+    public String exchangeWarPath(String srcPath){
+        srcPath =exchangePath(srcPath);
+        return srcPath.substring( srcPath.indexOf("/")+1);
+        
+    }
+    
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
@@ -128,7 +157,11 @@ public class PropValue {
         
         System.out.println(pv.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
         
-         System.out.println(pv.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
+         System.out.println(pv.exchangeWarPath("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
+         
+         System.out.println(pv.excelFolder);
+         
+         
        
 
     }

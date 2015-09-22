@@ -64,7 +64,7 @@ public class ListToFile {
                 listTofileHelper.svnDiffToPath();
             } else if (cmdOption.toUpperCase().equals("FROMZIP")) { // //从指定目录
                 System.out.println("===========从指定压缩文件war、zip、jar 导出到临时目录=================");
-                listTofileHelper.scanZipToPath();
+                listTofileHelper.scanWarToZip();     //scanZipToPath();
             } else
                 echoCommandInfo();
                 
