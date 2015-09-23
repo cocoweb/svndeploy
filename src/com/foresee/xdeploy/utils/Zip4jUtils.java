@@ -137,7 +137,14 @@ public class Zip4jUtils {
 		}
 	}
 
-	public static void AddStreamToZip(String zipFileName, InputStream isFile, String inzipName, String rootPath) {
+	/**
+	 * 将InputStream存入zip文件，并指定zip中的路径和文件名
+	 * 
+	 * @param zipFileName
+	 * @param isFile 存入zip的InputStream
+	 * @param inzipName
+	 */
+	public static void AddStreamToZip(String zipFileName, InputStream isFile, String inzipName) {
 		if (isFile == null)
 			return;
 
@@ -170,8 +177,8 @@ public class Zip4jUtils {
 			// the data will not be from a file but directly from a stream
 			parameters.setSourceExternalStream(true);
 
-			if (!rootPath.isEmpty())
-				parameters.setRootFolderInZip(rootPath);
+//			if (!rootPath.isEmpty())
+//				parameters.setRootFolderInZip(rootPath);
 
 			// For this example I use a FileInputStream but in practise this can
 			// be
@@ -199,7 +206,7 @@ public class Zip4jUtils {
 			// any inputstream
 			is = new FileInputStream(fileName);
 
-			AddStreamToZip(zipFileName, is, PathUtils.getFileNameWithExt(fileName), "");
+			AddStreamToZip(zipFileName, is, PathUtils.getFileNameWithExt(fileName) );
 
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -214,6 +221,14 @@ public class Zip4jUtils {
 		}
 	}
 
+	/**
+	 * 从zip文件中 copy指定文件，到另外一个zip文件
+	 * 
+	 * @param fromZIP
+	 * @param fromFile
+	 * @param toZIP
+	 * @param toFile
+	 */
 	public static void ZipCopyFile2Zip(String fromZIP, String fromFile, String toZIP, String toFile) {
 		ZipInputStream is = null;
 
@@ -232,7 +247,7 @@ public class Zip4jUtils {
 				// Get the InputStream from the ZipFile
 				is = fromZipFile.getInputStream(fileHeader);
 
-				AddStreamToZip(toZIP, is, toFile, "");
+				AddStreamToZip(toZIP, is, toFile);
 
 			}
 		} catch (Exception e) {
@@ -249,6 +264,12 @@ public class Zip4jUtils {
 
 	}
 
+	/**
+	 * 压缩文件
+	 * @param srcFile
+	 * @param destZIP
+	 * @param rootFolderInZip
+	 */
 	public static void zipFile(String srcFile, String destZIP, String rootFolderInZip) {
 		try {
 
@@ -277,6 +298,10 @@ public class Zip4jUtils {
 
 	}
 
+	/**
+	 * 显示zip文件信息
+	 * @param zipFileName
+	 */
 	public static void InfoZipFile(String zipFileName) {
 		final int javaCount[] = { 0 };
 		final int fileCount[] = { 0 };
@@ -297,6 +322,10 @@ public class Zip4jUtils {
 
 	}
 
+	/**
+	 * 显示zip文件列表和zip文件信息
+	 * @param zipFileName
+	 */
 	public static void ListAllFilesInZipFile(String zipFileName) {
 
 		scanZipFiles(zipFileName, new IHandleZipFile() {
@@ -332,6 +361,11 @@ public class Zip4jUtils {
 
 	}
 
+	/**
+	 * 扫描zip所有文件，并回调传入的接口
+	 * @param zipFileName
+	 * @param xhandleZipFile  回调接口
+	 */
 	public static void scanZipFiles(String zipFileName, IHandleZipFile xhandleZipFile) {
 		try {
 			// Initiate ZipFile object with the path/name of the zip file.
