@@ -143,7 +143,7 @@ public class ZipFileUtils {
     /**
      * 压缩文件-File
      * 
-     * @param zipFile
+     * @param zipWarFile
      *            zip文件
      * @param srcFiles
      *            被压缩源文件

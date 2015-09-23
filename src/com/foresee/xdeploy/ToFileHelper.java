@@ -15,6 +15,8 @@ import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
+import com.foresee.xdeploy.file.WarFile;
+import com.foresee.xdeploy.file.WarFiles;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.SvnClient;
 import com.foresee.xdeploy.utils.Zip4jUtils;
@@ -32,34 +34,29 @@ public class ToFileHelper {
     public ToFileHelper(String strFileName) {
         pv = new PropValue(strFileName);
     }
-    
 
     public void scanPrintList() {
         String sTofile = ""; // 默认为""，不用合并excel
 
         if (pv.getProperty("file.excel.merge").equals("true")) { // 判断是否需要合并excel
             // 生成excel输出文件名
-            sTofile = pv.excelfiletemplate.substring(0, pv.excelfiletemplate.indexOf(".")) + "-"
-                    + DateUtil.getCurrentDate("yyyyMMdd") + "-产品线-合并.xls";
+            sTofile = pv.excelfiletemplate.substring(0, pv.excelfiletemplate.indexOf(".")) + "-" + DateUtil.getCurrentDate("yyyyMMdd")
+                    + "-产品线-合并.xls";
             // 生成合并的excel文件
             FileUtil.Copy(pv.excelfiletemplate, sTofile);
         }
 
         // 扫描并获取全部excel内容
-        ScanIncrementFiles scanFiles = ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
-                pv.excelFolderFilter, sTofile);
+        ScanIncrementFiles scanFiles = ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter, sTofile);
 
         StringBuffer bugStr = new StringBuffer();
-        String a1_Path = ""; //用来比较上下路径的标记
+        String a1_Path = ""; // 用来比较上下路径的标记
         String lastStr = "";
 
         for (ArrayList<String> aRow : scanFiles.retList) {
-            String sPath = PathUtils.autoPathRoot(aRow.get( ColList_Path), pv.filekeyroot);
-            String printStr = "Ver:[" + aRow.get( ColList_Ver) + "] |" 
-                    + aRow.get( ColList_ProjPackage) + "| " 
-                    + sPath + "  " 
-                    + aRow.get( ColList_Man) + " << "
-                    + aRow.get( ColList_FileName) + "\n";
+            String sPath = PathUtils.autoPathRoot(aRow.get(ColList_Path), pv.filekeyroot);
+            String printStr = "Ver:[" + aRow.get(ColList_Ver) + "] |" + aRow.get(ColList_ProjPackage) + "| " + sPath + "  " + aRow.get(ColList_Man)
+                    + " << " + aRow.get(ColList_FileName) + "\n";
 
             // 判断是否目录，目录就不操作
             if (PathUtils.isFolder(sPath)) {
@@ -96,17 +93,16 @@ public class ToFileHelper {
      */
     public void scanSvnToPath() {
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
-        
-        String zipFileName =  PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"))
-                                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
+
+        String zipFileName = PathUtils.addFolderEnd(pv.getProperty("zip.tofolder")) + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm")
+                + ".zip";
         int fileCount = 0;
 
-        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
-                pv.excelFolderFilter)) {
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
-                String fromPath = PathUtils.autoPathRoot(aRow.get( ColList_Path), "trunk");
+                String fromPath = PathUtils.autoPathRoot(aRow.get(ColList_Path), "trunk");
                 String sUrl = pv.svnurl + fromPath; // svn库的文件绝对路径URL
-                String sVer = aRow.get( ColList_Ver);
+                String sVer = aRow.get(ColList_Ver);
                 String toPath = PathUtils.autoUrlToPath(sUrl, pv.svntofolder, pv.keyRootFolder);
 
                 // 判断是否目录，目录就不操作
@@ -117,8 +113,7 @@ public class ToFileHelper {
 
                     if (pv.getProperty("svn.tozip.enabled").equals("true")) {
                         // 将文件添加到zip文件
-                        Zip4jUtils.zipFile(toPath, zipFileName,
-                                FileUtil.getFolderPath(pv.exchangePath(fromPath)));
+                        Zip4jUtils.zipFile(toPath, zipFileName, FileUtil.getFolderPath(pv.exchangePath(fromPath)));
 
                     }
 
@@ -130,9 +125,9 @@ public class ToFileHelper {
             }
         }
 
-        System.out.println("\nTotal " + Integer.toString(fileCount) + " Files, Exported to path ="
-                + PathUtils.addFolderEnd(pv.svntofolder) + pv.keyRootFolder);
-        
+        System.out.println(
+                "\nTotal " + Integer.toString(fileCount) + " Files, Exported to path =" + PathUtils.addFolderEnd(pv.svntofolder) + pv.keyRootFolder);
+
         Zip4jUtils.InfoZipFile(zipFileName);
 
     }
@@ -180,8 +175,7 @@ public class ToFileHelper {
                 }
                 if (fileTemp.isDirectory() && (!fileTemp.isHidden())) {// 如果是子文件夹
 
-                    copyFolderExchange(strOldFolderPath + File.separator + strArrayFile[i], strNewFolderPath
-                            + File.separator + strArrayFile[i]);
+                    copyFolderExchange(strOldFolderPath + File.separator + strArrayFile[i], strNewFolderPath + File.separator + strArrayFile[i]);
                 }
             }
         } catch (Exception e) {
@@ -229,10 +223,9 @@ public class ToFileHelper {
         // 扫描excel文件的清单
         // ScanIncrementFiles xx = new ScanIncrementFiles(excelfile,
         // excelFolder, scanOption);
-        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
-                pv.excelFolderFilter)) {
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
-                String sPath = ciworkspace + aRow.get( ColList_Path); // 源文件路径citoFolder
+                String sPath = ciworkspace + aRow.get(ColList_Path); // 源文件路径citoFolder
                 String dPath = javaToclass(PathUtils.autoUrlToPath(sPath, citoFolder, cikeyroot)); // 目标路径
 
                 if (sPath.indexOf(cikeyroot) > 0) {
@@ -285,62 +278,51 @@ public class ToFileHelper {
 
     }
 
-    
-    class WarList{
-        Collection<File> clFiles=null;
-        
-        public WarList(String sFolderPath,String sFilter){
-            // 遍历文件夹，并过滤
-             clFiles = File2Util.getAllFiles(sFolderPath, sFilter);
-    
-        }
-        
-        public String getWar(String sProject){
-            for (File xfile : clFiles) {
-                if (xfile.getName().contains(sProject))
-                    return xfile.getPath() ;
-    
-            }
-            
-            return "";
-        }
-    }
-
-    public void scanWarToZip(){
+    public void scanWarToZip() {
         String zipfile = pv.getProperty("zip.file");
         String zipfoler = pv.getProperty("zip.folder");
         String zipfolderfilter = pv.getProperty("zip.folder.filter");
         String ziptofolder = PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"));
         String zipkeyroot = pv.getProperty("zip.keyroot");
-        
-        String toZip = ziptofolder
-                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
-        
-        WarList warlist = new WarList(zipfoler,zipfolderfilter);
-        
-        
+
+        String toZip = ziptofolder + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
+
+        WarFiles warlist = new WarFiles(zipfoler, zipfolderfilter);
+
         // 扫描excel文件的清单
-        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
-                pv.excelFolderFilter)) {
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
-                String sProject = aRow.get( ColList_ProjPackage);
+                String sProject = aRow.get(ColList_ProjPackage);
+                String srcPath = aRow.get(ColList_Path);
+
                 // 判断清单中的工程名，是否包含在 war包中
                 // 包含就抽取到目标路径
-                String sWar = warlist.getWar(sProject);
-                if (!sWar.isEmpty()) {
-                    String sPath = pv.exchangeWarPath(aRow.get( ColList_Path));
-                    String dPath = pv.exchangePath(aRow.get( ColList_Path));
-                    
-                    Zip4jUtils.ZipCopyFile2Zip(sWar, sPath, toZip, dPath);
-                    System.out.println("     抽取文件:" + dPath);
+                WarFile warfile = warlist.getWarFile(sProject);
+                if (warfile!=null) {
+                    if (srcPath.lastIndexOf(".java") > 0) { // 从jar抽取class
+                        ExchangePath jarpath = pv.exchangeJarPath(srcPath);
+                        
+                        warfile.copyJavaToZip(toZip, jarpath.SrcPath, jarpath.JARName);
+
+                        System.out.println("     抽取class:" + jarpath.ToZipPath);
+
+                    } else {
+                        String sPath = pv.exchangeWarPath(srcPath);
+                        String dPath = pv.exchangePath(srcPath);
+
+                        Zip4jUtils.ZipCopyFile2Zip(warfile.getPath(), sPath, toZip, dPath);
+                        System.out.println("     抽取文件:" + dPath);
+                    }
+                } else {
+                    System.out.println("   !!没能抽取:" + srcPath);
                 }
-            
+
             } catch (Exception e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
-        
+
     }
 
     public void scanZipToPath() {
@@ -351,15 +333,14 @@ public class ToFileHelper {
         String zipkeyroot = pv.getProperty("zip.keyroot");
 
         // 扫描excel文件的清单
-        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption,
-                pv.excelFolderFilter)) {
+        for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
-                String sProject = aRow.get( ColList_ProjPackage);
+                String sProject = aRow.get(ColList_ProjPackage);
 
                 // 判断清单中的工程名，是否包含在 war包中
                 // 包含就抽取到目标路径
                 if (zipfile.contains(sProject)) {
-                    String sPath = PathUtils.autoPathRoot(aRow.get( ColList_Path), zipkeyroot, "NOROOT"); // 源文件路径
+                    String sPath = PathUtils.autoPathRoot(aRow.get(ColList_Path), zipkeyroot, "NOROOT"); // 源文件路径
                     String dPath = PathUtils.addFolderEnd(ziptofolder) + sProject + PathUtils.addFolderStart(sPath); // 目标路径
                     ZipFileUtils.getZipFile(zipfile, sPath, dPath);
                     System.out.println("抽取文件:" + dPath);
@@ -397,7 +378,7 @@ public class ToFileHelper {
         // for (ArrayList<String> aRow : xlist) {
         // String sPath = PathUtils.autoPathRoot(aRow.get(1), filekeyroot);
         // String printStr = "Ver:[" + aRow.get(0) + "] |"
-        // +aRow.get(2)+"| "+sPath+ "  " +aRow.get(3)+" << "+aRow.get(4)+"\n";
+        // +aRow.get(2)+"| "+sPath+ " " +aRow.get(3)+" << "+aRow.get(4)+"\n";
         //
         // System.out.print(printStr);
         //

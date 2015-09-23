@@ -21,10 +21,10 @@ import net.lingala.zip4j.util.Zip4jConstants;
 public class Zip4jUtils {
 
     static final int BUFF_SIZE = 4096;
+
     public Zip4jUtils() {
         // TODO Auto-generated constructor stub
     }
-
 
     public void AddFilesDeflateComp() {
         try {
@@ -152,8 +152,7 @@ public class Zip4jUtils {
         List<String> removeHeaderNames = new ArrayList<String>();
         for (int i = 0, len = headersList.size(); i < len; i++) {
             FileHeader subHeader = (FileHeader) headersList.get(i);
-            if (subHeader.getFileName().startsWith(dirHeader.getFileName())
-                    && !subHeader.getFileName().equals(dirHeader.getFileName())) {
+            if (subHeader.getFileName().startsWith(dirHeader.getFileName()) && !subHeader.getFileName().equals(dirHeader.getFileName())) {
                 removeHeaderNames.add(subHeader.getFileName());
             }
         }
@@ -182,6 +181,18 @@ public class Zip4jUtils {
             // all these files are added to the zip file. If zip file does not
             // exist, then a new zip file is created with the files mentioned
             ZipFile zipFile = new ZipFile(zipFileName);
+            AddStreamToZip(zipFile,isFile,inzipName);
+ 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void AddStreamToZip(ZipFile zipFile, InputStream isFile, String inzipName) {
+        if (isFile == null)
+            return;
+
+        try {
 
             // Initiate Zip Parameters which define various properties such
             // as compression method, etc. More parameters are explained in
@@ -208,11 +219,6 @@ public class Zip4jUtils {
             // if (!rootPath.isEmpty())
             // parameters.setRootFolderInZip(rootPath);
 
-            // For this example I use a FileInputStream but in practise this can
-            // be
-            // any inputstream
-            // is = new FileInputStream(fileName);
-
             // Creates a new entry in the zip file and adds the content to the
             // zip file
             zipFile.addStream(isFile, parameters);
@@ -220,9 +226,9 @@ public class Zip4jUtils {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        
     }
-
+        
     /**
      * 添加文件到zip中
      * 
@@ -256,28 +262,64 @@ public class Zip4jUtils {
     }
 
     /**
+     * 根据输入流，生成zipfile对象
+     * 
+     * @param isZip
+     * @return
+     * @throws ZipException
+     */
+    public static ZipFile genZipFileFromStream(InputStream isZip) throws ZipException {
+    
+        return new ZipFile(StreamUtils.StreamToTempFile(isZip));
+    
+    }
+
+    /**
+     * 从ZIP的压缩文件中，搜索指定文件名的文件路径
+     * 
+     * @param zipfile
+     * @param filename
+     * @return
+     * @throws ZipException
+     */
+    public static String getFileNameFromZIP(ZipFile zipfile, String filename) throws ZipException {
+        // Get the list of file headers from the zip file
+        @SuppressWarnings("unchecked")
+        List<FileHeader> fileHeaderList = zipfile.getFileHeaders();
+    
+        for (FileHeader fh : fileHeaderList) {
+            if (fh.getFileName().contains(filename)) {
+    
+                return fh.getFileName();
+            }
+        }
+    
+        return "";
+    
+    }
+
+    /**
      * 从zip文件中获取某个文件的stream
      * 
      * @param zipFileName
      * @param fileName
      * @return 返回zip中文件stream
      */
-    /**
-     * @param zipFileName
-     * @param fileName
-     * @return
-     */
-    /**
-     * @param zipFileName
-     * @param fileName
-     * @return
-     */
     public static ZipInputStream getFileStreamFromZip(String zipFileName, String fileName) {
         try {
             // Initiate the ZipFile
             ZipFile zipFile = new ZipFile(zipFileName);
             // String destinationPath = "c:\\ZipTest";
+            return getFileStreamFromZip(zipFile, fileName);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
 
+    }
+
+    public static ZipInputStream getFileStreamFromZip(ZipFile zipFile, String fileName) {
+        try {
             // Get the FileHeader of the File you want to extract from the
             // zip file. Input for the below method is the name of the file
             // For example: 123.txt or abc/123.txt if the file 123.txt
@@ -303,31 +345,47 @@ public class Zip4jUtils {
 
     /**
      * 从zip流中，抽取文件，并返回stream
+     * 
      * @param isZip
      * @param fileName
      * @return
      */
     public static ZipInputStream getFileStreamFromStream(InputStream isZip, String fileName) {
-       //ZipInputStream zis = getFileStreamFromZip(zipFileName, fileName);
+        // ZipInputStream zis = getFileStreamFromZip(zipFileName, fileName);
         File zFile = StreamUtils.StreamToTempFile(isZip);
-        
+
         return getFileStreamFromZip(zFile.getPath(), fileName);
 
     }
+
     /**
-     * 根据输入流，生成zipfile对象
-     * @param isZip
+     * 在ZIP文件中，查找并获取 内部zip文件对象
+     * @param fromzipFile
+     * @param fileName  内部zip文件，如：jar、zip...
      * @return
-     * @throws ZipException
      */
-    public static ZipFile genZipFileFromStream(InputStream isZip) throws ZipException {
-        
-         return new ZipFile(StreamUtils.StreamToTempFile(isZip));
-
-     }
+    public static ZipFile getZipFileFromZIP(ZipFile fromzipFile, String fileName){
+        InputStream isJar = null;
+        try {
+            isJar = getFileStreamFromZip(fromzipFile, getFileNameFromZIP(fromzipFile,fileName));
+            return genZipFileFromStream(isJar);
+        } catch (ZipException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            try {
+                if (isJar != null)
+                    isJar.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return null;
+    
+    }
 
     /**
-     * 从zip文件中 copy指定文件，到另外一个zip文件
+     * 从zip文件中 copy指定文件，到另外一个zip文件的指定路径
      * 
      * @param fromZIP
      * @param fromFile
@@ -335,11 +393,33 @@ public class Zip4jUtils {
      * @param toFile
      */
     public static void ZipCopyFile2Zip(String fromZIP, String fromFile, String toZIP, String toFile) {
-        ZipInputStream is = null;
-
+ 
         try {
             // Initiate the ZipFile
             ZipFile fromZipFile = new ZipFile(fromZIP);
+            ZipCopyFile2Zip(fromZipFile, fromFile, toZIP, toFile);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+    }
+    public static void ZipCopyFile2Zip(ZipFile fromZipFile, String fromFile, String toZipFile, String toFile) {
+       try {
+            
+            ZipFile zipFile = new ZipFile(toZipFile);
+            
+            ZipCopyFile2Zip(fromZipFile, fromFile, zipFile, toFile);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+       
+    }
+    public static void ZipCopyFile2Zip(ZipFile fromZipFile, String fromFile, ZipFile toZipFile, String toFile) {
+        ZipInputStream is = null;
+
+        try {
 
             // Get the FileHeader of the File you want to extract from the
             // zip file. Input for the below method is the name of the file
@@ -352,8 +432,10 @@ public class Zip4jUtils {
                 // Get the InputStream from the ZipFile
                 is = fromZipFile.getInputStream(fileHeader);
 
-                AddStreamToZip(toZIP, is, toFile);
+                AddStreamToZip(toZipFile, is, toFile);
 
+            }else{
+                System.err.println("   !!未找到："+fromFile+"@"+fromZipFile.getFile().getName());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -366,7 +448,7 @@ public class Zip4jUtils {
                 }
             }
         }
-
+       
     }
 
     /**
@@ -518,7 +600,7 @@ public class Zip4jUtils {
             // filesToAdd.add(new File("c:\\ZipTest\\mysong.mp3"));
 
             ZipParameters parameters = new ZipParameters();
-            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE); 
+            parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
             parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
             parameters.setRootFolderInZip(rootFolderInZip);
 
@@ -628,71 +710,55 @@ public class Zip4jUtils {
         }
 
     }
-    
-    public static List<FileHeader> searchZipFile(ZipFile zipfile ,String filename) throws ZipException{
+
+    public static List<FileHeader> searchZipFiles(ZipFile zipfile, String filename) throws ZipException {
         // Get the list of file headers from the zip file
         @SuppressWarnings("unchecked")
         List<FileHeader> fileHeaderList = zipfile.getFileHeaders();
-        List<FileHeader> retList =new ArrayList<FileHeader>();
-        for(FileHeader fh:fileHeaderList){
-           
-            if (fh.getFileName().contains(filename)){
+        List<FileHeader> retList = new ArrayList<FileHeader>();
+        for (FileHeader fh : fileHeaderList) {
+
+            if (fh.getFileName().contains(filename)) {
                 retList.add(fh);
             }
         }
-        
+
         return retList;
-        
+
     }
     
-    public static String getZipFile(ZipFile zipfile ,String filename) throws ZipException{
-        // Get the list of file headers from the zip file
-        @SuppressWarnings("unchecked")
-        List<FileHeader> fileHeaderList = zipfile.getFileHeaders();
-        
-        for(FileHeader fh:fileHeaderList){
-            if (fh.getFileName().contains(filename)){
-                
-                return fh.getFileName();
-            }
-        }
-        
-        return "";
-        
-    }
-    
-    public static void copyJavaToZip(String warFile,String toZip,String javafile,String jarName){
+    public static void copyJavaToZip(String warFile, String toZip, String javafile, String jarName) {
         ZipFile zipfile = null;
-        InputStream isJar =null;
+        InputStream isJar = null;
         try {
-            isJar = getFileStreamFromZip(warFile ,getZipFile(new ZipFile(warFile),jarName));
-            zipfile= genZipFileFromStream(isJar);
-            
-            //java文件中可能会有子类，需要检查,并生成list
+            isJar = getFileStreamFromZip(warFile, getFileNameFromZIP(new ZipFile(warFile), jarName));
+            zipfile = genZipFileFromStream(isJar);
+
+            // java文件中可能会有子类，需要检查,并生成list
             String javaName = javafile.substring(0, javafile.lastIndexOf(".java"));
-            List<FileHeader> listJavaFile = searchZipFile(zipfile,javaName);
-            
-            for(FileHeader fileheader:listJavaFile){
-                InputStream isfile= zipfile.getInputStream(fileheader);
-                
-                AddStreamToZip(toZip, isfile, jarName+"/"+fileheader.getFileName());
-                //"com.foresee.etax.bizfront/com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class"
-                
+            List<FileHeader> listJavaFile = searchZipFiles(zipfile, javaName);
+
+            for (FileHeader fileheader : listJavaFile) {
+                InputStream isfile = zipfile.getInputStream(fileheader);
+
+                AddStreamToZip(toZip, isfile, jarName + "/" + fileheader.getFileName());
+                // "com.foresee.etax.bizfront/com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class"
+
                 isfile.close();
             }
-            
+
         } catch (ZipException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
-        } finally{
+        } finally {
             try {
-                if(isJar!=null) isJar.close();
+                if (isJar != null)
+                    isJar.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        
 
     }
 
@@ -711,24 +777,29 @@ public class Zip4jUtils {
         // "p:/tmp/www/style/images-swzj-01/atable-01/ico_fujian.gif");
 
         // ListAllFilesInZipFile("p:\\tmp\\e\\QGTG-YHCS.20150922-1100.zip");
-        // InfoZipFile("P:\\workspace0.10\\20150921\\QGTG-YHCS.20155621 1509.zip");
+        // InfoZipFile("P:\\workspace0.10\\20150921\\QGTG-YHCS.20155621
+        // 1509.zip");
 
-//        ZipCopyFile2Zip("E:/Open Source/Java/zip4j_1.3.2/zip4j_examples_1.3.2.zip",
-//                "Zip4jExamples/src/net/lingala/zip4j/examples/zip/CreateSplitZipFile.java", "p:/a/a.zip",
-//                "examples/zip/CreateSplitZipFile.java");
-        
-        
-        //打开war包
-        
-//        InputStream iswar = getFileStreamFromZip("d:/tmp/gt3nf-wsbs-2.0.23100.156.04013.00-5261.war"
-//                ,"WEB-INF/lib/com.foresee.etax.bizfront.jar");
-//        
-//        InputStream isfile = getFileStreamFromStream(iswar,"com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class");
-//        
-//        
-//        AddStreamToZip("p:/zz.zip", isfile, "com.foresee.etax.bizfront/com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class");
-        copyJavaToZip("d:/tmp/gt3nf-wsbs-2.0.23100.156.04013.00-5261.war", "p:/zzz.zip"
-                , "com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.java", "com.foresee.etax.bizfront");
+        // ZipCopyFile2Zip("E:/Open
+        // Source/Java/zip4j_1.3.2/zip4j_examples_1.3.2.zip",
+        // "Zip4jExamples/src/net/lingala/zip4j/examples/zip/CreateSplitZipFile.java",
+        // "p:/a/a.zip",
+        // "examples/zip/CreateSplitZipFile.java");
+
+        // 打开war包
+
+        // InputStream iswar =
+        // getFileStreamFromZip("d:/tmp/gt3nf-wsbs-2.0.23100.156.04013.00-5261.war"
+        // ,"WEB-INF/lib/com.foresee.etax.bizfront.jar");
+        //
+        // InputStream isfile =
+        // getFileStreamFromStream(iswar,"com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class");
+        //
+        //
+        // AddStreamToZip("p:/zz.zip", isfile,
+        // "com.foresee.etax.bizfront/com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class");
+        copyJavaToZip("d:/tmp/gt3nf-wsbs-2.0.23100.156.04013.00-5261.war", "p:/zzz.zip",
+                "com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.java", "com.foresee.etax.bizfront");
     }
 
 }
