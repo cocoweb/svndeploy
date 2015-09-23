@@ -12,6 +12,19 @@ public class StreamUtils {
     public StreamUtils() {
         // TODO Auto-generated constructor stub
     }
+    
+    public static void InputStreamToOutputStream(InputStream is,OutputStream os) throws IOException{
+        int readLen = -1;
+        byte[] buff = new byte[BUFF_SIZE];
+
+        // Loop until End of File and write the contents to the output
+        // stream
+        while ((readLen = is.read(buff)) != -1) {
+            os.write(buff, 0, readLen);
+        }
+        
+        
+    }
 
     public static void writeInputStreamToFile(InputStream is, File outFile) {
         OutputStream os = null;
@@ -26,15 +39,17 @@ public class StreamUtils {
 
             // Initialize the output stream
             os = new FileOutputStream(outFile);
+            
+            InputStreamToOutputStream(is,os);
 
-            int readLen = -1;
-            byte[] buff = new byte[BUFF_SIZE];
-
-            // Loop until End of File and write the contents to the output
-            // stream
-            while ((readLen = is.read(buff)) != -1) {
-                os.write(buff, 0, readLen);
-            }
+//            int readLen = -1;
+//            byte[] buff = new byte[BUFF_SIZE];
+//
+//            // Loop until End of File and write the contents to the output
+//            // stream
+//            while ((readLen = is.read(buff)) != -1) {
+//                os.write(buff, 0, readLen);
+//            }
 
             // Closing inputstream also checks for CRC of the the just
             // extracted file.
@@ -45,12 +60,19 @@ public class StreamUtils {
             // NOTE: It is recommended to close outputStream first because
             // Zip4j throws
             // an exception if CRC check fails
-            is.close();
+            //is.close();
 
-            // Close output stream
-            os.close();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally{
+            // Close output stream
+            try {
+                os.close();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
         }
 
     }
