@@ -21,7 +21,7 @@ public class WarFile {
     // public String warFileName ="";
     public File warFile = null;
 
-    ZipFile warZipFile = null;
+    public ZipFile warZipFile = null;
 
     public WarFile(String fileName) {
         this(new File(fileName));
@@ -96,17 +96,39 @@ public class WarFile {
     }
 
 
-    public void copyJavaToZip(String toZip, String javafile, String jarName) {
-        //ZipFile jarfile = null;
+    /**
+     * 复制java文件到指定的zip中
+     * 
+     * @param toZip
+     * @param javafile
+     * @param jarName
+     * @return  0：成功   -1：失败
+     */
+    public int copyJavaToZip(String toZip, String javafile, String jarName) {
+        try {
+            
+            ZipFile zipOutFile =new ZipFile(toZip);
+            return copyJavaToZip(zipOutFile,javafile,jarName);
+
+ 
+        } catch (ZipException e) {
+            e.printStackTrace();
+         } 
+        
+        return 0;
+
+    }
+    public int copyJavaToZip(ZipFile zipOutFile, String javafile, String jarName) {
         try {
             ZipFile jarfile = getJarZipFile(jarName);
 
             // java文件中可能会有子类(如 aaaa$bbb.class)，需要检查,并生成list
-            String javaName = javafile.substring(0, javafile.lastIndexOf(".java"));
+            String javaName = javafile.substring(0, javafile.lastIndexOf("."));
             
             List<FileHeader> listJavaFile = Zip4jUtils.searchZipFiles(jarfile, javaName);
-            
-            ZipFile zipOutFile =new ZipFile(toZip);
+            if(listJavaFile.size()<1) {
+                return -1;
+            }
 
             for (FileHeader fileheader : listJavaFile) {
                 InputStream isfile = jarfile.getInputStream(fileheader);
@@ -122,6 +144,8 @@ public class WarFile {
         } catch (IOException e) {
             e.printStackTrace();
         } 
+        
+        return 0;
 
     }
 

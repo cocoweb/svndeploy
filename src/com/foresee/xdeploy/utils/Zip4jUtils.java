@@ -273,6 +273,16 @@ public class Zip4jUtils {
         return new ZipFile(StreamUtils.StreamToTempFile(isZip));
     
     }
+    
+    public static ZipFile genZipFile(String toZip){
+        try {
+            return new ZipFile(toZip);
+        } catch (ZipException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return null;
+    }
 
     /**
      * 从ZIP的压缩文件中，搜索指定文件名的文件路径
@@ -625,7 +635,7 @@ public class Zip4jUtils {
             @Override
             public void handleFile(FileHeader fileHeader, ZipFile zipFile) {
                 fileCount[0]++;
-                if (fileHeader.getFileName().endsWith(".java"))
+                if (fileHeader.getFileName().endsWith(".java")||fileHeader.getFileName().endsWith(".class"))
                     javaCount[0]++;
 
             }

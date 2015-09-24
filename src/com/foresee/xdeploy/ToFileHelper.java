@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import net.lingala.zip4j.core.ZipFile;
+
 import org.tmatesoft.svn.core.SVNException;
 
 import com.foresee.test.util.io.FileUtil;
@@ -290,6 +292,7 @@ public class ToFileHelper {
         String zipkeyroot = pv.getProperty("zip.keyroot");
 
         String toZip = ziptofolder + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
+        ZipFile toZipFile = Zip4jUtils.genZipFile(toZip);
 
         WarFiles warlist = new WarFiles(zipfoler, zipfolderfilter);
 
@@ -306,19 +309,22 @@ public class ToFileHelper {
                     if (srcPath.lastIndexOf(".java") > 0) { // 从jar抽取class
                         ExchangePath jarpath = pv.exchangeJarPath(srcPath);
                         
-                        warfile.copyJavaToZip(toZip, jarpath.SrcPath, jarpath.JARName);
+                        if (warfile.copyJavaToZip(toZipFile, jarpath.FromPath, jarpath.JARName)==0){
 
-                        System.out.println("     抽取class:" + jarpath.ToZipPath);
+                             System.out.println("     抽取class:" + jarpath.ToZipPath);
+                        }else{
+                            System.err.println("   !!抽取失败:\n" + jarpath);
+                        }
 
                     } else {
                         String sPath = pv.exchangeWarPath(srcPath);
                         String dPath = pv.exchangePath(srcPath);
 
-                        Zip4jUtils.ZipCopyFile2Zip(warfile.getPath(), sPath, toZip, dPath);
+                        Zip4jUtils.ZipCopyFile2Zip(warfile.warZipFile, sPath, toZipFile, dPath);
                         System.out.println("     抽取文件:" + dPath);
                     }
                 } else {
-                    System.out.println("   !!没能抽取:" + srcPath);
+                    System.err.println("   !!没能抽取:" + srcPath);
                 }
 
             } catch (Exception e) {
@@ -326,6 +332,9 @@ public class ToFileHelper {
                 e.printStackTrace();
             }
         }
+        
+        Zip4jUtils.InfoZipFile(toZip);
+
 
     }
 

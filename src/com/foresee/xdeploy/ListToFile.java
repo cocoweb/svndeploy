@@ -63,7 +63,7 @@ public class ListToFile {
                 System.out.println("===========根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单=================");
                 listTofileHelper.svnDiffToPath();
             } else if (cmdOption.toUpperCase().equals("FROMZIP")) { // //从指定目录
-                System.out.println("===========从指定压缩文件war、zip、jar 导出到临时目录=================");
+                System.out.println("===========从指定压缩文件war、zip、jar 导出到zip文件=================");
                 listTofileHelper.scanWarToZip();     //scanZipToPath();
             } else
                 echoCommandInfo();
