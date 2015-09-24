@@ -7,8 +7,6 @@ import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjP
 import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,6 +23,7 @@ import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
 import com.foresee.xdeploy.file.WarFile;
 import com.foresee.xdeploy.file.WarFiles;
+import com.foresee.xdeploy.utils.FileSystem;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.SvnClient;
 import com.foresee.xdeploy.utils.Zip4jUtils;
@@ -46,8 +45,7 @@ public class ToFileHelper {
 
         if (pv.getProperty("file.excel.merge").equals("true")) { // 判断是否需要合并excel
             // 生成excel输出文件名
-            sTofile = pv.excelfiletemplate.substring(0, pv.excelfiletemplate.indexOf(".")) + "-" + DateUtil.getCurrentDate("yyyyMMdd")
-                    + "-产品线-合并.xls";
+            sTofile = pv.genOutExcelFileName();
             // 生成合并的excel文件
             FileUtil.Copy(pv.excelfiletemplate, sTofile);
         }
@@ -61,7 +59,9 @@ public class ToFileHelper {
 
         for (ArrayList<String> aRow : scanFiles.retList) {
             String sPath = PathUtils.autoPathRoot(aRow.get(ColList_Path), pv.filekeyroot);
-            String printStr = "Ver:[" + aRow.get(ColList_Ver) + "] |" + aRow.get(ColList_ProjPackage) + "| " + sPath + "  " + aRow.get(ColList_Man)
+            String printStr = "Ver:[" + aRow.get(ColList_Ver) + "] |"
+                    + aRow.get(ColList_ProjPackage) + "| " 
+                    + sPath + "  " + aRow.get(ColList_Man)
                     + " << " + aRow.get(ColList_FileName) + "\n";
 
             // 判断是否目录，目录就不操作
@@ -85,7 +85,8 @@ public class ToFileHelper {
         }
         System.out.println("\n共有文件数量：" + Integer.toString(scanFiles.retList.size()));
         System.out.println("==空的版本号，将获取最新的版本。==请仔细检查清单格式，路径不对将无法从svn获取。");
-        System.out.println("合并生成了EXCEL为：" + sTofile);
+        if (pv.getProperty("file.excel.merge").equals("true")) 
+            System.out.println("   >>>合并生成了EXCEL为：" + sTofile);
 
         if (bugStr.length() > 0) {
             System.err.println("\n<<<<文件有重复>>>>请注意核对，如下：");
@@ -100,8 +101,7 @@ public class ToFileHelper {
     public void scanSvnToPath() {
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
 
-        String zipFileName = PathUtils.addFolderEnd(pv.getProperty("zip.tofolder")) + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm")
-                + ".zip";
+        String zipFileName = pv.genOutZipFileName();
         int fileCount = 0;
 
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
@@ -135,86 +135,6 @@ public class ToFileHelper {
                 "\nTotal " + Integer.toString(fileCount) + " Files, Exported to path =" + PathUtils.addFolderEnd(pv.svntofolder) + pv.keyRootFolder);
 
         Zip4jUtils.InfoZipFile(zipFileName);
-
-    }
-
-    /**
-     * 复制整个文件夹的内容
-     * 
-     * @param strOldFolderPath
-     *            准备拷贝的目录
-     * 
-     * @param strNewFolderPath
-     *            指定绝对路径的新目录
-     * @return void
-     */
-    public static void copyFolderExchange(String strOldFolderPath, String strNewFolderPath) {
-        FileInputStream fileInputStream = null;
-        FileOutputStream fileOutputStream = null;
-        File file = null;
-        String[] strArrayFile = null;
-        File fileTemp = null;
-        byte[] byteArray = null;
-        int intIndex = 0;
-        try {
-            new File(strNewFolderPath).mkdirs(); // 如果文件夹不存在 则建立新文件夹
-
-            file = new File(strOldFolderPath);
-            strArrayFile = file.list();
-            for (int i = 0; i < strArrayFile.length; i++) {
-                if (strOldFolderPath.endsWith(File.separator)) {
-                    fileTemp = new File(strOldFolderPath + strArrayFile[i]);
-                } else {
-                    fileTemp = new File(strOldFolderPath + File.separator + strArrayFile[i]);
-                }
-                if (fileTemp.isFile() && (!fileTemp.isHidden())) {
-                    fileInputStream = new FileInputStream(fileTemp);
-                    fileOutputStream = new FileOutputStream(strNewFolderPath + "/" + (fileTemp.getName()).toString());
-                    byteArray = new byte[1024 * 5];
-                    while ((intIndex = fileInputStream.read(byteArray)) != -1) {
-                        fileOutputStream.write(byteArray, 0, intIndex);
-                    }
-                    fileOutputStream.flush();
-                    fileOutputStream.close();
-                    fileInputStream.close();
-                    intIndex = 0;
-                }
-                if (fileTemp.isDirectory() && (!fileTemp.isHidden())) {// 如果是子文件夹
-
-                    copyFolderExchange(strOldFolderPath + File.separator + strArrayFile[i], strNewFolderPath + File.separator + strArrayFile[i]);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            fileInputStream = null;
-            fileOutputStream = null;
-            file = null;
-            fileTemp = null;
-            byteArray = null;
-        }
-        // 释放对象
-        strArrayFile = null;
-        strNewFolderPath = null;
-        strOldFolderPath = null;
-    }
-
-    public void copyFiletoZip(String fromPath, String toPath) {
-        if (pv.getProperty("svn.tozip.enabled").equals("true")) {
-            // 将文件copy到临时目录
-            copyFolderExchange(toPath, "p:/tmp/zz/");
-            // FileUtil.getFolderPath(pv.exchangePath(fromPath))
-        }
-
-        if (pv.getProperty("svn.tozip.enabled").equals("true")) {
-            try {
-                ZipFileUtils.ZipFiles(new File("p:/zz.zip"), "", new File("p:/tmp/zz/"));
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
-
-        }
 
     }
 
@@ -290,8 +210,10 @@ public class ToFileHelper {
         String zipfolderfilter = pv.getProperty("zip.folder.filter");
         String ziptofolder = PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"));
         String zipkeyroot = pv.getProperty("zip.keyroot");
+        
+        int fileCount =0;
 
-        String toZip = ziptofolder + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
+        String toZip = pv.genOutZipFileName();
         ZipFile toZipFile = Zip4jUtils.genZipFile(toZip);
 
         WarFiles warlist = new WarFiles(zipfoler, zipfolderfilter);
@@ -302,18 +224,20 @@ public class ToFileHelper {
                 String sProject = aRow.get(ColList_ProjPackage);
                 String srcPath = aRow.get(ColList_Path);
 
+                ExchangePath jarpath = pv.exchangeJarPath(srcPath);
+                
                 // 判断清单中的工程名，是否包含在 war包中
                 // 包含就抽取到目标路径
                 WarFile warfile = warlist.getWarFile(sProject);
                 if (warfile!=null) {
-                    if (srcPath.lastIndexOf(".java") > 0) { // 从jar抽取class
-                        ExchangePath jarpath = pv.exchangeJarPath(srcPath);
+                    if (srcPath.lastIndexOf(".java") > 0||jarpath.isJar()) { // 从jar抽取class、xml
                         
                         if (warfile.copyJavaToZip(toZipFile, jarpath.FromPath, jarpath.JARName)==0){
 
-                             System.out.println("     抽取class:" + jarpath.ToZipPath);
+                             System.out.println("     抽取class :" + jarpath.ToZipPath);
+                             fileCount++;
                         }else{
-                            System.err.println("   !!抽取失败:\n" + jarpath);
+                            System.err.println("   !!抽取失败  :\n" + jarpath);
                         }
 
                     } else {
@@ -321,10 +245,11 @@ public class ToFileHelper {
                         String dPath = pv.exchangePath(srcPath);
 
                         Zip4jUtils.ZipCopyFile2Zip(warfile.warZipFile, sPath, toZipFile, dPath);
-                        System.out.println("     抽取文件:" + dPath);
+                        System.out.println("     抽取文件  :" + dPath);
+                        fileCount++;
                     }
                 } else {
-                    System.err.println("   !!没能抽取:" + srcPath);
+                    System.err.println("   !!没能抽取  :" + srcPath);
                 }
 
             } catch (Exception e) {
@@ -333,8 +258,15 @@ public class ToFileHelper {
             }
         }
         
+        System.out.println("\n    >>> 成功抽取文件数:" + fileCount);
+        
         Zip4jUtils.InfoZipFile(toZip);
 
+
+    }
+
+    public static void main(String[] args) {
+        // TODO Auto-generated method stub
 
     }
 
@@ -344,12 +276,12 @@ public class ToFileHelper {
         String zipfolderfilter = pv.getProperty("zip.folder.filter");
         String ziptofolder = pv.getProperty("zip.tofolder");
         String zipkeyroot = pv.getProperty("zip.keyroot");
-
+    
         // 扫描excel文件的清单
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
                 String sProject = aRow.get(ColList_ProjPackage);
-
+    
                 // 判断清单中的工程名，是否包含在 war包中
                 // 包含就抽取到目标路径
                 if (zipfile.contains(sProject)) {
@@ -357,9 +289,9 @@ public class ToFileHelper {
                     String dPath = PathUtils.addFolderEnd(ziptofolder) + sProject + PathUtils.addFolderStart(sPath); // 目标路径
                     ZipFileUtils.getZipFile(zipfile, sPath, dPath);
                     System.out.println("抽取文件:" + dPath);
-
+    
                 }
-
+    
                 // if (sPath.indexOf(cikeyroot) > 0) {
                 // // 创建目录
                 // FileUtil.createFolder(FileUtil.getFolderPath(dPath));
@@ -373,7 +305,7 @@ public class ToFileHelper {
                 e.printStackTrace();
             }
         }
-
+    
     }
 
     /**
@@ -414,12 +346,26 @@ public class ToFileHelper {
         // System.out.println("\n<<<<文件有重复>>>>请注意核对，如下：");
         // System.out.println(bugStr);
         // }
-
+    
     }
 
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
+    public void copyFiletoZip(String fromPath, String toPath) {
+        if (pv.getProperty("svn.tozip.enabled").equals("true")) {
+            // 将文件copy到临时目录
+            FileSystem.copyFolderExchange(toPath, "p:/tmp/zz/");
+            // FileUtil.getFolderPath(pv.exchangePath(fromPath))
+        }
+    
+        if (pv.getProperty("svn.tozip.enabled").equals("true")) {
+            try {
+                ZipFileUtils.ZipFiles(new File("p:/zz.zip"), "", new File("p:/tmp/zz/"));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+    
+        }
+    
     }
 
 }

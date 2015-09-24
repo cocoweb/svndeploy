@@ -165,6 +165,67 @@ public class FileSystem {
         }
     }
 
+    /**
+     * 复制整个文件夹的内容
+     * 
+     * @param strOldFolderPath
+     *            准备拷贝的目录
+     * 
+     * @param strNewFolderPath
+     *            指定绝对路径的新目录
+     * @return void
+     */
+    public static void copyFolderExchange(String strOldFolderPath, String strNewFolderPath) {
+        FileInputStream fileInputStream = null;
+        FileOutputStream fileOutputStream = null;
+        File file = null;
+        String[] strArrayFile = null;
+        File fileTemp = null;
+        byte[] byteArray = null;
+        int intIndex = 0;
+        try {
+            new File(strNewFolderPath).mkdirs(); // 如果文件夹不存在 则建立新文件夹
+    
+            file = new File(strOldFolderPath);
+            strArrayFile = file.list();
+            for (int i = 0; i < strArrayFile.length; i++) {
+                if (strOldFolderPath.endsWith(File.separator)) {
+                    fileTemp = new File(strOldFolderPath + strArrayFile[i]);
+                } else {
+                    fileTemp = new File(strOldFolderPath + File.separator + strArrayFile[i]);
+                }
+                if (fileTemp.isFile() && (!fileTemp.isHidden())) {
+                    fileInputStream = new FileInputStream(fileTemp);
+                    fileOutputStream = new FileOutputStream(strNewFolderPath + "/" + (fileTemp.getName()).toString());
+                    byteArray = new byte[1024 * 5];
+                    while ((intIndex = fileInputStream.read(byteArray)) != -1) {
+                        fileOutputStream.write(byteArray, 0, intIndex);
+                    }
+                    fileOutputStream.flush();
+                    fileOutputStream.close();
+                    fileInputStream.close();
+                    intIndex = 0;
+                }
+                if (fileTemp.isDirectory() && (!fileTemp.isHidden())) {// 如果是子文件夹
+    
+                    copyFolderExchange(strOldFolderPath + File.separator + strArrayFile[i], strNewFolderPath + File.separator + strArrayFile[i]);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            fileInputStream = null;
+            fileOutputStream = null;
+            file = null;
+            fileTemp = null;
+            byteArray = null;
+        }
+        // 释放对象
+        strArrayFile = null;
+        strNewFolderPath = null;
+        strOldFolderPath = null;
+    }
+
     public static void main(String[] args) {
         FileSystem fs ;
         if (args.length == 1) {

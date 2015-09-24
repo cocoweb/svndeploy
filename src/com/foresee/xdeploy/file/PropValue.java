@@ -11,6 +11,7 @@ import java.util.Map;
 import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.exfile.ExtProperties;
 import com.foresee.test.util.io.FileUtil;
+import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.utils.PathUtils;
 
@@ -133,7 +134,7 @@ public class PropValue {
         for (String akey : pkgmap.keySet()) {
             // 分离源路径 和 目标路径
             String[] apath = StringUtil.split(pkgmap.get(akey), "|");
-            if (srcPath.contains(apath[0])) { // 如果路径中包含了“源路径”
+            if (srcPath.contains(apath[0]) && akey.contains("w.")) { // 如果路径中包含了“源路径”
                 // return PathUtils.autoPathRoot(srcPath, xKeyRoot, string2)
                 return PathUtils.addFolderEnd(apath[1]) + PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()));
             }
@@ -158,22 +159,54 @@ public class PropValue {
      *          str[3]=srcpath  原始路径
      */
     public ExchangePath exchangeJarPath(String srcPath) {
-        if (srcPath.contains(".java")) {  // 不是java文件就不处理
+        if (srcPath.contains(".java")||srcPath.contains(".xml")) {  // 不是java文件就不处理
 
             for (String akey : pkgmap.keySet()) {
                 // 分离源路径 和 目标路径
                 String[] apath = StringUtil.split(pkgmap.get(akey), "|");
-                if (srcPath.contains(apath[0]) && akey.contains("j.")) { // 如果路径中包含了“源路径”
+                if (akey.contains("j.")&& srcPath.contains(apath[0])) { // 如果路径中包含了“源路径”
                     String jarName = akey.substring(2);
                     String fromPath = PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()))
                             .replace(".java", ".class");
                     String toPath = PathUtils.addFolderEnd(apath[1])+fromPath;
                     
-                    return new ExchangePath(jarName,fromPath,toPath,srcPath);
+                    return new ExchangePath(jarName,fromPath,toPath,srcPath,akey);
                 }
             }
         }
         return new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
+    }
+    
+    public ExchangePath exchangeFilePath(String srcPath) {
+        if (srcPath.contains(".java")||srcPath.contains(".xml")) {  // 不是java、xml文件就不处理
+
+            for (String akey : pkgmap.keySet()) {
+                // 分离源路径 和 目标路径
+                String[] apath = StringUtil.split(pkgmap.get(akey), "|");
+                if ( akey.contains("j.")&& srcPath.contains(apath[0])) { // 如果路径中包含了“源路径”
+                    String jarName = akey.substring(2);
+                    String fromPath = PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()))
+                            .replace(".java", ".class");
+                    String toPath = PathUtils.addFolderEnd(apath[1])+fromPath;
+                    
+                    return new ExchangePath(jarName,fromPath,toPath,srcPath,akey);
+                }
+            }
+        }
+        return new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
+    }
+    
+    public String genOutExcelFileName(){
+        return excelfiletemplate.substring(0,  excelfiletemplate.indexOf(".")) 
+                + "-" + DateUtil.getCurrentDate("yyyyMMdd")
+                + "-产品线-合并.xls";
+    }
+    
+    public String genOutZipFileName(){
+       // return PathUtils.addFolderEnd(pv.getProperty("zip.tofolder")) + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
+        return PathUtils.addFolderEnd( getProperty("zip.tofolder")) 
+                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm")
+                + ".zip";
     }
 
     public static void main(String[] args) {

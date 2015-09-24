@@ -72,7 +72,7 @@ public class WarFile {
             ZipFile jarfile = getJarZipFile(exPath.JARName);
 
             // java文件中可能会有子类(如 aaaa$bbb.class)，需要检查,并生成list
-            String javaName = exPath.FromPath.substring(0, exPath.FromPath.lastIndexOf(".class"));
+            String javaName = exPath.FromPath.substring(0, exPath.FromPath.lastIndexOf("."));
             
             List<FileHeader> listJavaFile = Zip4jUtils.searchZipFiles(jarfile, javaName);
             
