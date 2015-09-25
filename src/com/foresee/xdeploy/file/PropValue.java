@@ -126,6 +126,13 @@ public class PropValue {
 
     /**
      * 按照配置 * 转换路径
+     * 每一个srcPath（excel中的清单文件）都有以下几个对应环境的路径：
+     * 1、在svn主干中的路径
+     * 2、在svn基线中的路径
+     * 3、在war包中的路径
+     *      如果是jar里面的java文件，就包含两种：a) war中jar文件的路径 b)jar里面的文件路径
+     * 4、输出到zip增量包里面的路径
+     * 
      * 
      * @param srcPath
      * @return
