@@ -137,6 +137,8 @@ public class PropValue {
             if (srcPath.contains(apath[0]) && akey.contains("w.")) { // 如果路径中包含了“源路径”
                 // return PathUtils.autoPathRoot(srcPath, xKeyRoot, string2)
                 return PathUtils.addFolderEnd(apath[1]) + PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()));
+            }else if(srcPath.contains(apath[0])){
+                return PathUtils.addFolderEnd(apath[1]) + PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()));
             }
         }
 
@@ -218,6 +220,7 @@ public class PropValue {
                 pv.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
 
         System.out.println(pv.exchangeWarPath("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
+        System.out.println(pv.exchangePath("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
 
         System.out.println(pv.excelFolder);
         
