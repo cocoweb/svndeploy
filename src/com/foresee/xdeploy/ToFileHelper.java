@@ -243,7 +243,7 @@ public class ToFileHelper {
                 // 包含就抽取到目标路径
                 WarFile warfile = warlist.getWarFile(sProject);
                 if (warfile!=null) {
-                    if (srcPath.lastIndexOf(".java") > 0||jarpath.isJar()) { // 从jar抽取class、xml
+                    if (srcPath.lastIndexOf(".java") > 0||jarpath.inJar()) { // 从jar抽取class、xml
                         
                         if (warfile.copyJavaToZip(toZipFile, jarpath.FromPath, jarpath.JARName)==0){
 

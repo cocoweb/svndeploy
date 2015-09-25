@@ -34,11 +34,12 @@ public class PropValue {
     public String propFileName = "";
     public String excelFolderFilter = "";
     public String scanOption = ""; // 清单文件选项 默认BATCH为file.excel.folder目录下的批量，
-    private Map<String, String> pkgmap = null;
+    public Map<String, String> pkgmap = null;
 
     public PropValue(String strFileName) {
         propFileName = strFileName;
         initProp();
+        ExchangePath.InitExchangePath(this);   //初始化路径转换器
     }
 
     private void savePara(ExtProperties extprop) {
