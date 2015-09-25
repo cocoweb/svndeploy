@@ -41,6 +41,9 @@ public class ToFileHelper {
     }
 
     public void scanPrintList() {
+        System.out.println("===========显示待处理文件清单=================");
+
+        
         String sTofile = ""; // 默认为""，不用合并excel
 
         if (pv.getProperty("file.excel.merge").equals("true")) { // 判断是否需要合并excel
@@ -99,6 +102,8 @@ public class ToFileHelper {
      * 扫描清单文件， 从svn导出每一个文件到 指定目录
      */
     public void scanSvnToPath() {
+        System.out.println("===========从svn库导出到临时目录，或者workspace=================");
+
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
 
         String zipFileName = pv.genOutZipFileName();
@@ -142,6 +147,8 @@ public class ToFileHelper {
      * 扫描清单文件，从指定目录 导出文件到 临时输出目录
      */
     public void scanWorkspaceToPath() {
+        System.out.println("===========从指定目录 导出到临时目录，或者workspace=================");
+
         String ciworkspace = pv.getProperty("ci.workspace");
         String citoFolder = pv.getProperty("ci.tofolder");
         String cikeyroot = pv.getProperty("ci.keyroot");
@@ -179,6 +186,9 @@ public class ToFileHelper {
      * 根据起始版本号，获取文件清单；从指定目录 导出到输出目录
      */
     public void svnDiffToPath() {
+        System.out.println("===========根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单=================");
+
+        
         String svnurl = pv.getProperty("svndiff.url");
         String startversion = pv.getProperty("svndiff.startversion");
         String endversion = pv.getProperty("svndiff.endversion");
@@ -205,6 +215,9 @@ public class ToFileHelper {
     }
 
     public void scanWarToZip() {
+        System.out.println("===========从指定压缩文件war、zip、jar 导出到zip文件=================");
+
+        
         String zipfile = pv.getProperty("zip.file");
         String zipfoler = pv.getProperty("zip.folder");
         String zipfolderfilter = pv.getProperty("zip.folder.filter");

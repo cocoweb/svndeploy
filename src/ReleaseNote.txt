@@ -13,6 +13,12 @@ Example：java ListToFile.class FROMSVN
           [FILE]   :批量处理excel，扫描目录file.excel.folder下的所有
   args3 = Properties File Name, Default is [svntools.properties]
 
+todo:
+1、svn自动迁移基线，update，export，checkin
+2、输出zip中，需要包含java源文件
+3、全参数化
+4、日志、输出文件优化
+
 v0.12-20150924
 1、实现从war提取文件
 2、改善部分提示信息
