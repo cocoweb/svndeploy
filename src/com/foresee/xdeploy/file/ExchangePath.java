@@ -273,7 +273,7 @@ public class ExchangePath {
     }
     
     public String getFileName(){
-        return "";
+        return PathUtils.getFileNameWithExt(SrcPath);
     }
     
    public boolean isJava() {

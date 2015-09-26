@@ -249,7 +249,7 @@ public class ToFileHelper {
                     
                     if(expath.isJava()){  
                         //同时抽取java源文件加入到zip中 
-                        String tmpFilePath = pv.tempPath+expath.getFileName();
+                        String tmpFilePath = pv.tempPath+"/"+expath.getFileName();
                         
                         xclient.svnExport(expath.getTrunkURL(), aRow.get(ColList_Ver), tmpFilePath, pv.keyRootFolder);
                         // 将文件添加到zip文件
