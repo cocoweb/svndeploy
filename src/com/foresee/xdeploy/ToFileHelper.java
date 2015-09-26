@@ -112,7 +112,9 @@ public class ToFileHelper {
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
                 String fromPath = PathUtils.autoPathRoot(aRow.get(ColList_Path), "trunk");
-                String sUrl = pv.svnurl + fromPath; // svn库的文件绝对路径URL
+                ExchangePath expath = ExchangePath.exchange(fromPath);
+                
+                String sUrl = expath.getTrunkURL();   //pv.svnurl + fromPath; // svn库的文件绝对路径URL
                 String sVer = aRow.get(ColList_Ver);
                 String toPath = PathUtils.autoUrlToPath(sUrl, pv.svntofolder, pv.keyRootFolder);
 
@@ -124,7 +126,8 @@ public class ToFileHelper {
 
                     if (pv.getProperty("svn.tozip.enabled").equals("true")) {
                         // 将文件添加到zip文件
-                        Zip4jUtils.zipFile(toPath, zipFileName, FileUtil.getFolderPath(pv.exchangePath(fromPath)));
+                        Zip4jUtils.zipFile(toPath, zipFileName,expath.getToZipFolderPath()); 
+                                //FileUtil.getFolderPath(pv.exchangePath(fromPath)));
 
                     }
 
@@ -237,25 +240,25 @@ public class ToFileHelper {
                 String sProject = aRow.get(ColList_ProjPackage);
                 String srcPath = aRow.get(ColList_Path);
 
-                ExchangePath jarpath = pv.exchangeJarPath(srcPath);
+                ExchangePath expath = ExchangePath.exchange(srcPath);   //pv.exchangeJarPath(srcPath);
                 
                 // 判断清单中的工程名，是否包含在 war包中
                 // 包含就抽取到目标路径
                 WarFile warfile = warlist.getWarFile(sProject);
                 if (warfile!=null) {
-                    if (srcPath.lastIndexOf(".java") > 0||jarpath.inJar()) { // 从jar抽取class、xml
+                    if (srcPath.lastIndexOf(".java") > 0||expath.inJar()) { // 从jar抽取class、xml
                         
-                        if (warfile.copyJavaToZip(toZipFile, jarpath.FromPath, jarpath.JARName)==0){
+                        if (warfile.copyJavaToZip(toZipFile, expath.FromPath, expath.JARName)==0){
 
-                             System.out.println("     抽取class :" + jarpath.ToZipPath);
+                             System.out.println("     抽取class :" + expath.ToZipPath);
                              fileCount++;
                         }else{
-                            System.err.println("   !!抽取失败  :\n" + jarpath);
+                            System.err.println("   !!抽取失败  :\n" + expath);
                         }
 
                     } else {
-                        String sPath = pv.exchangeWarPath(srcPath);
-                        String dPath = pv.exchangePath(srcPath);
+                        String sPath = expath.FromPath;   //pv.exchangeWarPath(srcPath);
+                        String dPath = expath.ToZipPath;  //pv.exchangePath(srcPath);
 
                         Zip4jUtils.ZipCopyFile2Zip(warfile.warZipFile, sPath, toZipFile, dPath);
                         System.out.println("     抽取文件  :" + dPath);
