@@ -66,32 +66,96 @@ public class WarFile {
 
     }
     
-    public void copyJavaToZip(String toZip, ExchangePath exPath) {
-        //ZipFile jarfile = null;
+    public int copyToZip(ZipFile zipOutFile, ExchangePath expath){
+        int retint = -1;
+        
+        if (expath.SrcPath.lastIndexOf(".java") > 0||expath.inJar()) { // 从jar抽取class、xml
+            
+            // TODO  同时抽取java源文件加入到zip中 
+            retint =  copyJavaToZip(zipOutFile, expath);
+            
+            if (retint==0){
+                  System.out.println("     抽取class :" + expath.ToZipPath);
+             }else{
+                 System.err.println("   !!抽取失败  :\n" + expath);
+             }
+
+         } else {
+             retint = copyFileToZip(zipOutFile,expath);
+             
+             System.out.println("     抽取文件  :" + expath.ToZipPath);
+         }
+        
+        return 0;
+
+    }
+    
+    public int copyFileToZip(ExchangePath expath){
         try {
-            ZipFile jarfile = getJarZipFile(exPath.JARName);
-
-            // java文件中可能会有子类(如 aaaa$bbb.class)，需要检查,并生成list
-            String javaName = exPath.FromPath.substring(0, exPath.FromPath.lastIndexOf("."));
             
-            List<FileHeader> listJavaFile = Zip4jUtils.searchZipFiles(jarfile, javaName);
-            
-            ZipFile zipOutFile =new ZipFile(toZip);
+            ZipFile zipOutFile =new ZipFile(expath.getOutZipFileName());
+            return copyFileToZip(zipOutFile,expath.FromPath,expath.ToZipPath);
 
-            for (FileHeader fileheader : listJavaFile) {
-                InputStream isfile = jarfile.getInputStream(fileheader);
-
-                Zip4jUtils.AddStreamToZip(zipOutFile, isfile, exPath.ToZipPath);
-                // "com.foresee.etax.bizfront/com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class"
-
-                isfile.close();
-            }
-
+ 
         } catch (ZipException e) {
             e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } 
+         } 
+        
+        return 0;
+        
+    }
+    
+    public int copyFileToZip(ZipFile zipOutFile, ExchangePath expath){
+         return copyFileToZip(zipOutFile,expath.FromPath,expath.ToZipPath);
+         
+     }
+    
+    public int copyFileToZip(ZipFile zipOutFile, String sPath,String dPath){
+        Zip4jUtils.ZipCopyFile2Zip(warZipFile, sPath, zipOutFile, dPath);
+        
+        return 0;
+        
+    }
+    
+    
+    public int copyJavaToZip(ExchangePath exPath) {
+        return copyJavaToZip(exPath.getOutZipFileName(),exPath.FromPath,exPath.JARName);
+    }
+    
+    public int copyJavaToZip(ZipFile toZipFile, ExchangePath exPath) {
+        return copyJavaToZip(toZipFile,exPath.FromPath,exPath.JARName);
+    }
+
+
+    
+    public int copyJavaToZip(String toZip, ExchangePath exPath) {
+        return copyJavaToZip(toZip,exPath.FromPath,exPath.JARName);
+        
+//        //ZipFile jarfile = null;
+//        try {
+//            ZipFile jarfile = getJarZipFile(exPath.JARName);
+//
+//            // java文件中可能会有子类(如 aaaa$bbb.class)，需要检查,并生成list
+//            String javaName = exPath.FromPath.substring(0, exPath.FromPath.lastIndexOf("."));
+//            
+//            List<FileHeader> listJavaFile = Zip4jUtils.searchZipFiles(jarfile, javaName);
+//            
+//            ZipFile zipOutFile =new ZipFile(toZip);
+//
+//            for (FileHeader fileheader : listJavaFile) {
+//                InputStream isfile = jarfile.getInputStream(fileheader);
+//
+//                Zip4jUtils.AddStreamToZip(zipOutFile, isfile, exPath.ToZipPath);
+//                // "com.foresee.etax.bizfront/com/foresee/etax/bizfront/constant/EtaxBizFrontConstant.class"
+//
+//                isfile.close();
+//            }
+//
+//        } catch (ZipException e) {
+//            e.printStackTrace();
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } 
 
     }
 

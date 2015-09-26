@@ -11,12 +11,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import net.lingala.zip4j.core.ZipFile;
-
 import org.tmatesoft.svn.core.SVNException;
 
 import com.foresee.test.util.io.FileUtil;
-import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
@@ -28,6 +25,8 @@ import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.SvnClient;
 import com.foresee.xdeploy.utils.Zip4jUtils;
 import com.foresee.xdeploy.utils.ZipFileUtils;
+
+import net.lingala.zip4j.core.ZipFile;
 
 public class ToFileHelper {
     PropValue pv = null;
@@ -134,10 +133,12 @@ public class ToFileHelper {
                 }
                 fileCount++;
             } catch (SVNException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
+        
+        // TODO export svn文件后，自动提交到基线分支
+
 
         System.out.println(
                 "\nTotal " + Integer.toString(fileCount) + " Files, Exported to path =" + PathUtils.addFolderEnd(pv.svntofolder) + pv.keyRootFolder);
@@ -173,7 +174,6 @@ public class ToFileHelper {
                     break;
                 }
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -211,7 +211,6 @@ public class ToFileHelper {
 
             System.out.println("变动文件数=" + Integer.toString(alist.size()));
         } catch (SVNException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -219,13 +218,10 @@ public class ToFileHelper {
 
     public void scanWarToZip() {
         System.out.println("===========从指定压缩文件war、zip、jar 导出到zip文件=================");
-
         
         String zipfile = pv.getProperty("zip.file");
         String zipfoler = pv.getProperty("zip.folder");
         String zipfolderfilter = pv.getProperty("zip.folder.filter");
-        String ziptofolder = PathUtils.addFolderEnd(pv.getProperty("zip.tofolder"));
-        String zipkeyroot = pv.getProperty("zip.keyroot");
         
         int fileCount =0;
 
@@ -246,24 +242,33 @@ public class ToFileHelper {
                 // 包含就抽取到目标路径
                 WarFile warfile = warlist.getWarFile(sProject);
                 if (warfile!=null) {
-                    if (srcPath.lastIndexOf(".java") > 0||expath.inJar()) { // 从jar抽取class、xml
-                        
-                        if (warfile.copyJavaToZip(toZipFile, expath.FromPath, expath.JARName)==0){
-
-                             System.out.println("     抽取class :" + expath.ToZipPath);
-                             fileCount++;
-                        }else{
-                            System.err.println("   !!抽取失败  :\n" + expath);
-                        }
-
-                    } else {
-                        String sPath = expath.FromPath;   //pv.exchangeWarPath(srcPath);
-                        String dPath = expath.ToZipPath;  //pv.exchangePath(srcPath);
-
-                        Zip4jUtils.ZipCopyFile2Zip(warfile.warZipFile, sPath, toZipFile, dPath);
-                        System.out.println("     抽取文件  :" + dPath);
+                    if(warfile.copyToZip(toZipFile, expath)==0)
                         fileCount++;
-                    }
+                    
+                    
+//                    if (srcPath.lastIndexOf(".java") > 0||expath.inJar()) { // 从jar抽取class、xml
+//                        
+//                       // TODO  同时抽取java源文件加入到zip中 
+//
+//                        
+//                       if (warfile.copyJavaToZip(toZipFile, expath)==0){
+//
+//                             System.out.println("     抽取class :" + expath.ToZipPath);
+//                             fileCount++;
+//                        }else{
+//                            System.err.println("   !!抽取失败  :\n" + expath);
+//                        }
+//
+//                    } else {
+////                        String sPath = expath.FromPath;   //pv.exchangeWarPath(srcPath);
+////                        String dPath = expath.ToZipPath;  //pv.exchangePath(srcPath);
+////
+////                        Zip4jUtils.ZipCopyFile2Zip(warfile.warZipFile, sPath, toZipFile, dPath);
+//                        warfile.copyFileToZip(toZipFile,expath);
+//                        
+//                        System.out.println("     抽取文件  :" + expath.ToZipPath);
+//                        fileCount++;
+//                    }
                 } else {
                     System.err.println("   !!没能抽取  :" + srcPath);
                 }
@@ -276,6 +281,8 @@ public class ToFileHelper {
         
         System.out.println("\n    >>> 成功抽取文件数:" + fileCount);
         
+        // TODO 对zip文件进行检查，对比excel的文件，和zip中的文件
+
         Zip4jUtils.InfoZipFile(toZip);
 
 
@@ -317,8 +324,7 @@ public class ToFileHelper {
                 // break;
                 // }
             } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+               e.printStackTrace();
             }
         }
     
@@ -376,7 +382,6 @@ public class ToFileHelper {
             try {
                 ZipFileUtils.ZipFiles(new File("p:/zz.zip"), "", new File("p:/tmp/zz/"));
             } catch (IOException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
     

@@ -16,7 +16,7 @@ Example：java ListToFile.class FROMSVN
 todo:
 1、svn自动迁移基线，update，export，checkin
 2、输出zip中，需要包含java源文件
-3、全参数化
+3、全参数化       OK
 4、日志、输出文件优化
 
 v0.13-20150925

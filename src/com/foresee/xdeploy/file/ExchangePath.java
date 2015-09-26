@@ -264,6 +264,10 @@ public class ExchangePath {
         return getTrunkURL(SrcPath);
     }
     
+    public String getOutZipFileName(){
+        return getOutZipFile();
+    }
+    
     public static String getOutZipFile(){
         return propvalue.genOutZipFileName();
     }
