@@ -272,10 +272,18 @@ public class ExchangePath {
         return propvalue.genOutZipFileName();
     }
     
+    public String getFileName(){
+        return "";
+    }
+    
+   public boolean isJava() {
+        
+        return SrcPath.lastIndexOf(".java") > 0;
+    }
     public static void main(String[] args) {
         InitExchangePath( new PropValue("/svntools.properties"));
         
-        //System.out.println(exchange("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
+       System.out.println(exchange("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
         //System.out.println(ExchangePath.propvalue.exchangeFilePath("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
         System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
        // System.out.println(ExchangePath.propvalue.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
@@ -283,4 +291,5 @@ public class ExchangePath {
 
     }
 
+ 
 }

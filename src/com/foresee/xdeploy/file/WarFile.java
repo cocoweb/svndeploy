@@ -86,7 +86,7 @@ public class WarFile {
              System.out.println("     抽取文件  :" + expath.ToZipPath);
          }
         
-        return 0;
+        return retint;
 
     }
     

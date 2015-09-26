@@ -603,6 +603,16 @@ public class Zip4jUtils {
         try {
 
             ZipFile zipFile = new ZipFile(destZIP);
+            
+            zipFile(srcFile,zipFile,rootFolderInZip);
+
+        } catch (ZipException e) {
+            e.printStackTrace();
+        }
+
+    }
+    public static void zipFile(String srcFile, ZipFile zipFile, String rootFolderInZip) {
+        try {
 
             ArrayList<File> filesToAdd = new ArrayList<File>();
             filesToAdd.add(new File(srcFile));
@@ -619,7 +629,7 @@ public class Zip4jUtils {
         } catch (ZipException e) {
             e.printStackTrace();
         }
-
+        
     }
 
     /**

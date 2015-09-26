@@ -225,6 +225,8 @@ public class ToFileHelper {
         
         int fileCount =0;
 
+        SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
+        
         String toZip = pv.genOutZipFileName();
         ZipFile toZipFile = Zip4jUtils.genZipFile(toZip);
 
@@ -245,10 +247,22 @@ public class ToFileHelper {
                     if(warfile.copyToZip(toZipFile, expath)==0)
                         fileCount++;
                     
+                    if(expath.isJava()){  
+                        //同时抽取java源文件加入到zip中 
+                        String tmpFilePath = pv.tempPath+expath.getFileName();
+                        
+                        xclient.svnExport(expath.getTrunkURL(), aRow.get(ColList_Ver), tmpFilePath, pv.keyRootFolder);
+                        // 将文件添加到zip文件
+                        Zip4jUtils.zipFile(tmpFilePath, toZipFile,expath.getToZipFolderPath()); 
+                        fileCount++;
+                        
+                        FileUtil.delFile(tmpFilePath);
+                        
+                   }
                     
 //                    if (srcPath.lastIndexOf(".java") > 0||expath.inJar()) { // 从jar抽取class、xml
 //                        
-//                       // TODO  同时抽取java源文件加入到zip中 
+//                         同时抽取java源文件加入到zip中 
 //
 //                        
 //                       if (warfile.copyJavaToZip(toZipFile, expath)==0){
