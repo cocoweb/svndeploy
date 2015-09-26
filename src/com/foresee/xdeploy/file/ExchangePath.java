@@ -100,6 +100,11 @@ public class ExchangePath {
     }
     
     
+    public boolean isJava() {
+        
+        return SrcPath.lastIndexOf(".java") > 0;
+    }
+
     private static String[] findSrcPath(String srcPath){
         for (String akey : propvalue.pkgmap.keySet()) {
             // 分离源路径 和 目标路径
@@ -132,7 +137,8 @@ public class ExchangePath {
             
             ep=new ExchangePath(jarName, fromPath, toPath, srcPath, xpath[2]);
             
-        }
+        }else
+            ep=new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
         
         
         return ep;
@@ -254,7 +260,7 @@ public class ExchangePath {
     public static String getTrunkURL(String srcPath){
         String fromPath = PathUtils.autoPathRoot(srcPath, "trunk");
         // svn库的文件绝对路径URL
-        String sUrl = propvalue.svnurl + fromPath;
+        String sUrl = propvalue.svnurl +  PathUtils.addFolderEnd( fromPath);
         
         return sUrl;
 
@@ -276,11 +282,7 @@ public class ExchangePath {
         return PathUtils.getFileNameWithExt(SrcPath);
     }
     
-   public boolean isJava() {
-        
-        return SrcPath.lastIndexOf(".java") > 0;
-    }
-    public static void main(String[] args) {
+   public static void main(String[] args) {
         InitExchangePath( new PropValue("/svntools.properties"));
         
        System.out.println(exchange("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));

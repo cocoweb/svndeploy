@@ -31,6 +31,8 @@ public class WarFiles{
     }
     
     public WarFile getWarFile(String sWarName){
+        if(sWarName.contains(",")) sWarName=sWarName.split(",")[0];
+        
         for (File xfile : clFiles) {
             if (xfile.getName().contains(sWarName))
                 return new WarFile(xfile) ;

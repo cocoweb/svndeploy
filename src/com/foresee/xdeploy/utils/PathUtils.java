@@ -52,7 +52,7 @@ public class PathUtils {
 	 * @return
 	 */
 	public static String autoPathRoot(String xPath, String xKeyRoot) {
-		if (xPath.indexOf(xKeyRoot) > 0) {
+		if (xPath.indexOf(xKeyRoot) >= 0) {
 			return addFolderStart(xPath.substring(xPath.indexOf(xKeyRoot)));
 		} else {
 			System.out.println("keyroot 配置错误，" + xKeyRoot + "未包含在URL中: " + xPath);
@@ -73,7 +73,7 @@ public class PathUtils {
 	 * @return
 	 */
 	public static String autoPathRoot(String xPath, String xKeyRoot, String string2) {
-		if (xPath.indexOf(xKeyRoot) > 0) {
+		if (xPath.indexOf(xKeyRoot) >= 0) {
 			return trimFolderStart(xPath.substring(xPath.indexOf(xKeyRoot) + xKeyRoot.length()));
 		} else {
 			System.out.println("keyroot 配置错误，" + xKeyRoot + "未包含在URL中: " + xPath);

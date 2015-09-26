@@ -83,7 +83,10 @@ public class WarFile {
          } else {
              retint = copyFileToZip(zipOutFile,expath);
              
-             System.out.println("     抽取文件  :" + expath.ToZipPath);
+             if (retint==-1){
+                System.out.println("    ！抽取失败  :" + expath); 
+             }else             
+                System.out.println("     抽取文件  :" + expath.ToZipPath);
          }
         
         return retint;
@@ -92,6 +95,8 @@ public class WarFile {
     
     public int copyFileToZip(ExchangePath expath){
         try {
+            
+            if(expath.FromPath.isEmpty()) return -1;
             
             ZipFile zipOutFile =new ZipFile(expath.getOutZipFileName());
             return copyFileToZip(zipOutFile,expath.FromPath,expath.ToZipPath);
@@ -106,6 +111,7 @@ public class WarFile {
     }
     
     public int copyFileToZip(ZipFile zipOutFile, ExchangePath expath){
+        if(expath.FromPath.isEmpty()) return -1;
          return copyFileToZip(zipOutFile,expath.FromPath,expath.ToZipPath);
          
      }
