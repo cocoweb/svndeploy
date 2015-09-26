@@ -165,6 +165,87 @@ public class ExchangePath {
 //
 //        return PathUtils.trimFolderStart(srcPath);
 //    }
+    /**
+     * 按照配置 * 转换路径
+     * 每一个srcPath（excel中的清单文件）都有以下几个对应环境的路径：
+     * 1、在svn主干中的路径
+     * 2、在svn基线中的路径
+     * 3、在war包中的路径
+     *      如果是jar里面的java文件，就包含两种：a) war中jar文件的路径 b)jar里面的文件路径
+     * 4、输出到zip增量包里面的路径
+     * 
+     * 
+     * @param srcPath
+     * @return
+     */
+//    public String exchangePath(String srcPath) {
+//        for (String akey : pkgmap.keySet()) {
+//            // 分离源路径 和 目标路径
+//            String[] apath = StringUtil.split(pkgmap.get(akey), "|");
+//            if (srcPath.contains(apath[0]) && akey.contains("w.")) { // 如果路径中包含了“源路径”
+//                // return PathUtils.autoPathRoot(srcPath, xKeyRoot, string2)
+//                return PathUtils.addFolderEnd(apath[1]) + PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()));
+//            }else if(srcPath.contains(apath[0])){
+//                return PathUtils.addFolderEnd(apath[1]) + PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()));
+//            }
+//        }
+//
+//        return PathUtils.trimFolderStart(srcPath);
+//    }
+//
+//    public String exchangeWarPath(String srcPath) {
+//        srcPath = exchangePath(srcPath);
+//        return srcPath.substring(srcPath.indexOf("/") + 1);
+//
+//    }
+//    
+//    /**
+//     * 根据配置转换路径
+//     * 
+//     * @param srcPath
+//     * @return  str[0]=key  or  jarname
+//     *          str[1]=fromPath  jar包中的源路径
+//     *          str[2]=topath  转换后的Path,保存到Zip中
+//     *          str[3]=srcpath  原始路径
+//     */
+//    public ExchangePath exchangeJarPath(String srcPath) {
+//        if (srcPath.contains(".java")||srcPath.contains(".xml")) {  // 不是java文件就不处理
+//
+//            for (String akey : pkgmap.keySet()) {
+//                // 分离源路径 和 目标路径
+//                String[] apath = StringUtil.split(pkgmap.get(akey), "|");
+//                if (akey.contains("j.")&& srcPath.contains(apath[0])) { // 如果路径中包含了“源路径”
+//                    String jarName = akey.substring(2);
+//                    String fromPath = PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()))
+//                            .replace(".java", ".class");
+//                    String toPath = PathUtils.addFolderEnd(apath[1])+fromPath;
+//                    
+//                    return new ExchangePath(jarName,fromPath,toPath,srcPath,akey);
+//                }
+//            }
+//        }
+//        return new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
+//    }
+//    
+//    public ExchangePath exchangeFilePath(String srcPath) {
+//        if (srcPath.contains(".java")||srcPath.contains(".xml")) {  // 不是java、xml文件就不处理
+//
+//            for (String akey : pkgmap.keySet()) {
+//                // 分离源路径 和 目标路径
+//                String[] apath = StringUtil.split(pkgmap.get(akey), "|");
+//                if ( akey.contains("j.")&& srcPath.contains(apath[0])) { // 如果路径中包含了“源路径”
+//                    String jarName = akey.substring(2);
+//                    String fromPath = PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) + apath[0].length()))
+//                            .replace(".java", ".class");
+//                    String toPath = PathUtils.addFolderEnd(apath[1])+fromPath;
+//                    
+//                    return new ExchangePath(jarName,fromPath,toPath,srcPath,akey);
+//                }
+//            }
+//        }
+//        return new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
+//    }
+    
     
     public String getToZipFolderPath(){
         return FileUtil.getFolderPath(ToZipPath);

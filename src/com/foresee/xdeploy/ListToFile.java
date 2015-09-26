@@ -11,8 +11,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
+import org.apache.commons.lang.StringUtils;
 
 import com.foresee.test.util.lang.DateUtil;
+import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
 
 public class ListToFile {
@@ -152,7 +154,7 @@ public class ListToFile {
 
             // ListToFile [-B | --befile] -d | -h | -l | -s | -z [-P
             // <name=value> | --propertiesfile <PropertiesFile>]
-            cmds = parser.parse(options, args, prop);
+            cmds = parser.parse(options, args, prop, true);
 
             if (cmds.hasOption('h')) {
                 // 打印使用帮助
@@ -169,10 +171,10 @@ public class ListToFile {
             } else {
                 listTofileHelper = new ToFileHelper();
 
-                if (cmds.hasOption("P")) {
-                    // commandLine.getOptionProperties("keyvalue");
+                if (cmds.hasOption("P")) {  //提取参数
+                    PropValue.argsProp = cmds.getOptionProperties("P");
 
-                    System.out.println(prop);
+                    //System.out.println(listTofileHelper.pv.argsProp);
                 }
             }
 
@@ -185,27 +187,28 @@ public class ListToFile {
             // 互斥命令组 -d | -h | -l | -s | -z
             if (cmds.hasOption('d')) {
                 listTofileHelper.svnDiffToPath();
-            } else
-            // if (cmds.hasOption('h')) {
-            // // 打印使用帮助
-            // hf.printHelp("ListToFile", options, true);
-            // } else
-            if (cmds.hasOption('l')) {
+            } else if (cmds.hasOption('l')) {
                 listTofileHelper.scanPrintList();
             } else if (cmds.hasOption('s')) {
                 listTofileHelper.scanSvnToPath();
             } else if (cmds.hasOption('z')) {
                 listTofileHelper.scanWarToZip();
             }
+            
+            System.out.println("   args:  svn.url            ="+listTofileHelper.pv.getProperty("svn.url"));
+            System.out.println("   args:  file.excel.merge   ="+listTofileHelper.pv.getProperty("file.excel.merge"));
 
             // 打印opts的名称和值
             System.out.println("--------------------------------------");
             Option[] opts = cmds.getOptions();
             if (opts != null) {
                 for (Option opt1 : opts) {
-                    String name = opt1.getLongOpt();
-                    String value = cmds.getOptionValue(name);
-                    System.out.println(name + "=>" + value);
+                    String name = opt1.getOpt();
+                    String lname= opt1.getLongOpt();
+                    if (StringUtils.isEmpty(lname))
+                        lname = name;
+                    String value = cmds.getOptionValue(lname);
+                    System.out.println(lname + "=>" + value);
                 }
             }
 
