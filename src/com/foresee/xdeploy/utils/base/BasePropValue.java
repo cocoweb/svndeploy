@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.base;
+package com.foresee.xdeploy.utils.base;
 
 import java.io.File;
 import java.io.FileInputStream;

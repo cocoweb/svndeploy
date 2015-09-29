@@ -890,6 +890,11 @@ public class ExcelMoreUtil {
                     if (cell1 != null && !POIExcelMakerUtil.getCellValue(row1.getCell(1)).toString().equals("")) {
 
                         if (xHandleScanRow == null) {
+                            System.out.println("");
+                            for(int i2 =0;i2<row1.getPhysicalNumberOfCells();i2++){
+                                System.out.print(POIExcelMakerUtil.getCellValue(row1.getCell(i2))+" | ");
+                            }
+                            
 
                         } else {
                             // 判断如果传入了接口，则调用接口进行处理

@@ -242,7 +242,7 @@ public class POIExcelMakerUtil {
 	 * @return
 	 */
 	public static Object getCellValue(Cell cell) {
-		int type = cell.getCellType();
+		int type = cell!=null? cell.getCellType():Cell.CELL_TYPE_BLANK;
 		switch (type) {
 		case Cell.CELL_TYPE_STRING:
 			return (Object) cell.getStringCellValue();

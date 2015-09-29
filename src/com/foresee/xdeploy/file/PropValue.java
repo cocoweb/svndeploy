@@ -8,8 +8,8 @@ import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.exfile.ExtProperties;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.base.BasePropValue;
 import com.foresee.xdeploy.utils.PathUtils;
+import com.foresee.xdeploy.utils.base.BasePropValue;
 
 public class PropValue extends BasePropValue {
 
