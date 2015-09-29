@@ -260,7 +260,7 @@ public class ExchangePath {
     public static String getTrunkURL(String srcPath){
         String fromPath = PathUtils.autoPathRoot(srcPath, "trunk");
         // svn库的文件绝对路径URL
-        String sUrl = propvalue.svnurl +  PathUtils.addFolderEnd( fromPath);
+        String sUrl = propvalue.svnurl +   fromPath;
         
         return sUrl;
 

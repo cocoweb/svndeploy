@@ -14,7 +14,6 @@ import java.util.Collections;
 import org.tmatesoft.svn.core.SVNException;
 
 import com.foresee.test.util.io.FileUtil;
-import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
@@ -163,7 +162,7 @@ public class ToFileHelper {
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
                 String sPath = ciworkspace + aRow.get(ColList_Path); // 源文件路径citoFolder
-                String dPath = javaToclass(PathUtils.autoUrlToPath(sPath, citoFolder, cikeyroot)); // 目标路径
+                String dPath = PathUtils.javaToclass(PathUtils.autoUrlToPath(sPath, citoFolder, cikeyroot)); // 目标路径
 
                 if (sPath.indexOf(cikeyroot) > 0) {
                     // 创建目录
@@ -178,11 +177,6 @@ public class ToFileHelper {
             }
         }
 
-    }
-
-    private String javaToclass(String xPath) {
-
-        return xPath.endsWith(".java") ? StringUtil.trimEnd(xPath, ".java") + ".class" : xPath;
     }
 
     /**

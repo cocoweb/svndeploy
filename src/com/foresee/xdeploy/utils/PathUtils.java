@@ -174,6 +174,11 @@ public class PathUtils {
 			return -1;
 			
 	}
+	
+	public static String SwitchFileExt(String xPath,String sExt,String dExt){
+        return xPath.endsWith(sExt) ? StringUtil.trimEnd(xPath, sExt) + dExt : xPath;
+
+	}
 
 	public static void main(String[] args) {
 		System.out.println(addFolderEnd("aaa/bbb/ccc\\ddd/"));
@@ -189,5 +194,10 @@ public class PathUtils {
 		System.out.println(getPath("E:/Open Source/Java/zip4j_1.3.2/zip4j_examples_eclipse_1.3.2.zip"));
 
 	}
+
+    public static String javaToclass(String xPath) {
+    
+        return SwitchFileExt(xPath,".java",".class");
+    }
 
 }
