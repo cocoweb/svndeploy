@@ -13,11 +13,28 @@ import com.foresee.xdeploy.utils.base.BasePropValue;
 
 public class PropValue extends BasePropValue {
 
-    public static Properties argsProp =null;
+    private static Properties argsProp =null;
 
     // private static ExtProperties extProp = null;
 
     public String workspace = "";
+    /**
+     * @return the argsProp
+     */
+    public static Properties getArgsProp() {
+        return argsProp;
+    }
+
+
+    /**
+     * @param argsProp the argsProp to set
+     */
+    public static void setArgsProp(Properties argsProp) {
+        PropValue.argsProp = argsProp;
+    }
+
+
+
     public String tempPath = "";
 
     public String excelfile = "";

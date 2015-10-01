@@ -93,7 +93,7 @@ public class WarFile {
 
     }
     
-    public int copyFileToZip(ExchangePath expath){
+    private int copyFileToZip(ExchangePath expath){
         try {
             
             if(expath.FromPath.isEmpty()) return -1;
@@ -110,13 +110,13 @@ public class WarFile {
         
     }
     
-    public int copyFileToZip(ZipFile zipOutFile, ExchangePath expath){
+    private int copyFileToZip(ZipFile zipOutFile, ExchangePath expath){
         if(expath.FromPath.isEmpty()) return -1;
          return copyFileToZip(zipOutFile,expath.FromPath,expath.ToZipPath);
          
      }
     
-    public int copyFileToZip(ZipFile zipOutFile, String sPath,String dPath){
+    private int copyFileToZip(ZipFile zipOutFile, String sPath,String dPath){
         Zip4jUtils.ZipCopyFile2Zip(warZipFile, sPath, zipOutFile, dPath);
         
         return 0;
@@ -124,17 +124,17 @@ public class WarFile {
     }
     
     
-    public int copyJavaToZip(ExchangePath exPath) {
+    private int copyJavaToZip(ExchangePath exPath) {
         return copyJavaToZip(exPath.getOutZipFileName(),exPath.FromPath,exPath.JARName);
     }
     
-    public int copyJavaToZip(ZipFile toZipFile, ExchangePath exPath) {
+    private int copyJavaToZip(ZipFile toZipFile, ExchangePath exPath) {
         return copyJavaToZip(toZipFile,exPath.FromPath,exPath.JARName);
     }
 
 
     
-    public int copyJavaToZip(String toZip, ExchangePath exPath) {
+    private int copyJavaToZip(String toZip, ExchangePath exPath) {
         return copyJavaToZip(toZip,exPath.FromPath,exPath.JARName);
         
 //        //ZipFile jarfile = null;
@@ -174,7 +174,7 @@ public class WarFile {
      * @param jarName
      * @return  0：成功   -1：失败
      */
-    public int copyJavaToZip(String toZip, String javafile, String jarName) {
+    private int copyJavaToZip(String toZip, String javafile, String jarName) {
         try {
             
             ZipFile zipOutFile =new ZipFile(toZip);
@@ -188,7 +188,7 @@ public class WarFile {
         return 0;
 
     }
-    public int copyJavaToZip(ZipFile zipOutFile, String javafile, String jarName) {
+    private int copyJavaToZip(ZipFile zipOutFile, String javafile, String jarName) {
         try {
             ZipFile jarfile = getJarZipFile(jarName);
 

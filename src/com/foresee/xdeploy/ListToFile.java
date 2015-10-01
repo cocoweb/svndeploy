@@ -172,7 +172,7 @@ public class ListToFile {
                 listTofileHelper = new ToFileHelper();
 
                 if (cmds.hasOption("P")) {  //提取参数
-                    PropValue.argsProp = cmds.getOptionProperties("P");
+                    PropValue.setArgsProp(cmds.getOptionProperties("P"));
 
                     //System.out.println(listTofileHelper.pv.argsProp);
                 }
