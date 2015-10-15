@@ -17,7 +17,9 @@ import com.foresee.test.util.exfile.POIExcelUtil;
 import com.foresee.test.util.io.File2Util;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.utils.ExcelMoreUtil;
+import com.foresee.xdeploy.utils.POIExcelMakerUtil;
 import com.foresee.xdeploy.utils.ExcelMoreUtil.IHandleCopyRow;
+import com.foresee.xdeploy.utils.ExcelMoreUtil.IHandleScanRow;
 import com.foresee.xdeploy.utils.PathUtils;
 
 import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.*;
@@ -158,6 +160,66 @@ public class ScanIncrementFiles {
         }
 
         return retList;
+    }
+    
+    public SvnFiles loadSvnFiles(File xfile) {
+        final SvnFiles svnfiles = new SvnFiles();
+        final String filename = xfile.getName();
+        
+        try {
+            ExcelMoreUtil.scanExcelData(xfile.getPath(), SheetName, new IHandleScanRow(){
+                HSSFRow localrow;
+
+                private String getValue(int col){
+                    return  POIExcelMakerUtil.getCellValue(localrow.getCell(col)).toString();
+                }
+                
+                @Override
+                public void handleRow(HSSFRow row, HSSFWorkbook fromWB) {
+                    localrow =row;
+                    
+                    if ( !StringUtil.isEmpty(getValue(ColExcel_Path))) {
+                        // ArrayList<String> xrow = new ArrayList<String>();
+
+                        // 判断是否包含多个文件分隔
+                        if (getValue( ColExcel_Path).contains("\n")) {
+                            for (String xfield : handlePathList(getValue(ColExcel_Path))) {
+                                svnfiles.addItem(getValue(ColExcel_Ver), xfield, getValue(ColExcel_ProjPackage),
+                                        getValue(ColExcel_Man), filename);
+                            }
+
+                        } else {
+                            svnfiles.addItem(getValue(ColExcel_Ver)
+                                    , getValue(ColExcel_Path)
+                                    , getValue(ColExcel_ProjPackage)
+                                    , getValue(ColExcel_Man)
+                                    , filename);
+                        }
+
+                    }
+                   
+                    
+                }
+
+                @Override
+                public int skipRow() {
+                    return 2;
+                }
+                
+            });
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        
+        return svnfiles;
+        
+    }
+    
+    public  List<ArrayList<String>> loadSvnFilesList(File xfile) {
+        
+        return loadSvnFiles(xfile).SvnFileList;
+        
     }
 
     private ArrayList<String> handleLine(String xver, String xpath, String xproj, String xman, String xfilename) {
@@ -304,7 +366,9 @@ public class ScanIncrementFiles {
         // System.out.println(aRow );
         // }
 
-        xx.mergeListfile("p:/xxx.xls", "20150828");
+        //xx.mergeListfile("p:/xxx.xls", "20150828");
+        
+        System.out.println(xx.loadSvnFilesList(new File("p:/因开发所致环境变更记录表模版-20150922-产品线-合并.xls")));
 
     }
 
