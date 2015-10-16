@@ -68,18 +68,20 @@ public class SvnFiles implements Iterable<SvnFile> {
      */
     @Override
     public Iterator<SvnFile>  iterator() {
-        return new SvnFilesIterator( SvnFileList.iterator());
+        return new SvnFilesIterator( SvnFileList.iterator(),this);
     }
     
     private class SvnFilesIterator extends BaseSwitchIterator<SvnFile,ArrayList<String>>{
+        SvnFiles svnfiles;
 
-        public SvnFilesIterator(Iterator<ArrayList<String>> xiterator) {
+        public SvnFilesIterator(Iterator<ArrayList<String>> xiterator, SvnFiles svnFiles) {
             super(xiterator);
+            svnfiles = svnFiles;
         }
 
         @Override
         public SvnFile switchObject(ArrayList<String> xobj) {
-            return  new SvnFile(xobj);
+            return  new SvnFile(xobj,svnfiles);
         }
 
       
@@ -104,7 +106,7 @@ public class SvnFiles implements Iterable<SvnFile> {
         System.out.println();
         
         for(SvnFile sf:sflist){
-            System.out.println(sf.getPath());
+            System.out.print(sf);
         }
     }
 

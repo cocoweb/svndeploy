@@ -2,6 +2,8 @@ package com.foresee.xdeploy.file;
 
 import java.util.ArrayList;
 
+import com.foresee.xdeploy.utils.PathUtils;
+
 import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_FileName;
 import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Man;
 import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
@@ -12,13 +14,24 @@ public class SvnFile {
     
     String FilePath="";
     ArrayList<String> svnfileDefList = null;
-
-    public SvnFile() {
-        // TODO Auto-generated constructor stub
-    }
+    SvnFiles parentSvnFiles =null;
     
-    public SvnFile(ArrayList<String> ll) {
-        svnfileDefList =  ll;
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Ver:[" + getVer() + "] |"
+                + getProj() + "| " 
+                + getPath() + "  " 
+                + getMan()
+                + " << " + getExcelName() + "\n";
+
+    }
+
+    public SvnFile(ArrayList<String> listString, SvnFiles svnfiles) {
+        svnfileDefList =  listString;
+        parentSvnFiles = svnfiles;
     }
 
     public String getURL(){
@@ -28,10 +41,27 @@ public class SvnFile {
     public String getVer(){
         return svnfileDefList.get(ColList_Ver);
     }
+    public String getProj(){
+        return svnfileDefList.get(ColList_ProjPackage);
+    }
     
-    public String getPath(){
-        return svnfileDefList.get(ColList_Path);
+    public String getPath(String filekeyroot){
+ 
+        return PathUtils.autoPathRoot(svnfileDefList.get(ColList_Path), filekeyroot);
        
     }
+    public String getPath(){
+        return getPath("engineering");
+        
+    }
+    public String getMan(){
+        return svnfileDefList.get(ColList_Man);
+       
+    }
+    public String getExcelName(){
+        return svnfileDefList.get(ColList_FileName);
+       
+    }
+    
 
 }
