@@ -1,7 +1,7 @@
 #fsdeploy
 ================
 
-## * Mode1
+## * Mode1 啊啊啊
 
 ** ListToFile -s|-d|-h|-z|-l [-P <name=value> | --propfile <PropertiesFile>]  [-B|--befile] **
 
