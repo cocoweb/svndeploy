@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import com.foresee.xdeploy.utils.Zip4jUtils;
+import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;

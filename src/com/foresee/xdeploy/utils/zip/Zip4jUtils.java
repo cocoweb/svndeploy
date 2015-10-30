@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.utils;
+package com.foresee.xdeploy.utils.zip;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -8,6 +8,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.foresee.xdeploy.utils.PathUtils;
+import com.foresee.xdeploy.utils.StreamUtils;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;

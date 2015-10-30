@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.utils;
+package com.foresee.xdeploy.utils.svn;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,6 +26,7 @@ import org.tmatesoft.svn.core.wc.SVNStatusType;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.utils.PathUtils;
 
 public class SvnClient {
     private static volatile SvnClient svnClient = null;
@@ -188,17 +189,23 @@ public class SvnClient {
         System.out.println(sB);
 
     }
+    
+    public boolean CheckFileVersion(){
+//        clientManager.getLogClient().
+//        clientManager.getLookClient().doGetRevisionProperties(repositoryRoot, revision)
+        return false;
+    }
 
     public static void main(String[] args) {
         try {
             // SvnClient.getInstance("xieying",
             // "xieying").svnExport("https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/branch/20150812/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_ccstool.js",
             // "3063", "p:/tmp/c/","branch");
-            ArrayList<String> xlist = SvnClient.getInstance("xieying", "xieying").svnDiff(
+            ArrayList<String> xlist = SvnClient.getInstance("xieying", "xieying,1").svnDiff(
                     "https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/branch/20150812", "3395", "3442" , "src");
 
             for (String sfile : xlist) {
-                SvnClient.getInstance("xieying", "xieying").svnLogRead(
+                SvnClient.getInstance("xieying", "xieying,1").svnLogRead(
                         "https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/trunk/" + sfile, "3395", "3442");
             }
         } catch (SVNException e) {

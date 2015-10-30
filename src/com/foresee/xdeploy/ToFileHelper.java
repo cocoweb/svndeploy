@@ -21,9 +21,9 @@ import com.foresee.xdeploy.file.WarFile;
 import com.foresee.xdeploy.file.WarFiles;
 import com.foresee.xdeploy.utils.FileSystem;
 import com.foresee.xdeploy.utils.PathUtils;
-import com.foresee.xdeploy.utils.SvnClient;
-import com.foresee.xdeploy.utils.Zip4jUtils;
-import com.foresee.xdeploy.utils.ZipFileUtils;
+import com.foresee.xdeploy.utils.svn.SvnClient;
+import com.foresee.xdeploy.utils.zip.Zip4jUtils;
+import com.foresee.xdeploy.utils.zip.ZipFileUtils;
 
 import net.lingala.zip4j.core.ZipFile;
 

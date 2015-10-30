@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.utils;
+package com.foresee.xdeploy.utils.excel;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;

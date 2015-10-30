@@ -2,11 +2,11 @@ package com.foresee.xdeploy.utils.testng;
 
 import java.io.IOException;
 
-import org.testng.annotations.Test;
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-import com.foresee.xdeploy.utils.ExcelMoreUtil;
+import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
 
 public class ExcelMoreUtilTest {
   @BeforeClass

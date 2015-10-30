@@ -42,25 +42,7 @@ public class StreamUtils {
             
             InputStreamToOutputStream(is,os);
 
-//            int readLen = -1;
-//            byte[] buff = new byte[BUFF_SIZE];
-//
-//            // Loop until End of File and write the contents to the output
-//            // stream
-//            while ((readLen = is.read(buff)) != -1) {
-//                os.write(buff, 0, readLen);
-//            }
 
-            // Closing inputstream also checks for CRC of the the just
-            // extracted file.
-            // If CRC check has to be skipped (for ex: to cancel the unzip
-            // operation, etc)
-            // use method is.close(boolean skipCRCCheck) and set the flag,
-            // skipCRCCheck to false
-            // NOTE: It is recommended to close outputStream first because
-            // Zip4j throws
-            // an exception if CRC check fails
-            //is.close();
 
         } catch (Exception e) {
             e.printStackTrace();

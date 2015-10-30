@@ -1,5 +1,14 @@
 package com.foresee.xdeploy.file;
 
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_Man;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_Path;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_ProjPackage;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_ROWNo;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_Ver;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -16,14 +25,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import com.foresee.test.util.exfile.POIExcelUtil;
 import com.foresee.test.util.io.File2Util;
 import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.utils.ExcelMoreUtil;
-import com.foresee.xdeploy.utils.POIExcelMakerUtil;
-import com.foresee.xdeploy.utils.ExcelMoreUtil.IHandleCopyRow;
-import com.foresee.xdeploy.utils.ExcelMoreUtil.IHandleScanRow;
 import com.foresee.xdeploy.utils.PathUtils;
-
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.*;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.*;
+import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
+import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleCopyRow;
+import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleScanRow;
+import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
 
 /**
  * @author allan.xie 根据清单生成 版本号和路径

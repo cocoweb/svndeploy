@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.utils;
+package com.foresee.xdeploy.utils.zip;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
