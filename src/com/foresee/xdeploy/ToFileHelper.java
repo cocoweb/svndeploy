@@ -120,14 +120,20 @@ public class ToFileHelper {
                 if (PathUtils.isFolder(sUrl)) {
                     System.out.println("目录不处理" + sUrl);
                 } else {
-                    xclient.svnExport(sUrl, sVer, toPath, pv.keyRootFolder);
+                    if (xclient.CheckFileVersion(sUrl, sVer)){
+                    	
+						xclient.svnExport(sUrl, sVer, toPath, pv.keyRootFolder);
 
-                    if (pv.getProperty("svn.tozip.enabled").equals("true")) {
-                        // 将文件添加到zip文件
-                        Zip4jUtils.zipFile(toPath, zipFileName,expath.getToZipFolderPath()); 
-                                //FileUtil.getFolderPath(pv.exchangePath(fromPath)));
+						if (pv.getProperty("svn.tozip.enabled").equals("true")) {
+							// 将文件添加到zip文件
+							Zip4jUtils.zipFile(toPath, zipFileName, expath.getToZipFolderPath());
+							// FileUtil.getFolderPath(pv.exchangePath(fromPath)));
 
+						}
+                    }else{
+                    	System.out.println(" -->>>文件版本不存在：[" +sVer+"]"+ sUrl);
                     }
+                	
 
                 }
                 fileCount++;

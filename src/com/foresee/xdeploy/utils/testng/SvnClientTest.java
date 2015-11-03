@@ -31,13 +31,12 @@ public class SvnClientTest {
     public void svnVersion(){
         //clientManager.getLookClient().doGetRevisionProperties(repositoryRoot, revision)
         
-        try {
-			SvnClient.getInstance("xieying", "xieying,1").svnLogRead(
-			        fileurl , "6114", "6114");
-		} catch (SVNException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+        if (SvnClient.getInstance("xieying", "xieying,1").CheckFileVersion( fileurl , "6114")){
+			System.out.println("6113");
+		}else{
+			System.out.println("no such version 6113");
+			
+		};
 
 
     }

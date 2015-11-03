@@ -146,7 +146,7 @@ public class ScanIncrementFiles {
 
         int RowNo = 0;
         for (ArrayList<String> aRow : filecontent) {
-            if (RowNo >= excelStartRow && !StringUtil.isEmpty(aRow.get(ColExcel_Path))) {
+            if (RowNo >= excelStartRow && !StringUtil.isBlank(aRow.get(ColExcel_Path))) {
                 // ArrayList<String> xrow = new ArrayList<String>();
 
                 // 判断是否包含多个文件分隔
