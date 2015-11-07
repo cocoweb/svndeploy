@@ -1,40 +1,18 @@
 package com.foresee.xdeploy.file;
 
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Properties;
 
-import com.foresee.test.loadrunner.lrapi4j.lr;
-import com.foresee.test.util.exfile.ExtProperties;
 import com.foresee.test.util.lang.DateUtil;
-import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.utils.PathUtils;
-import com.foresee.xdeploy.utils.base.BasePropValue;
+import com.foresee.xdeploy.utils.base.ParamPropValue;
 
-public class PropValue extends BasePropValue {
+public class PropValue extends ParamPropValue {
 
-    private static Properties argsProp =null;
+    
 
     // private static ExtProperties extProp = null;
 
     public String workspace = "";
-    /**
-     * @return the argsProp
-     */
-    public static Properties getArgsProp() {
-        return argsProp;
-    }
-
-
-    /**
-     * @param argsProp the argsProp to set
-     */
-    public static void setArgsProp(Properties argsProp) {
-        PropValue.argsProp = argsProp;
-    }
-
-
-
     public String tempPath = "";
 
     public String excelfile = "";
@@ -56,7 +34,7 @@ public class PropValue extends BasePropValue {
    
     protected void initProp() {
          
-        savePara( getExProp());
+       // savePara( getExProp());
 
         workspace = getProperty("workspace");
         tempPath = getProperty("temppath");
@@ -77,33 +55,6 @@ public class PropValue extends BasePropValue {
         // xprop.
 
     }
-
-    @Override
-    public String getProperty(String key) {
-        String sValue = "";
-        if (argsProp!=null)
-            sValue = argsProp.getProperty(key,"");
-        
-        if (sValue.isEmpty())
-           sValue = lr.eval_string(StringUtil.trim(super.getProperty(key)));
-        
-         return sValue;
-    }
-
-
-    
-    private void savePara(ExtProperties extprop) {
-    
-        Iterator<Object> iter = extprop.keySet().iterator();
-    
-        while (iter.hasNext()) {
-            String skey = StringUtil.trim(iter.next().toString());
-            lr.save_string(StringUtil.trim(extprop.getProperty(skey)), skey);
-        }
-    
-    }
-
-
 
     private static String outexcelfilename="";
     public String genOutExcelFileName(){
