@@ -6,9 +6,7 @@ import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.base.ParamPropValue;
 
-public class PropValue extends ParamPropValue {
-
-    
+public class PropValue extends ParamPropValue  {
 
     // private static ExtProperties extProp = null;
 

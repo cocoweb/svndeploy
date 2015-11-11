@@ -12,28 +12,29 @@ import com.foresee.xdeploy.utils.PathUtils;
  * 路径转换器
  * 
  * @author Allan 
- * 每一个srcPath（excel中的清单文件）都有以下几个对应环境的路径： 
- * 1、在svn主干中的路径                         SrcPath
- *         2、在svn基线中的路径 
- *         3、在war包中的路径                              FromPath 
- *         如果是jar里面的java文件，就包含两种：          JARName 
- *         a) war中jar文件的路径 
- *         b) jar里面的文件路径 
- *         4、输出到zip增量包里面的路径                  ToZipPath 
- *   另外还包括几个容器路径
- *         1、excel增量清单路径 
- *         2、合并后的excel文件路径 
- *         3、svn主干URL 
- *         4、svn分支基线URL
  * 
- *         5、war包路径 
- *         6、临时jar包路径 
- *         7、输出zip增量包文件的路径
+ * 每一个srcPath（excel中的清单文件）都有以下几个对应环境的路径： </Br>
+ * 1、在svn主干中的路径                         SrcPath</Br>
+ *         2、在svn基线中的路径 </Br>
+ *         3、在war包中的路径                              FromPath </Br>
+ *         如果是jar里面的java文件，就包含两种：          JARName </Br>
+ *         a) war中jar文件的路径 </Br>
+ *         b) jar里面的文件路径 </Br>
+ *         4、输出到zip增量包里面的路径                  ToZipPath </Br>
+ *   另外还包括几个容器路径</Br>
+ *         1、excel增量清单路径 </Br>
+ *         2、合并后的excel文件路径 </Br>
+ *         3、svn主干URL </Br>
+ *         4、svn分支基线URL</Br>
  * 
- *         JARName =gov.chinatax.gt3nf 
- *         FromPath =gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.class
- *         ToZipPath =gov.chinatax.gt3nf/gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.class 
- *         SrcPath  =/trunk/engineering/src/gt3nf/java/gov.chinatax.gt3nf/src/gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.java
+ *         5、war包路径 </Br>
+ *         6、临时jar包路径 </Br>
+ *         7、输出zip增量包文件的路径</Br>
+ * 
+ *         JARName =gov.chinatax.gt3nf </Br>
+ *         FromPath =gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.class</Br>
+ *         ToZipPath =gov.chinatax.gt3nf/gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.class </Br>
+ *         SrcPath  =/trunk/engineering/src/gt3nf/java/gov.chinatax.gt3nf/src/gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.java</Br>
  *
  */
 public class ExchangePath {
@@ -50,12 +51,12 @@ public class ExchangePath {
         propvalue = pv;
     }
 
-    public ExchangePath(String jARName, String fromPath, String toZipPath, String srcPath, String mappingKey) {
+    private ExchangePath(String jARName, String fromPath, String toZipPath, String srcPath, String mappingKey) {
         this(jARName, fromPath, toZipPath, srcPath);
         MappingKey = mappingKey;
     }
 
-    public ExchangePath(String jARName, String fromPath, String toZipPath, String srcPath) {
+    private ExchangePath(String jARName, String fromPath, String toZipPath, String srcPath) {
         super();
         JARName = jARName;
         FromPath = fromPath;
@@ -144,7 +145,53 @@ public class ExchangePath {
         return ep;
     }
     
-    /**
+
+    
+    public String getToZipFolderPath(){
+        return FileUtil.getFolderPath(ToZipPath);
+    }
+    
+    public static String getTrunkURL(String srcPath){
+        String fromPath = PathUtils.autoPathRoot(srcPath, "trunk");
+        // svn库的文件绝对路径URL
+        String sUrl = propvalue.svnurl +   fromPath;
+        
+        return sUrl;
+
+    }
+    
+    public String getTrunkURL(){
+        return getTrunkURL(SrcPath);
+    }
+    
+    public String getOutZipFileName(){
+        return getOutZipFile();
+    }
+    
+    public static String getOutZipFile(){
+        return propvalue.genOutZipFileName();
+    }
+    
+    public String getFileName(){
+        return PathUtils.getFileNameWithExt(SrcPath);
+    }
+    
+   public static void main(String[] args) {
+        InitExchangePath( new PropValue("/svntools.properties"));
+        
+       System.out.println(exchange("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
+        //System.out.println(ExchangePath.propvalue.exchangeFilePath("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
+        System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
+        System.out.println(exchange("trunk/engineering/src/gt3nf/web/gt3nf-task/.settings/org.eclipse.wst.common.component"));
+       // System.out.println(ExchangePath.propvalue.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
+        //System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
+
+    }
+
+ 
+}   
+
+/**
      * 按照配置 * 转换路径
      * 每一个srcPath（excel中的清单文件）都有以下几个对应环境的路径：
      * 1、在svn主干中的路径
@@ -252,47 +299,3 @@ public class ExchangePath {
 //        return new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
 //    }
     
-    
-    public String getToZipFolderPath(){
-        return FileUtil.getFolderPath(ToZipPath);
-    }
-    
-    public static String getTrunkURL(String srcPath){
-        String fromPath = PathUtils.autoPathRoot(srcPath, "trunk");
-        // svn库的文件绝对路径URL
-        String sUrl = propvalue.svnurl +   fromPath;
-        
-        return sUrl;
-
-    }
-    
-    public String getTrunkURL(){
-        return getTrunkURL(SrcPath);
-    }
-    
-    public String getOutZipFileName(){
-        return getOutZipFile();
-    }
-    
-    public static String getOutZipFile(){
-        return propvalue.genOutZipFileName();
-    }
-    
-    public String getFileName(){
-        return PathUtils.getFileNameWithExt(SrcPath);
-    }
-    
-   public static void main(String[] args) {
-        InitExchangePath( new PropValue("/svntools.properties"));
-        
-       System.out.println(exchange("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
-        //System.out.println(ExchangePath.propvalue.exchangeFilePath("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
-        System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
-        System.out.println(exchange("trunk/engineering/src/gt3nf/web/gt3nf-task/.settings/org.eclipse.wst.common.component"));
-       // System.out.println(ExchangePath.propvalue.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
-        //System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
-
-    }
-
- 
-}

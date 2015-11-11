@@ -17,6 +17,7 @@ import com.foresee.test.util.io.FileUtil;
 import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
+import com.foresee.xdeploy.file.SvnFiles;
 import com.foresee.xdeploy.file.WarFile;
 import com.foresee.xdeploy.file.WarFiles;
 import com.foresee.xdeploy.utils.FileSystem;
@@ -37,7 +38,22 @@ public class ToFileHelper {
     public ToFileHelper(String strFileName) {
         pv = new PropValue(strFileName);
     }
+    public void scanPrintList1() {
+        System.out.println("===========显示待处理文件清单=================");
+        String sTofile = ""; // 默认为""，不用合并excel
 
+        if (pv.getProperty("file.excel.merge").equals("true")) { // 判断是否需要合并excel
+            // 生成excel输出文件名
+            sTofile = pv.genOutExcelFileName();
+            // 生成合并的excel文件
+            FileUtil.Copy(pv.excelfiletemplate, sTofile);
+        }
+        // 扫描并获取全部excel内容
+        ScanIncrementFiles scanFiles = ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter, sTofile);
+        //SvnFiles sflist = scanFiles.loadSvnFiles(xfile)
+
+    }
+    
     public void scanPrintList() {
         System.out.println("===========显示待处理文件清单=================");
 

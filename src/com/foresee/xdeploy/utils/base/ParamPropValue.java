@@ -3,7 +3,6 @@ package com.foresee.xdeploy.utils.base;
 import java.util.Iterator;
 import java.util.Properties;
 
-import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.exfile.ExtProperties;
 import com.foresee.test.util.lang.StringUtil;
 
@@ -40,7 +39,7 @@ public class ParamPropValue extends BasePropValue {
 	
 	    while (iter.hasNext()) {
 	        String skey = StringUtil.trim(iter.next().toString());
-	        lr.save_string(StringUtil.trim(extprop.getProperty(skey)), skey);
+	        save_string(StringUtil.trim(extprop.getProperty(skey)), skey);
 	    }
 	
 	}
@@ -52,13 +51,12 @@ public class ParamPropValue extends BasePropValue {
 	@Override
 	public String getProperty(String key) {
 	    String sValue = "";
-	    if (argsProp!=null)
+	    if (argsProp!=null)  //参数值保存下来,可以覆盖参数文件的内容
 	        sValue = argsProp.getProperty(key,"");
 	    
-	    if (sValue.isEmpty())
-	       sValue = lr.eval_string(StringUtil.trim(super.getProperty(key)));
+	    if (sValue.isEmpty())  
+	       sValue = eval_string(StringUtil.trim(super.getProperty(key)));
 	    
 	     return sValue;
 	}
-
 }
