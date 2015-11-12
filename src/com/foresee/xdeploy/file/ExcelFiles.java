@@ -58,7 +58,7 @@ public class ExcelFiles {
         this.scanOption = BATCH;
     }
 	
-	public ArrayList<String>  getExcelList(String sFilter){
+	public ArrayList<String>  getExcelList(){
         if (scanOption.equals(FILE)) {
         	System.out.println("Loading List >>> " + sfilePath);
         	fileList.add(sfilePath);

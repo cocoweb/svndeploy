@@ -11,7 +11,7 @@ import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
 
 public class SvnFiles implements Iterable<SvnFile> {
-    List<ArrayList<String>> SvnFileList=new ArrayList<ArrayList<String>>();
+    public List<ArrayList<String>> SvnFileList=new ArrayList<ArrayList<String>>();
 
     public SvnFiles() {
        
@@ -98,17 +98,7 @@ public class SvnFiles implements Iterable<SvnFile> {
 
         //xx.mergeListfile("p:/xxx.xls", "20150828");
         
-        SvnFiles sflist = xx.loadSvnFiles(new File("p:/因开发所致环境变更记录表模版-20150922-产品线-合并.xls"));
-        Iterator<SvnFile> it = sflist.iterator();
-        while(it.hasNext()){
-                System.out.println(it.next().getPath());
-        }
-        System.out.println();
-        
-        for(SvnFile sf:sflist){
-            System.out.print(sf);
-        }
-    }
+     }
 
 
 }
