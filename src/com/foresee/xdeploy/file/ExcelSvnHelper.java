@@ -4,11 +4,6 @@ import static com.foresee.xdeploy.file.ExcelFiles.ExcelCols.ColExcel_Man;
 import static com.foresee.xdeploy.file.ExcelFiles.ExcelCols.ColExcel_Path;
 import static com.foresee.xdeploy.file.ExcelFiles.ExcelCols.ColExcel_ProjPackage;
 import static com.foresee.xdeploy.file.ExcelFiles.ExcelCols.ColExcel_Ver;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_FileName;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Man;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
 
 import java.io.File;
 import java.io.IOException;
@@ -132,6 +127,5 @@ public class ExcelSvnHelper {
     }
     
     
-
 
 }
