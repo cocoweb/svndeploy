@@ -1,23 +1,21 @@
 package com.foresee.xdeploy.file.testng;
 
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_FileName;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Man;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
+import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_FileName;
+import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_Man;
+import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_Ver;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.testng.annotations.Test;
 import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
 
-import com.foresee.test.util.io.FileUtil;
 import com.foresee.xdeploy.file.ExcelFiles;
 import com.foresee.xdeploy.file.ExcelSvnHelper;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.file.ScanIncrementFiles;
 import com.foresee.xdeploy.file.SvnFiles;
 import com.foresee.xdeploy.utils.PathUtils;
 
@@ -36,7 +34,7 @@ public class ExcelSvnHelperTest {
     public void loadSvnFilesList() {
 
         System.out.println(efh.loadSvnFilesList(new File("p:/因开发所致环境变更记录表模版-20150922-产品线-合并.xls")));
-    }
+    } 
 
     @Test
     public void loadSvnFilesList1() {
