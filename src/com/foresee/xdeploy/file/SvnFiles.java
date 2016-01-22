@@ -1,16 +1,13 @@
 package com.foresee.xdeploy.file;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
-import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
 
-public class SvnFiles implements Iterable<SvnFile> {
+public class SvnFiles extends XdeployBase implements Iterable<SvnFile> {
     public List<ArrayList<String>> SvnFileList=new ArrayList<ArrayList<String>>();
 
     public SvnFiles() {
@@ -39,29 +36,13 @@ public class SvnFiles implements Iterable<SvnFile> {
         return xrow;
     }
     
-    private String handleProjectName(String xname) {
-        // xname = xname.replaceAll( "[\\p{P}+~$`^=|<>～｀＄＾＋＝｜＜＞￥×^_]" , ",");
-        // //StringUtil.replaceAll(xname,"、",",");
-        xname = xname.replaceAll("[、，]", ","); // StringUtil.replaceAll(xname,"、",",");
-        xname = xname.replaceAll("[_]", "-");
-        return xname;
-    }
-
-    // 整理数据
-    private String handleVerNo(String sVerNo) {
-        return StringUtil.trim(sVerNo, "#");
-    }
+    
 
 //    private List<String> handlePathList(String sPath) {
 //        String[] xstr = StringUtil.split(sPath);
 //        return Arrays.asList(xstr);
 //    }
 
-    private static String handlePath(String sPath) {
-
-        // 截取到Trunk
-        return PathUtils.addFolderStart(StringUtil.trim(sPath));
-    }
     /**
      * @return
      * @see java.util.List#iterator()
@@ -87,18 +68,15 @@ public class SvnFiles implements Iterable<SvnFile> {
       
     }
     
+   public int size() {
+        
+        return SvnFileList.size();
+    }
 
     
     public static void main(String[] args) throws Exception {
-        ScanIncrementFiles xx = new ScanIncrementFiles("p:/因开发所致环境变更记录表模版-20150820-产品线-合并.xls", "P:\\workspace\\xls",
-                "BATCH");
-        // for(ArrayList<String> aRow:xx.loadExcelFile()){
-        // System.out.println(aRow );
-        // }
-
-        //xx.mergeListfile("p:/xxx.xls", "20150828");
-        
      }
 
+ 
 
 }

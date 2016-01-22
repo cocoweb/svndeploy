@@ -1,68 +1,78 @@
 package com.foresee.xdeploy.file;
 
+import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_Man;
+import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_Path;
+import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_ProjPackage;
+import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_ROWNo;
+import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_Ver;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
 import com.foresee.test.util.io.File2Util;
+import com.foresee.test.util.io.FileUtil;
+import com.foresee.test.util.lang.DateUtil;
+import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
 
-public class ExcelFiles {
-    //excle Files 包含多个or一个Excel文件
-	//
-	public interface ListCols {
-        // List列字段序号
-        public static final int ColList_Ver = 0;
-        public static final int ColList_Path = 1;
-        public static final int ColList_ProjPackage = 2;
-        public static final int ColList_Man = 3;
-        public static final int ColList_FileName = 4;
-
-    }
-
-    public interface ExcelCols {
-
-        // Excel列字段序号
-        public static final int ColExcel_ROWNo = 0;
-        public static final int ColExcel_Ver = 3;
-        public static final int ColExcel_Path = 6;
-        public static final int ColExcel_ProjPackage = 7;
-        public static final int ColExcel_Man = 13;
-
-    }
+public class ExcelFiles extends XdeployBase{
     public static final String BATCH = "BATCH";
     public static final String FILE = "FILE";
 
     public String sfilePath;
     public String sFolderPath;
     public String sFilter;
+    public static String excelfiletemplate;
 
     public String scanOption = BATCH; // 默认批量扫描
-    
+
     public ArrayList<String> fileList = new ArrayList<String>();
 
-	public ExcelFiles(String sfilePath, String sFolderPath, String scanOption) {
-		super();
-		this.sfilePath = sfilePath;
-		this.sFolderPath = sFolderPath;
-		this.scanOption = scanOption;
-	}
-    public ExcelFiles(String sfilePath) {
+    public ExcelFiles(String sfilePath, String sFolderPath, String scanOption) {
         super();
         this.sfilePath = sfilePath;
-        this.scanOption = FILE;
-    }
-    public ExcelFiles(String sFolderPath, String sFilter) {
-        super();
         this.sFolderPath = sFolderPath;
-        this.sFilter = sFilter;
-        this.scanOption = BATCH;
+        this.scanOption = scanOption;
     }
-	
-	public ArrayList<String>  getExcelList(){
+
+    public ExcelFiles(String sfilePath) {
+        this(sfilePath,"",FILE);
+    }
+
+    public ExcelFiles(String sFolderPath, String sFilter) {
+        this("",sFolderPath,BATCH);
+    }
+    public ExcelFiles(PropValue pv) {
+        this(pv.excelfile,pv.excelFolder,pv.scanOption);
+        excelfiletemplate = pv.excelfiletemplate;
+        sFilter = pv.excelFolderFilter;
+        if (pv.getProperty("file.excel.merge").equals("true")) { // 判断是否需要合并excel
+            // 生成excel输出文件
+            mergeToFile();
+        }
+        
+    }
+
+    public String mergeToFileName = ""; // 默认为""，不用合并excel
+    public String mergeToFile() {
+
+        // 生成excel输出文件名
+        mergeToFileName = genOutExcelFileName();
+        // 生成合并的excel文件
+        FileUtil.Copy(excelfiletemplate, mergeToFileName);
+
+        return mergeToFileName;
+    }
+
+    public ArrayList<String> getExcelList() {
         if (scanOption.equals(FILE)) {
-        	System.out.println("Loading List >>> " + sfilePath);
-        	fileList.add(sfilePath);
-            
+            System.out.println("Loading List >>> " + sfilePath);
+            fileList.add(sfilePath);
+
         } else {
 
             // 遍历文件夹，并过滤
@@ -75,7 +85,54 @@ public class ExcelFiles {
 
         }
         return fileList;
-		
-	}
+
+    }
+
+    private static String outexcelfilename = "";
+
+    public static String genOutExcelFileName() {
+        if (outexcelfilename == "") {
+            outexcelfilename = excelfiletemplate.substring(0, excelfiletemplate.indexOf(".")) + "-"
+                    + DateUtil.getCurrentDate("yyyyMMdd") + "-产品线-合并.xls";
+        }
+        return outexcelfilename;
+    }
+
+    public static void addRowToList(SvnFiles xsvnfiles, HSSFRow xlocalrow, String filename) {
+        localrow = xlocalrow;
+    
+        for (String xfield : handlePathList(getValue(ColExcel_Path))) {
+            xsvnfiles.addItem(getValue(ColExcel_Ver), xfield, getValue(ColExcel_ProjPackage), getValue(ColExcel_Man), filename);
+        }
+    
+    }
+
+    public static void copyRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork, HSSFWorkbook sourceWork,int iExcelRowCount) {
+        for (int i = sourceRow.getFirstCellNum(); i <= sourceRow.getLastCellNum(); i++) {
+            HSSFCell sourceCell = sourceRow.getCell(i);
+            HSSFCell targetCell = targetRow.getCell(i);
+    
+            if (sourceCell != null) {
+                if (targetCell == null) {
+                    targetCell = targetRow.createCell(i);
+                }
+    
+                switch (i) { // 根据列号进行处理
+                case ColExcel_ROWNo:
+                    targetCell.setCellValue(iExcelRowCount);
+                    break;
+                case ColExcel_Path:
+                    targetCell.setCellValue(handlePath(sourceCell.getStringCellValue()));
+                    break;
+                default:
+                    // 拷贝单元格，包括内容和样式
+                    ExcelMoreUtil.copyCell(targetCell, sourceCell, targetWork, sourceWork, null);
+    
+                }
+    
+            }
+        }
+    
+    }
 
 }

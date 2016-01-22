@@ -119,8 +119,8 @@ public class ScanIncrementFiles {
         Collections.sort(retList, new Comparator<ArrayList<String>>() {
             @Override
             public int compare(ArrayList<String> o1, ArrayList<String> o2) {
-                return (o1.get(ColList_ProjPackage) + o1.get(ColList_Path) + o1.get(ColList_Ver)).compareTo(o2
-                        .get(ColList_ProjPackage) + o2.get(ColList_Path) + o2.get(ColList_Ver));
+                return (o1.get(ColList_Path) +o1.get(ColList_Ver) +o1.get(ColList_ProjPackage)  ).compareTo(
+                         o2.get(ColList_Path) +o2.get(ColList_Ver)+ o2.get(ColList_ProjPackage) );
             }
 
         });

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.utils.PathUtils;
+import com.foresee.test.util.PathUtils;
 
 /**
  * 路径转换器

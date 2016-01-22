@@ -1,24 +1,16 @@
 
 package com.foresee.xdeploy.file.testng;
 
-import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_FileName;
-import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_Man;
-import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.ExcelFiles.ListCols.ColList_Ver;
-
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.foresee.xdeploy.ListToFileHelper;
 import com.foresee.xdeploy.file.ExcelFiles;
 import com.foresee.xdeploy.file.ExcelSvnHelper;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.SvnFiles;
-import com.foresee.xdeploy.utils.PathUtils;
 
 public class ExcelSvnHelperTest {
     ExcelSvnHelper efh;
@@ -53,50 +45,12 @@ public class ExcelSvnHelperTest {
 
         // 扫描并获取全部excel内容
         //ScanIncrementFiles scanFiles = ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter, sTofile);
-        SvnFiles sf = efh.loadSvnFiles(new ExcelFiles(pv.excelFolder, pv.excelFolderFilter));
+        SvnFiles sf = efh.loadSvnFiles(new ExcelFiles(pv));
         
-        displayList(sf.SvnFileList);
+        //ListToFileHelper.displayList(sf);
 
     }
 
-    public void displayList(List<ArrayList<String>> filelist) {
-        StringBuffer bugStr = new StringBuffer();
-        String a1_Path = ""; // 用来比较上下路径的标记
-        String lastStr = "";
 
-        for (ArrayList<String> aRow : filelist) {
-            String sPath = PathUtils.autoPathRoot(aRow.get(ColList_Path), pv.filekeyroot);
-            String printStr = "Ver:[" + aRow.get(ColList_Ver) + "] |" + aRow.get(ColList_ProjPackage) + "| " + sPath + "  " + aRow.get(ColList_Man)
-                    + " << " + aRow.get(ColList_FileName) + "\n";
-
-            // 判断是否目录，目录就不操作
-            if (PathUtils.isFolder(sPath)) {
-                System.out.print("<<< 注意 >>> 清单包含有目录：\n" + printStr);
-            } else {
-
-                System.out.print(printStr);
-            }
-
-            // 比较两个相邻的文件,相同标识重复
-            if (sPath.equals(a1_Path)) {
-                bugStr.append(lastStr);
-                bugStr.append(printStr);
-                lastStr = "";
-            }
-
-            lastStr = printStr;
-            a1_Path = sPath;
-
-        }
-        System.out.println("\n共有文件数量：" + Integer.toString(filelist.size()));
-        System.out.println("==空的版本号，将获取最新的版本。==请仔细检查清单格式，路径不对将无法从svn获取。");
-        // if (pv.getProperty("file.excel.merge").equals("true"))
-        // System.out.println(" >>>合并生成了EXCEL为：" + sTofile);
-
-        if (bugStr.length() > 0) {
-            System.err.println("\n<<<<文件有重复>>>>请注意核对，如下：");
-            System.err.println(bugStr);
-        }
-    }
 }
 

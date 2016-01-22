@@ -5,7 +5,7 @@
 	<property file="build.properties"/>
 	
 	<property name="out_path" value="${project_path}workspace/" />
-	<property name="jar.version" value="0.18" />
+	<property name="jar.version" value="0.19" />
 	<property name="jar.name" value="listcopy_${jar.version}.jar" />
 	
     <path id="Lib.jarSets">
@@ -78,7 +78,7 @@
         </jar>
 		<copy todir="${out_path}">
 			<fileset dir="${project_path}/bin" includes="**/svntools.properties" />
-			<fileset dir="${project_path}/bin" includes="**/ReleaseNote.txt" />
+			<fileset dir="${project_path}/bin" includes="**/ReleaseNote.md" />
 			
 		</copy>
 		<zip destfile="${out_path}listcopy_src.zip">
@@ -98,7 +98,7 @@
 			<fileset dir="${out_path}" >
 				<include name="${jar.name}"/>
 				<include name="listcopy_src.zip"/>
-				<include name="ReleaseNote.txt"/>
+				<include name="ReleaseNote.md"/>
 				<include name="readme.png"/>
 				<include name="svntools.properties"/>
 				<include name="*.bat"/>
