@@ -88,6 +88,9 @@ public class PropValue extends ParamPropValue  {
 //        System.out.println(pv.exchangePath("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
 
         System.out.println(pv.excelFolder);
+        System.out.println(pv.tempPath);
+        System.out.println(pv.genOutZipFileName());
+        System.out.println(pv.getProperty("zip.tofolder"));
         
         ExchangePath aa = ExchangePath.exchange("/trunk/engineering/src/gt3nf/java/gov.chinatax.gt3nf/src/gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.java");
         

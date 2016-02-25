@@ -52,10 +52,10 @@ public class ParamPropValue extends BasePropValue {
 	public String getProperty(String key) {
 	    String sValue = "";
 	    if (argsProp!=null)  //参数值保存下来,可以覆盖参数文件的内容
-	        sValue = argsProp.getProperty(key,"");
+	        sValue = eval_string(eval_string(argsProp.getProperty(key,"")));
 	    
 	    if (sValue.isEmpty())  
-	       sValue = eval_string(StringUtil.trim(super.getProperty(key)));
+	       sValue = eval_string(eval_string(eval_string(StringUtil.trim(super.getProperty(key)))));
 	    
 	     return sValue;
 	}

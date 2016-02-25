@@ -101,6 +101,7 @@ public class ScanIncrementFiles {
         List<ArrayList<String>> retList = null;
 
         if (scanOption.equals(FILE)) {
+            fileList.add(sfilePath);
             retList = loadExcelFile();
         } else {
             retList = new ArrayList<ArrayList<String>>();

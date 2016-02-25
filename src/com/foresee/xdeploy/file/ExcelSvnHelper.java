@@ -1,8 +1,8 @@
 package com.foresee.xdeploy.file;
 
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Ver;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
 
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +40,8 @@ public class ExcelSvnHelper {
         Collections.sort(svnfiles.SvnFileList, new Comparator<ArrayList<String>>() {
             @Override
             public int compare(ArrayList<String> o1, ArrayList<String> o2) {
-                return (o1.get(ColList_ProjPackage) + o1.get(ColList_Path) + o1.get(ColList_Ver)).compareTo(o2
-                        .get(ColList_ProjPackage) + o2.get(ColList_Path) + o2.get(ColList_Ver));
+                return (o1.get(ColList_Path) +o1.get(ColList_Ver) +o1.get(ColList_ProjPackage)  ).compareTo(
+                        o2.get(ColList_Path) +o2.get(ColList_Ver)+ o2.get(ColList_ProjPackage) );
             }
 
         });
