@@ -16,6 +16,7 @@ import org.apache.commons.lang.StringUtils;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
+import com.foresee.xdeploy.utils.ConsoleTextArea;
 
 public class ListToFile {
     public ListToFile() {
@@ -229,6 +230,8 @@ public class ListToFile {
     }
 
     public static void main(String[] args) {
+        ConsoleTextArea.showForm();
+        
         if (args.length > 0 && args[0].startsWith("-")) {
             // 使用带- 的命令行模式
             parserCLICmd(cmdCLIOptions(), args);
