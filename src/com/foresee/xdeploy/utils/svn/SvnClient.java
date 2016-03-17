@@ -84,7 +84,7 @@ public class SvnClient {
 	 *            branch or engineering or src
 	 * @throws SVNException
 	 */
-	public void svnExport(String xUrl, String xVersion, String xPath, String keyRootFolder) throws SVNException {
+	public long svnExport(String xUrl, String xVersion, String xPath, String keyRootFolder) throws SVNException {
 
 		SVNURL url = SVNURL.parseURIEncoded(xUrl);
 
@@ -95,8 +95,10 @@ public class SvnClient {
 
 		long re = clientManager.getUpdateClient().doExport(url, dstPath, revision, revision, null, true,
 				SVNDepth.fromRecurse(true));
+		
+		return re;
 
-		System.out.println("export 版本：" + Long.toString(re) + "|| url=" + url);
+		//System.out.println("export 版本：" + Long.toString(re) + "|| url=" + url);
 
 	}
 

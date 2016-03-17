@@ -14,6 +14,7 @@ import java.util.Collections;
 import org.tmatesoft.svn.core.SVNException;
 
 import com.foresee.test.util.io.FileUtil;
+import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
@@ -29,7 +30,7 @@ import com.foresee.xdeploy.utils.zip.ZipFileUtils;
 import net.lingala.zip4j.core.ZipFile;
 
 public class ToFileHelper {
-    PropValue pv = null;
+    public PropValue pv = null;
 
     public ToFileHelper() {
         this("/svntools.properties");
@@ -107,6 +108,8 @@ public class ToFileHelper {
 
         String zipFileName = pv.genOutZipFileName();
         int fileCount = 0;
+        long lVer=-1;
+        String sMessage="";
 
         for (ArrayList<String> aRow : ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter)) {
             try {
@@ -121,20 +124,52 @@ public class ToFileHelper {
                 if (PathUtils.isFolder(sUrl)) {
                     System.out.println("目录不处理" + sUrl);
                 } else {
-                    if (xclient.CheckFileVersion(sUrl, sVer)){
-                    	
-						xclient.svnExport(sUrl, sVer, toPath, pv.keyRootFolder);
+                    if(pv.getProperty("svn.version.verify").equals("true")){  //必须校验版本号
+                       if (xclient.CheckFileVersion(sUrl, sVer)){
+                            
+                            xclient.svnExport(sUrl, sVer, toPath, pv.keyRootFolder);
+                            
+                            System.out.println("export 版本：" + sVer + "|| url=" + sUrl);
 
-						if (pv.getProperty("svn.tozip.enabled").equals("true")) {
-							// 将文件添加到zip文件
-							Zip4jUtils.zipFile(toPath, zipFileName, expath.getToZipFolderPath());
-							// FileUtil.getFolderPath(pv.exchangePath(fromPath)));
 
-						}
-                    }else{
-                    	System.out.println(" -->>>文件版本不存在：[" +sVer+"]"+ sUrl);
+                        }else{
+                            System.out.println(" -->>>文件版本不存在：[" +sVer+"]"+ sUrl);
+                            continue;
+                        }                       
+                    }else {//允许不校验版本号
+                        
+                        
+                        if(StringUtil.isBlank(sVer)){
+                            sMessage = "export Last版本：";
+
+                            
+                        }else if (xclient.CheckFileVersion(sUrl, sVer)){
+                            sMessage="export 版本：";
+
+                        }else{
+                            sMessage="export Last版本(原"+sVer+")：";
+                        }
+                        
+                        try{
+                            lVer = xclient.svnExport(sUrl, sVer, toPath, pv.keyRootFolder);
+                            
+                            System.out.println(sMessage + Long.toString(lVer) + "|| url=" + sUrl);
+                            
+                        }catch (SVNException e) {
+                            e.printStackTrace();
+                            System.out.println(" -->>>文件版本不存在：[" +sVer+"]"+ sUrl);
+                        }
+                             
                     }
-                	
+                    
+                    if (pv.getProperty("svn.tozip.enabled").equals("true")) {
+                        // 将文件添加到zip文件
+                        Zip4jUtils.zipFile(toPath, zipFileName, expath.getToZipFolderPath());
+                        // FileUtil.getFolderPath(pv.exchangePath(fromPath)));
+
+                    }
+                    
+               	
 
                 }
                 fileCount++;

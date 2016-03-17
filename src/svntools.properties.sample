@@ -1,0 +1,91 @@
+#JAVA编写的清单COPY工具
+#listcopy.bat               会显示文件清单，版本号+文件路径
+#listcopy.bat FROMSVN       会按照文件清单以及配置，从svn库导出到指定的目录
+#listcopy.bat help          显示参数帮助信息
+# 支持{}模板变量方式
+
+workspace=E:/tmp/workspace
+temppath={workspace}/tmp
+zipwar={workspace}/tmp
+
+#清单文件相关
+file.excel=p:/因开发所致环境变更记录表模版-20160225产品线-合并-文书.xls
+#{workspace}/xls/因开发所致环境变更记录表模版-20150823-杜英恒-产品线.xls
+file.excel.folder={workspace}/xls
+   #文件过滤，逗号分隔  ,xls,xlsx
+file.excel.filter=20150820
+   #下面代表着读取清单路径时,目录开头=/[file.keyroot]/...  (包括LIST显示)
+file.keyroot=engineering
+file.excel.template={workspace}/因开发所致环境变更记录表模版.xls
+   #按照模板合并excel，否则=false
+file.excel.merge=true 
+
+#svn export相关
+svn.url=https://svn.ddddd.ccccc.com/sdfsdf/dddd
+svn.username=
+svn.password=
+   #下面代表着输出目录=[svn.tofolder]/[svn.keyroot]/...=p:/tmp/d/engineering/...
+svn.tofolder={temppath}/e
+svn.keyroot=engineering
+svn.tozip.enabled=true
+   #是否进行版本校验，true=必须指定有效版本号；false=可接受空版本号，按照最新版本处理，无效版本号会提示，但是按照最新版本处理
+svn.version.verify=false  
+
+
+#zip/war等文件类型相关
+zip.file={zipwar}/gt3nf-wsbs-2.0.23100.156.04013.00-5261.war
+zip.folder={zipwar}
+zip.folder.filter=5574
+   #下面代表着输出目录(root被排除)=[zip.tofolder]/...=p:/tmp/e/gt3nf-skin/...
+zip.keyroot=WebContent
+zip.tofolder={temppath}
+
+##以下为路径转换配置，使用 | 隔离
+    #如： [源路径]|[包路径]
+mapping.w.gt3nf-wsbs	              =gt3nf/web/gt3nf-wsbs/WebContent|gt3nf-wsbs/
+mapping.w.gt3nf-skin		          =gt3nf/web/gt3nf-skin/WebContent/|gt3nf-skin/
+mapping.w.gt3nf-service0              =gt3nf/web/gt3nf-service/WebContent|gt3nf-service
+mapping.w.gt3nf-service1              =gt3nf-service/src|gt3nf-service
+mapping.w.gt3nf-admin                 =gt3nf-admin/WebContent|gt3nf-admin
+mapping.w.gt3nf-portal                =portal/web/gt3nf-portal/WebContent|gt3nf-portal
+mapping.w.km-web                      =portal/web/km-web/WebContent|km-web
+mapping.w.gt3nf-thirdparty-client     =gt3nf/web/gt3nf-thirdparty-client/src|gt3nf-thirdparty-client
+mapping.w.tycx-wsbs                   =tycx/web/tycx-wsbs/WebContent|tycx-wsbs
+mapping.w.vfs_home                =src/portal/vfs_home|vfs_home
+#mapping.w.tycx-service                =tycx/java/com.foresee.tycx.service/src|tycx-service
+
+	#jar包
+mapping.j.com.foresee.gt3nf.service   =gt3nf/java/com.foresee.gt3nf.service/src|com.foresee.gt3nf.service
+mapping.j.com.foresee.gt3nf.wsbs      =gt3nf/java/com.foresee.gt3nf.wsbs/src|com.foresee.gt3nf.wsbs
+mapping.j.gov.chinatax.gt3nf          =gt3nf/java/gov.chinatax.gt3nf/src|gov.chinatax.gt3nf
+mapping.j.com.foresee.tax.nsrqx       =tax/java/com.foresee.tax.nsrqx/src|com.foresee.tax.nsrqx
+mapping.j.com.foresee.portal.biz      =com.foresee.portal.biz/src|com.foresee.portal.biz
+mapping.j.com.foresee.portal          =com.foresee.portal/src|com.foresee.portal
+#mapping.j.com.foresee.tycx.service    =com.foresee.tycx.service|com.foresee.tycx.service
+mapping.j.com.foresee.etax.bizfront   =etax/java/com.foresee.etax.bizfront/src|com.foresee.etax.bizfront
+mapping.j.com.foresee.tax.service     =tax/java/com.foresee.tax.service/src|com.foresee.tax.service
+mapping.j.com.foresee.gt3nf.task      =src/gt3nf/java/com.foresee.gt3nf.task/src|com.foresee.gt3nf.task
+mapping.j.com.foresee.tycx.service    =tycx/java/com.foresee.tycx.service/src|com.foresee.tycx.service
+mapping.j.com.foresee.gt3nf.thirdpartyfront =com.foresee.gt3nf.thirdpartyfront/src|com.foresee.gt3nf.thirdpartyfront
+
+##############################
+
+#目录Copy相关
+ci.workspace={workspace}/d
+ci.tofolder={workspace}/e
+ci.keyroot=engineering
+
+
+
+#package相关，比如war、jar
+package.list=gt3nf-service,gt3nf-wsbs,gt3nf-skin,gt3nf-portal,gt3nf-admin,gt3nf-thirdparty-front,km-web,tycx-wsbs,tycx-service
+
+
+#按照svn版本号，提取增量清单
+svndiff.url=https://
+svndiff.startversion=5000
+svndiff.endversion=5998
+   #下面代表着生成版本差异清单时,目录开头=/[svndiff.keyroot]/... =/src/...
+svndiff.keyroot=
+
+

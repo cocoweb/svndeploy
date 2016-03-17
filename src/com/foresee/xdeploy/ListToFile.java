@@ -12,13 +12,16 @@ import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.lang.StringUtils;
+import org.apache.log4j.Logger;
 
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
-import com.foresee.xdeploy.utils.ConsoleTextArea;
+import com.foresee.xdeploy.win.Mainwin;
 
 public class ListToFile {
+    static Logger log  = Logger.getLogger(ListToFile.class );
+    
     public ListToFile() {
     }
 
@@ -230,9 +233,12 @@ public class ListToFile {
     }
 
     public static void main(String[] args) {
-        ConsoleTextArea.showForm();
+        //ConsoleTextArea.showForm();
+        //ConsoleString.createConsole();
         
-        if (args.length > 0 && args[0].startsWith("-")) {
+        if (args.length <=0 ){
+            Mainwin.showForm();
+        }else if(args[0].startsWith("-")) {
             // 使用带- 的命令行模式
             parserCLICmd(cmdCLIOptions(), args);
         } else
@@ -241,6 +247,10 @@ public class ListToFile {
         System.out.println("\nRun at >>> " + DateUtil.getCurrentDate("yyyy-MM-dd HH:mm:ss"));
 
         // System.out.print(PropFile.getExtPropertiesInstance().getProperty("file.excel"));
+        
+       //log.info(ConsoleString.Content.toString()); 
+       //log.info(ConsoleTextArea.getString());
+       //System.exit(0);
 
     }
 
