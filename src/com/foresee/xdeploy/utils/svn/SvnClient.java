@@ -26,6 +26,7 @@ import org.tmatesoft.svn.core.wc.SVNStatusType;
 import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.utils.PathUtils;
 
 public class SvnClient {
@@ -221,14 +222,15 @@ public class SvnClient {
 
 	public static void main(String[] args) {
 		try {
-			// SvnClient.getInstance("xieying",
-			// "xieying").svnExport("https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/branch/20150812/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_ccstool.js",
+		    
+		    PropValue pv = new PropValue("/svntools.properties");
+			// SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password")).svnExport("https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/branch/20150812/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_ccstool.js",
 			// "3063", "p:/tmp/c/","branch");
-			ArrayList<String> xlist = SvnClient.getInstance("xieying", "xieying,1")
+			ArrayList<String> xlist = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"))
 					.svnDiff("https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/branch/20150812", "3395", "3442", "src");
 
 			for (String sfile : xlist) {
-				SvnClient.getInstance("xieying", "xieying,1")
+				SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"))
 						.svnLogRead("https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/trunk/" + sfile, "3395", "3442");
 			}
 		} catch (SVNException e) {
