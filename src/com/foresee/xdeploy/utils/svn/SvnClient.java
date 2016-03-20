@@ -102,6 +102,8 @@ public class SvnClient {
 		//System.out.println("export 版本：" + Long.toString(re) + "|| url=" + url);
 
 	}
+	
+	
 
 	private static ArrayList<String> changeList = new ArrayList<String>();
 	private static String svnDiffKeyroot = "";

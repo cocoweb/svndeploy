@@ -20,7 +20,7 @@ public class SvnFilesTest {
 
     @Test
     public void iterator() {
-        SvnFiles sflist = efh.loadSvnFiles(new File("p:/因开发所致环境变更记录表模版-20150922-产品线-合并.xls"));
+        SvnFiles sflist = efh.loadSvnFiles(new File("p:/因开发所致环境变更记录表模版-20150823-杜英恒-产品线.xls"));
         Iterator<SvnFile> it = sflist.iterator();
         while (it.hasNext()) {
             System.out.println(it.next().getPath());

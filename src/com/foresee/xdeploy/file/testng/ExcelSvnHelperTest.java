@@ -2,6 +2,7 @@
 package com.foresee.xdeploy.file.testng;
 
 import java.io.File;
+import java.util.Iterator;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -10,6 +11,7 @@ import com.foresee.xdeploy.ListToFileHelper;
 import com.foresee.xdeploy.file.ExcelFiles;
 import com.foresee.xdeploy.file.ExcelSvnHelper;
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.file.SvnFile;
 import com.foresee.xdeploy.file.SvnFiles;
 
 public class ExcelSvnHelperTest {
@@ -26,7 +28,7 @@ public class ExcelSvnHelperTest {
     @Test
     public void loadSvnFilesList() {
 
-        System.out.println(efh.loadSvnFilesList(new File("p:/因开发所致环境变更记录表模版-20150922-产品线-合并.xls")));
+        System.out.println(efh.loadSvnFilesList(new File("p:/因开发所致环境变更记录表模版-20150823-杜英恒-产品线.xls")));
     } 
 
     @Test
@@ -47,7 +49,11 @@ public class ExcelSvnHelperTest {
         //ScanIncrementFiles scanFiles = ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter, sTofile);
         SvnFiles sf = efh.loadSvnFiles(new ExcelFiles(pv));
         
-        //ListToFileHelper.displayList(sf);
+        Iterator<SvnFile> it = sf.iterator();
+        while (it.hasNext()) {
+            System.out.println(it.next().getPath());
+        }
+
 
     }
 

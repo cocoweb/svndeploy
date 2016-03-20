@@ -21,19 +21,20 @@ import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleScanRow;
 public class ExcelSvnHelper {
 
     public static final String SheetName = "功能清单";
-    final SvnFiles svnfiles = new SvnFiles();
+    
 
     public ExcelSvnHelper() {
         // TODO Auto-generated constructor stub
     }
 
     public SvnFiles loadSvnFiles(ExcelFiles excelfiles) {
+        final SvnFiles svnfiles = new SvnFiles();
 
         for (String filepath : excelfiles.getExcelList()) {
             if (excelfiles.mergeToFileName.isEmpty()) 
-                loadSvnFiles(new File(filepath));
+                svnfiles.addAll( loadSvnFiles(new File(filepath)).SvnFileList);
             else
-                loadSvnFiles(filepath, excelfiles.mergeToFileName);
+                svnfiles.addAll(loadSvnFiles(filepath, excelfiles.mergeToFileName).SvnFileList);
         }
 
         // 排序返回的清单
@@ -60,6 +61,7 @@ public class ExcelSvnHelper {
      * @return
      */
     public SvnFiles loadSvnFiles(File xfile) {
+        final SvnFiles svnfiles = new SvnFiles();
         final String filename = xfile.getName();
 
         try {
@@ -88,6 +90,7 @@ public class ExcelSvnHelper {
     public int iExcelRowCount = 1;
 
     public SvnFiles loadSvnFiles(final String sfile, String tofilename) {
+        final SvnFiles svnfiles = new SvnFiles();
 
         try {
             ExcelMoreUtil.copyExcelDataToFile(sfile, tofilename, SheetName, new IHandleCopyRow() {

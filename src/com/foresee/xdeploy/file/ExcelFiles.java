@@ -43,6 +43,14 @@ public class ExcelFiles extends XdeployBase{
         this(sfilePath,"",FILE);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "ExcelFiles [" + getExcelList() + "]";
+    }
+
     public ExcelFiles(String sFolderPath, String sFilter) {
         this("",sFolderPath,BATCH);
     }

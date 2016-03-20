@@ -31,6 +31,9 @@ svn.tozip.enabled=true
    #是否进行版本校验，true=必须指定有效版本号；false=可接受空版本号，按照最新版本处理，无效版本号会提示，但是按照最新版本处理
 svn.version.verify=false  
 
+svn.workspace=E:/svn_home/xxx/baseline/0319
+svn.autocommit=false
+
 
 #zip/war等文件类型相关
 zip.file={zipwar}/gt3nf-wsbs-2.0.23100.156.04013.00-5261.war

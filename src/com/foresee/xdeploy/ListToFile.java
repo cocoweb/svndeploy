@@ -18,6 +18,7 @@ import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
 import com.foresee.xdeploy.win.Mainwin;
+import com.foresee.xdeploy.win.Mainwin2;
 
 public class ListToFile {
     static Logger log  = Logger.getLogger(ListToFile.class );
@@ -237,7 +238,7 @@ public class ListToFile {
         //ConsoleString.createConsole();
         
         if (args.length <=0 ){
-            Mainwin.showForm();
+            Mainwin2.showForm();
         }else if(args[0].startsWith("-")) {
             // 使用带- 的命令行模式
             parserCLICmd(cmdCLIOptions(), args);

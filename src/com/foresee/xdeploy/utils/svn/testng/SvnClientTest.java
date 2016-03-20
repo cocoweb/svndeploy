@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.utils.testng;
+package com.foresee.xdeploy.utils.svn.testng;
 
 import org.testng.annotations.Test;
 import org.testng.annotations.BeforeClass;
