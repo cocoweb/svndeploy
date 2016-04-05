@@ -1,5 +1,8 @@
 package com.foresee.xdeploy.file;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import com.foresee.test.util.lang.DateUtil;
@@ -23,6 +26,8 @@ public class PropValue extends ParamPropValue  {
     public String excelFolderFilter = "";
     public String scanOption = ""; // 清单文件选项 默认BATCH为file.excel.folder目录下的批量，
     public Map<String, String> pkgmap = null;
+    
+    public List<String> pkgList = null;
 
     public PropValue(String strFileName) {
         super(strFileName);
@@ -48,6 +53,8 @@ public class PropValue extends ParamPropValue  {
         excelfiletemplate = getProperty("file.excel.template");
 
         pkgmap = getSectionItems("mapping");
+        
+        pkgList = Arrays.asList(getProperty("package.list").split(","));     
 
         ExchangePath.InitExchangePath(this);   //初始化路径转换器
         // xprop.

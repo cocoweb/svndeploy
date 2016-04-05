@@ -105,7 +105,7 @@ public class Mainwin2 {
     private void initialize() throws IOException {
         frame = new JFrame();
         frame.setTitle("版本清单工具");
-        frame.setBounds(100, 100, 762, 545);
+        frame.setBounds(100, 100, 897, 583);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout(5, 5));
         
@@ -209,6 +209,14 @@ public class Mainwin2 {
             }
         });
         panel_3.add(btnsvn);
+        
+        JButton btnNewButton_3 = new JButton("从War导出到zip");
+        btnNewButton_3.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                listTofileHelper.scanWarToZip();
+            }
+        });
+        panel_3.add(btnNewButton_3);
         panel_5.setLayout(new BoxLayout(panel_5, BoxLayout.X_AXIS));
         
         final JLabel lblMessage = new JLabel("");

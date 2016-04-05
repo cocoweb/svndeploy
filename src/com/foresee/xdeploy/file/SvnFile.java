@@ -15,6 +15,7 @@ public class SvnFile {
     String FilePath="";
     ArrayList<String> svnfileDefList = null;
     SvnFiles parentSvnFiles =null;
+    String keyRoot="";
     
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -23,7 +24,7 @@ public class SvnFile {
     public String toString() {
         return "Ver:[" + getVer() + "] |"
                 + getProj() + "| " 
-                + getPath() + "  " 
+                + getPath(keyRoot) + "  " 
                 + getMan()
                 + " << " + getExcelName() + "\n";
 
@@ -51,7 +52,7 @@ public class SvnFile {
        
     }
     public String getPath(){
-        return getPath("engineering");
+        return getPath("");
         
     }
     public String getMan(){
@@ -63,5 +64,9 @@ public class SvnFile {
        
     }
     
+    
+    public void setKeyRoot(String keyroot){
+        keyRoot = keyroot;
+    }
 
 }

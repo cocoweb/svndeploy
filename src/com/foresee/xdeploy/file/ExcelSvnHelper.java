@@ -28,7 +28,7 @@ public class ExcelSvnHelper {
     }
 
     public SvnFiles loadSvnFiles(ExcelFiles excelfiles) {
-        final SvnFiles svnfiles = new SvnFiles();
+        final SvnFiles svnfiles = new SvnFiles(excelfiles);
 
         for (String filepath : excelfiles.getExcelList()) {
             if (excelfiles.mergeToFileName.isEmpty()) 

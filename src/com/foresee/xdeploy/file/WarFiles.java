@@ -35,7 +35,11 @@ public class WarFiles{
         
         for (File xfile : clFiles) {
             if (xfile.getName().contains(sWarName))
-                return new WarFile(xfile) ;
+            {
+                WarFile wf = new WarFile(xfile) ;
+                wf.setWarName(sWarName);
+                return wf;
+            }
 
         }
         return null;

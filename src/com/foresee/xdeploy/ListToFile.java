@@ -51,17 +51,18 @@ public class ListToFile {
 
     public static void actionOptions(String[] args) {
         // 根据参数设置Properties文件
-        ToFileHelper listTofileHelper = args.length > 2 ? new ToFileHelper(args[2]) : new ToFileHelper();
+        //ToFileHelper listTofileHelper = args.length > 2 ? new ToFileHelper(args[2]) : new ToFileHelper();
+        ListToFileHelper listTofileHelper = args.length > 2 ? new ListToFileHelper(args[2]) : new ListToFileHelper();
 
         if ((args.length == 0) || "LIST".equals(args[0].toUpperCase())) {
-            listTofileHelper.pv.scanOption = args.length > 1 ? args[1] : ScanIncrementFiles.BATCH;
+            listTofileHelper.pv.scanOption = args.length > 1 ? args[1] : ListToFileHelper.BATCH;
             // xListtofile.scanOption = "FILE";
             listTofileHelper.scanPrintList();
 
         } else if (args.length > 0) {
             String cmdOption = args[0];
 
-            listTofileHelper.pv.scanOption = args.length > 1 ? args[1] : ScanIncrementFiles.BATCH; // 单文件or
+            listTofileHelper.pv.scanOption = args.length > 1 ? args[1] : ListToFileHelper.BATCH; // 单文件or
                                                                                                    // 批量
 
             if (cmdOption.toUpperCase().equals("FROMSVN")) { // 从svn库导出到临时目录，或者workspace
@@ -69,10 +70,10 @@ public class ListToFile {
             } else if (cmdOption.toUpperCase().equals("FROMCI")) { // //从指定目录
                                                                    // 导出到临时目录，或者workspace
                 listTofileHelper.scanWorkspaceToPath();
+            } else if (cmdOption.toUpperCase().equals("FROMZIP")) { // //从指定war包目录
+                listTofileHelper.scanWarToZip(); // scanZipToPath();
             } else if (cmdOption.toUpperCase().equals("DIFFVER")) { // //从指定目录
                 listTofileHelper.svnDiffToPath();
-            } else if (cmdOption.toUpperCase().equals("FROMZIP")) { // //从指定目录
-                listTofileHelper.scanWarToZip(); // scanZipToPath();
             } else
                 echoCommandInfo();
         } else if (args.length > 0 && "HELP".equals(args[0].toUpperCase())) {
@@ -167,14 +168,14 @@ public class ListToFile {
                 //return;
             }
 
-            ToFileHelper listTofileHelper = null;
+            ListToFileHelper listTofileHelper = null;
 
             // 属性组 [-P <name=value> | --propertiesfile <PropertiesFile>]
             if (cmds.hasOption("propfile")) {
-                listTofileHelper = new ToFileHelper(cmds.getOptionValue("propfile"));
+                listTofileHelper = new ListToFileHelper(cmds.getOptionValue("propfile"));
 
             } else {
-                listTofileHelper = new ToFileHelper();
+                listTofileHelper = new ListToFileHelper();
 
                 if (cmds.hasOption("P")) {  //提取参数
                     PropValue.setArgsProp(cmds.getOptionProperties("P"));
@@ -185,9 +186,9 @@ public class ListToFile {
 
             // 是否批量清单 [-B | --befile]
             if (cmds.hasOption("befile")) {
-                listTofileHelper.pv.scanOption = ScanIncrementFiles.FILE;
+                listTofileHelper.pv.scanOption = listTofileHelper.FILE;
             } else
-                listTofileHelper.pv.scanOption = ScanIncrementFiles.BATCH;
+                listTofileHelper.pv.scanOption = listTofileHelper.BATCH;
 
             // 互斥命令组 -d | -h | -l | -s | -z
             if (cmds.hasOption('d')) {
@@ -200,27 +201,27 @@ public class ListToFile {
                 listTofileHelper.scanWarToZip();
             }
             
-            System.out.println("   args:  svn.url            ="+listTofileHelper.pv.getProperty("svn.url"));
-            System.out.println("   args:  file.excel.merge   ="+listTofileHelper.pv.getProperty("file.excel.merge"));
-
+ 
             // 打印opts的名称和值
             System.out.println("--------------------------------------");
-            Option[] opts = cmds.getOptions();
-            if (opts != null) {
-                for (Option opt1 : opts) {
-                    String name = opt1.getOpt();
-                    String lname= opt1.getLongOpt();
-                    if (StringUtils.isEmpty(lname))
-                        lname = name;
-                    String value = cmds.getOptionValue(lname);
-                    System.out.println(lname + "=>" + value);
-                }
-            }
-
-            String[] xargs = cmds.getArgs();
-            if (Array.getLength(xargs) > 0) {
-                System.out.println("Arguments : + Arrays.toString(xargs)" + xargs[0]);
-            }
+           System.out.println("   args:  svn.url            ="+listTofileHelper.pv.getProperty("svn.url"));
+            System.out.println("   args:  file.excel.merge   ="+listTofileHelper.pv.getProperty("file.excel.merge"));
+//            Option[] opts = cmds.getOptions();
+//            if (opts != null) {
+//                for (Option opt1 : opts) {
+//                    String name = opt1.getOpt();
+//                    String lname= opt1.getLongOpt();
+//                    if (StringUtils.isEmpty(lname))
+//                        lname = name;
+//                    String value = cmds.getOptionValue(lname);
+//                    System.out.println(lname + "=>" + value);
+//                }
+//            }
+//
+//            String[] xargs = cmds.getArgs();
+//            if (Array.getLength(xargs) > 0) {
+//                System.out.println("Arguments : + Arrays.toString(xargs)" + xargs[0]);
+//            }
 
         } catch (ParseException e) {
             String mess = e.getLocalizedMessage();

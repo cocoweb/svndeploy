@@ -92,6 +92,17 @@ public class ExchangePath {
         return retmap;
     }
 
+    /**
+     * @return the toZipPath
+     */
+    public String getToZipPath() {
+        return ToZipPath;
+    }
+    public String getToZipPath(String keyRoot) {
+        return keyRoot  + ToZipPath.substring(ToZipPath.indexOf("/"));
+        
+    }
+
     public boolean inJar() {
         return MappingKey.indexOf("j.") == 0;
     }
@@ -131,7 +142,7 @@ public class ExchangePath {
         String[] xpath = findSrcPath(srcPath);
         if (Array.getLength(xpath)>1){
             
-            String jarName = xpath[2].substring(2);
+            String jarName = xpath[1];
             String fromPath = PathUtils.trimFolderStart(
                   srcPath.substring(srcPath.indexOf(xpath[0]) + xpath[0].length())).replace(".java",".class");
             String toPath = PathUtils.addFolderEnd(xpath[1]) + fromPath;
@@ -145,12 +156,15 @@ public class ExchangePath {
         return ep;
     }
     
-
     
     public String getToZipFolderPath(){
         return FileUtil.getFolderPath(ToZipPath);
     }
-    
+    public String getToZipFolderPath(String keyRoot){
+        String ss = getToZipFolderPath();
+        return keyRoot + ss.substring(ss.indexOf("/"));
+    }
+
     public static String getTrunkURL(String srcPath){
         String fromPath = PathUtils.autoPathRoot(srcPath, "trunk");
         // svn库的文件绝对路径URL

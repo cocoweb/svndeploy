@@ -35,6 +35,7 @@ import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
  * @author allan.xie 根据清单生成 版本号和路径
  *
  */
+@Deprecated
 public class ScanIncrementFiles {
     public static final String SheetName = "功能清单";
 

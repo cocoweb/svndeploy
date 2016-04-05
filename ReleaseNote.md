@@ -46,6 +46,15 @@
 3、比对检查zip、excel
 
 ##Release Note
+v0.26-20160405
+修改清单第一个无效，导致无法导出svn问题
+加入web工程检查，定义在配置文件中的  #package相关，比如war、jar   package.list=
+
+v0.24-
+war包导出增量几个问题：
+1、多个工程要有多个文件，从哪个包里来的，放到哪个目录去（依赖清单web工程字段）
+2、war包中的jar抽取bug问题
+
 v0.23-20160321
 可手动、制动提交svn代码
 需设定指向svn workspace

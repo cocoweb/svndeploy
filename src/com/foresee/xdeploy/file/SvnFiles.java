@@ -9,11 +9,16 @@ import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
 
 public class SvnFiles extends XdeployBase implements Iterable<SvnFile> {
     public List<ArrayList<String>> SvnFileList=new ArrayList<ArrayList<String>>();
+    public ExcelFiles excelFiles;
+
+    public SvnFiles(ExcelFiles excelfiles) {
+        excelFiles= excelfiles;
+       
+    }
 
     public SvnFiles() {
        
     }
-
     /**
      * @param arg0
      * @return

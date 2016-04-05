@@ -40,6 +40,7 @@ public class ToFileHelper {
         pv = new PropValue(strFileName);
     }
     
+    @Deprecated
     public void scanPrintList() {
         System.out.println("===========显示待处理文件清单=================");
 
@@ -101,6 +102,7 @@ public class ToFileHelper {
     /**
      * 扫描清单文件， 从svn导出每一个文件到 指定目录
      */
+    @Deprecated
     public void scanSvnToPath() {
         System.out.println("===========从svn库导出到临时目录，或者workspace=================");
 
@@ -191,6 +193,7 @@ public class ToFileHelper {
     /**
      * 扫描清单文件，从指定目录 导出文件到 临时输出目录
      */
+    @Deprecated
     public void scanWorkspaceToPath() {
         System.out.println("===========从指定目录 导出到临时目录，或者workspace=================");
 
@@ -224,6 +227,7 @@ public class ToFileHelper {
     /**
      * 根据起始版本号，获取文件清单；从指定目录 导出到输出目录
      */
+    @Deprecated
     public void svnDiffToPath() {
         System.out.println("===========根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单=================");
 
@@ -251,7 +255,8 @@ public class ToFileHelper {
         }
 
     }
-
+    
+    @Deprecated
     public void scanWarToZip() {
         System.out.println("===========从指定压缩文件war、zip、jar 导出到zip文件=================");
         

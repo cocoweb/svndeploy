@@ -22,6 +22,8 @@ public class WarFile {
     public File warFile = null;
 
     public ZipFile warZipFile = null;
+    
+    private String warName="";
 
     public WarFile(String fileName) {
         this(new File(fileName));
@@ -35,6 +37,13 @@ public class WarFile {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
+    }
+    
+    public String getWarName(){
+        return warName;
+    }
+    public void setWarName(String warname){
+        warName = warname;
     }
 
     public String getName() {
@@ -71,7 +80,7 @@ public class WarFile {
         
         if (expath.SrcPath.lastIndexOf(".java") > 0||expath.inJar()) { // 从jar抽取class、xml
             
-            // TODO  同时抽取java源文件加入到zip中 
+            //   同时抽取java源文件加入到zip中 
             retint =  copyJavaToZip(zipOutFile, expath);
             
             if (retint==0){
@@ -112,7 +121,7 @@ public class WarFile {
     
     private int copyFileToZip(ZipFile zipOutFile, ExchangePath expath){
         if(expath.FromPath.isEmpty()) return -1;
-         return copyFileToZip(zipOutFile,expath.FromPath,expath.ToZipPath);
+         return copyFileToZip(zipOutFile,expath.FromPath,expath.getToZipPath(warName));
          
      }
     

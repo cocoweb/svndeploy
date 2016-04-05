@@ -3,6 +3,7 @@ package com.foresee.xdeploy.testng;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
+import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.ListToFileHelper;
 
 public class ListToFileHelperTest {
@@ -14,8 +15,12 @@ public class ListToFileHelperTest {
 
 
     @Test
-    public void displayList() {
-      throw new RuntimeException("Test not implemented");
+    public void tt() {
+        String spack = "gt3nf-wsbs、gt3nf-service";
+        String[] pakages=StringUtil.split(spack,",、，");
+        
+        System.out.println(pakages[0]+"||"+pakages[1]);
+
     }
 
     @Test
