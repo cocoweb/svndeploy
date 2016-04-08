@@ -37,7 +37,8 @@ public class ToFileHelper {
     }
 
     public ToFileHelper(String strFileName) {
-        pv = new PropValue(strFileName);
+        pv = PropValue.getInstance(strFileName);
+
     }
     
     @Deprecated
@@ -177,6 +178,9 @@ public class ToFileHelper {
                 fileCount++;
             } catch (SVNException e) {
                 e.printStackTrace();
+            } catch (Exception e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
             }
         }
         

@@ -1,16 +1,18 @@
 package com.foresee.xdeploy.file;
 
 import java.util.ArrayList;
+import java.util.List;
 
+import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.utils.PathUtils;
 
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_FileName;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Man;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_FileName;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Man;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Ver;
 
-public class SvnFile {
+public class SvnFile extends XdeployBase {
     
     String FilePath="";
     ArrayList<String> svnfileDefList = null;
@@ -68,5 +70,38 @@ public class SvnFile {
     public void setKeyRoot(String keyroot){
         keyRoot = keyroot;
     }
+    
+    public boolean checkProject() throws Exception{
+        List<String> alist = PropValue.getInstance().pkgList;
+        boolean bret = false;
+        
+        String[] packages =StringUtil.split(getProj(),",、，"); 
+        
+
+        for (String pak : packages) {
+            if (alist.indexOf(pak)<0){
+                bret = false;
+                throw new Exception("无效的web工程名："+getProj());
+            }else bret =true;
+       
+        }
+        
+        return bret;
+        
+    }
+    
+    ExchangePath ep =null;
+    public ExchangePath getExchange(){
+        if (ep==null){
+            try {
+                ep = ExchangePath.exchange(getPath());
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        }
+        return ep;
+    }
+
 
 }

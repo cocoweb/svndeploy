@@ -18,6 +18,7 @@ import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.SvnFile;
 import com.foresee.xdeploy.file.SvnFiles;
+import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.WarFile;
 import com.foresee.xdeploy.file.WarFiles;
 import com.foresee.xdeploy.utils.PathUtils;
@@ -39,7 +40,7 @@ public class ListToFileHelper {
     }
 
     public ListToFileHelper(String propFileName) {
-        pv = new PropValue(propFileName);
+        pv = PropValue.getInstance(propFileName);
         excelsvnhelper = new ExcelSvnHelper();
     }
 
@@ -56,6 +57,8 @@ public class ListToFileHelper {
 
         // 扫描并获取全部excel内容
         SvnFiles sfs = loadSvnFiles();
+        
+        //sfs.removeDeuplicate();
 
         printList(sfs);
 
@@ -70,7 +73,7 @@ public class ListToFileHelper {
             String sPath = sf.getPath(pv.filekeyroot);
             sf.setKeyRoot(pv.filekeyroot);
             try {
-                checkProject(sf.getProj());
+                sf.checkProject();
             } catch (Exception e) {
                 
                 //e.printStackTrace();
@@ -99,8 +102,8 @@ public class ListToFileHelper {
         }
         System.out.println("\n共有文件数量：" + Integer.toString(svnfiles.size()));
         System.out.println("==空的版本号，将获取最新的版本。==请仔细检查清单格式，路径不对将无法从svn获取。");
-        // if (pv.getProperty("file.excel.merge").equals("true"))
-        // System.out.println(" >>>合并生成了EXCEL为：" + sTofile);
+        if (pv.getProperty("file.excel.merge").equals("true"))
+             System.out.println(" >>>合并生成了EXCEL为：" + ExcelFiles.genOutExcelFileName());
 
         if (bugStr.length() > 0) {
             System.err.println("\n<<<<文件有重复>>>>请注意核对，如下：");
@@ -108,23 +111,7 @@ public class ListToFileHelper {
         }
     }
     
-    private boolean checkProject(String sProj) throws Exception{
-        List<String> alist = pv.pkgList;
-        boolean bret = false;
-        String[] packages =StringUtil.split(sProj,",、，"); 
-        
 
-        for (String pak : packages) {
-            if (alist.indexOf(pak)<0){
-                bret = false;
-                throw new Exception("无效的web工程名："+sProj);
-            }else bret =true;
-       
-        }
-        
-        return bret;
-        
-    }
 
     /**
      * 扫描清单文件， 从svn导出每一个文件到 指定目录
@@ -134,6 +121,9 @@ public class ListToFileHelper {
 
         // 扫描并获取全部excel内容
         SvnFiles sfs = loadSvnFiles();
+        
+        // 排重
+        sfs.removeDeuplicate();
 
         svnToPath(sfs);
 
@@ -145,7 +135,9 @@ public class ListToFileHelper {
 
     public String svnToPath(SvnFiles svnfiles) {
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
-        String zipFileName = pv.genOutZipFileName();
+        ToZipFile tozipfile = new ToZipFile(xclient);
+        
+        //String zipFileName = pv.genOutZipFileName();
         String exportToPath = pv.svntofolder;
 
         int fileCount = 0;
@@ -163,7 +155,7 @@ public class ListToFileHelper {
                 // "trunk");
                 ExchangePath expath = ExchangePath.exchange(fromPath);
 
-                String sUrl = expath.getTrunkURL(); // pv.svnurl + fromPath; //
+                String sUrl = expath.getSvnURL() ;//expath.getTrunkURL(); // pv.svnurl + fromPath; //
                                                     // svn库的文件绝对路径URL
                 String sVer = svnfile.getVer(); // aRow.get(ColList_Ver);
                 String toPath = PathUtils.autoUrlToPath(sUrl, exportToPath, pv.keyRootFolder);
@@ -180,7 +172,7 @@ public class ListToFileHelper {
                             System.out.println("export 版本：" + sVer + "|| url=" + sUrl);
 
                         } else {
-                            System.out.println(" -->>>文件版本不存在：[" + sVer + "]" + sUrl);
+                            System.err.println(" -->>>文件版本不存在：[" + sVer + "]" + sUrl);
                             continue;
                         }
                     } else {// 允许不校验版本号
@@ -202,17 +194,15 @@ public class ListToFileHelper {
 
                         } catch (SVNException e) {
                             e.printStackTrace();
-                            System.out.println(" -->>>文件版本不存在：[" + sVer + "]" + sUrl);
+                            System.err.println(" -->>>文件版本不存在：[" + sVer + "]" + sUrl);
                         }
 
                     }
 
-                    // TODO
-
+                 
                     if (pv.getProperty("svn.tozip.enabled").equals("true")) {
                         // 将文件添加到zip文件
-                        addToZip(toPath, zipFileName, expath, svnfile);
-                        // FileUtil.getFolderPath(pv.exchangePath(fromPath)));
+                        tozipfile.addToZip(toPath, expath, svnfile);
 
                     }
 
@@ -220,31 +210,33 @@ public class ListToFileHelper {
                 fileCount++;
             } catch (SVNException e) {
                 e.printStackTrace();
+            } catch (Exception e1) {
+                e1.printStackTrace();
             }
         }
 
         System.out.println("\nTotal " + Integer.toString(fileCount) + " Files, Exported to path ="
                 + PathUtils.addFolderEnd(exportToPath) + pv.keyRootFolder);
 
-        Zip4jUtils.InfoZipFile(zipFileName);
+        Zip4jUtils.InfoZipFile(tozipfile.toZipPath);
 
         return exportToPath;
 
     }
 
-    private void addToZip(String toPath, String zipFileName, ExchangePath expath, SvnFile svnfile) {
-
-        String[] packages =StringUtil.split(svnfile.getProj(),",、，"); 
-        // if (spack.contains(","))
-        // pakages = spack.split(",");
-
-        for (String pak : packages) {
-            //System.out.println(pak + "@@" + expath.getToZipFolderPath());
-            if(new File(toPath).exists())
-                Zip4jUtils.zipFile(toPath, zipFileName, expath.getToZipFolderPath(pak));//??
-        }
-
-    }
+//    private void addToZip(String toPath, String zipFileName, ExchangePath expath, SvnFile svnfile) {
+//
+//        String[] packages =StringUtil.split(svnfile.getProj(),",、，"); 
+//        // if (spack.contains(","))
+//        // pakages = spack.split(",");
+//
+//        for (String pak : packages) {
+//            //System.out.println(pak + "@@" + expath.getToZipFolderPath());
+//            if(new File(toPath).exists())
+//                Zip4jUtils.zipFile(toPath, zipFileName, expath.getToZipFolderPath(pak));//??
+//        }
+//
+//    }
 
     public void commitsvn() {
         ExcelFiles excelfiles = new ExcelFiles(pv);
@@ -284,6 +276,8 @@ public class ListToFileHelper {
 
         // 扫描并获取全部excel内容
         SvnFiles sfs = loadSvnFiles();
+        // 排重
+        sfs.removeDeuplicate();
 
         warToZip(sfs);
 
@@ -291,90 +285,37 @@ public class ListToFileHelper {
 
     public void warToZip(SvnFiles svnfiles) {
 
-        String zipfile = pv.getProperty("zip.file");
-        String zipfoler = pv.getProperty("zip.folder");
-        String zipfolderfilter = pv.getProperty("zip.folder.filter");
-
         int fileCount = 0;
 
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
 
-        String toZip = pv.genOutZipFileName();
-        ZipFile toZipFile = Zip4jUtils.genZipFile(toZip);
+        ToZipFile tozipfile = new ToZipFile(xclient);
 
         // war包的清单
-        WarFiles warlist = new WarFiles(zipfoler, zipfolderfilter);
+        WarFiles warlist = new WarFiles(pv.getProperty("zip.folder"), pv.getProperty("zip.folder.filter"));
+        System.out.println("Loading.." + warlist);
+        
 
         // 扫描excel文件的清单
-        // for (ArrayList<String> aRow :
-        // ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder,
-        // pv.scanOption, pv.excelFolderFilter)) {
-        for (SvnFile sf : svnfiles) {
+        for (SvnFile svnfile : svnfiles) {
 
             try {
-                String sProject = sf.getProj(); // aRow.get(ColList_ProjPackage);
-                String srcPath = sf.getPath(); // aRow.get(ColList_Path);
-
-                //ExchangePath expath = ExchangePath.exchange(srcPath); // pv.exchangeJarPath(srcPath);
-                
-                fileCount += addToZip(warlist, toZipFile,  xclient, sf);
+                fileCount += tozipfile.addToZip(warlist, svnfile);
 
             } catch (Exception e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
 
         System.out.println("\n    >>> 成功抽取文件数:" + fileCount);
 
-        // TODO 对zip文件进行检查，对比excel的文件，和zip中的文件
+        //   对zip文件进行检查，对比excel的文件，和zip中的文件
+        tozipfile.FileInfo();
 
-        Zip4jUtils.InfoZipFile(toZip);
+        //Zip4jUtils.InfoZipFile(tozipfile.toZipPath);
 
     }
 
-    private int addToZip(WarFiles warlist, ZipFile toZipFile, SvnClient xclient, SvnFile sf) {
-        int fileCount = 0;
-        
-        ExchangePath expath = ExchangePath.exchange(sf.getPath()); // pv.exchangeJarPath(srcPath);
-
-        String[] packages =StringUtil.split(sf.getProj(),",、，"); //sf.getProj().split(",");
-        for (String pak : packages) {
-            // 判断清单中的工程名，是否包含在 war包中
-            // 包含就抽取到目标路径
-            WarFile warfile = warlist.getWarFile(pak);
-            if (warfile != null) {
-                if (warfile.copyToZip(toZipFile, expath) == 0)
-                    fileCount++;
-                if(expath.isJava()){
-                    //同时抽取java源文件加入到zip中
-                    String tmpFilePath = pv.tempPath+"/"+expath.getFileName();
-                   
-                    try {
-                        xclient.svnExport(expath.getTrunkURL(), sf.getVer(), tmpFilePath,pv.keyRootFolder);
-                        // 将文件添加到zip文件
-                        Zip4jUtils.zipFile(tmpFilePath,toZipFile,expath.getToZipFolderPath());
-                                           
-                        fileCount++;
-                        FileUtil.delFile(tmpFilePath);
-                    } catch (SVNException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                   
-                   
-                    }
-
-            }else {
-                System.err.println("   !!没能抽取  :" + expath.SrcPath);
-            }
-
-        }
-
-        
-
-        return fileCount;
-    }
 
     /**
      * 扫描清单文件，从指定目录 导出文件到 临时输出目录
@@ -405,7 +346,7 @@ public class ListToFileHelper {
                     FileUtil.createFolder(FileUtil.getFolderPath(dPath));
                     FileUtil.Copy(sPath, dPath);
                 } else {
-                    System.out.println("ci.keyroot 配置错误，未包含在复制路径中！");
+                    System.err.println("ci.keyroot 配置错误，未包含在复制路径中！");
                     break;
                 }
             } catch (Exception e) {

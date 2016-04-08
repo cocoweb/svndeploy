@@ -1,5 +1,7 @@
 package com.foresee.xdeploy.file;
 
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
@@ -58,6 +60,24 @@ public class SvnFiles extends XdeployBase implements Iterable<SvnFile> {
     }
     
     private class SvnFilesIterator extends BaseSwitchIterator<SvnFile,ArrayList<String>>{
+        /* (non-Javadoc)
+         * @see com.foresee.xdeploy.utils.base.BaseSwitchIterator#hasNext()
+         */
+        @Override
+        public boolean hasNext() {
+            // TODO Auto-generated method stub
+            return super.hasNext();
+        }
+
+        /* (non-Javadoc)
+         * @see com.foresee.xdeploy.utils.base.BaseSwitchIterator#next()
+         */
+        @Override
+        public SvnFile next() {
+            // TODO Auto-generated method stub
+            return super.next();
+        }
+
         SvnFiles svnfiles;
 
         public SvnFilesIterator(Iterator<ArrayList<String>> xiterator, SvnFiles svnFiles) {
@@ -78,7 +98,25 @@ public class SvnFiles extends XdeployBase implements Iterable<SvnFile> {
         return SvnFileList.size();
     }
 
-    
+   public void removeDeuplicate(){
+       List<ArrayList<String>> newlist = new ArrayList<ArrayList<String>>();
+
+       for(int z=0;z<SvnFileList.size();z++){
+           ArrayList<String> tmplist1=SvnFileList.get(z);
+           ArrayList<String> tmplist2= z+1>=SvnFileList.size()?null:SvnFileList.get(z+1);
+           
+           if(tmplist2==null||!tmplist1.get(ColList_Path).equals(tmplist2.get(ColList_Path))){
+               newlist.add(tmplist1);
+           }else{
+               //newlist.add(tmplist2);
+               //z++;
+           }
+       }
+       
+       SvnFileList.clear(); 
+       SvnFileList.addAll(newlist);
+   }
+
     public static void main(String[] args) throws Exception {
      }
 

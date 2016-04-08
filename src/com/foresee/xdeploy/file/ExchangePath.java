@@ -39,6 +39,11 @@ import com.foresee.test.util.PathUtils;
  */
 public class ExchangePath {
     private static PropValue propvalue = null;
+    
+    public static final String Type_WAR="WAR";
+    public static final String Type_JAR="JAR";
+    public static final String Type_CHG="CHG";
+    
 
     public String JARName = "";
     public String FromPath = "";
@@ -69,12 +74,14 @@ public class ExchangePath {
         return  "-------"  
                 + "\n JARName     =" + JARName
                 + "\n FromPath    =" + FromPath
-                + "\n ToZipPath   =" + ToZipPath
+                + "\n ToZipPath   =" + getToZipPath()
                 + "\n SrcPath     =" + SrcPath
                 + "\n Key         =" + MappingKey
-                + "\n TrunkURL    =" + getTrunkURL(SrcPath)
-                + "\n ToExcelFile =" + propvalue.genOutExcelFileName()
-                + "\n ToZipFile   =" + propvalue.genOutZipFileName();
+                //+ "\n TrunkURL    =" + getTrunkURL(SrcPath)
+                + "\n SvnURL      =" + getSvnURL()
+                + "\n ToExcelFile =" + ExcelFiles.genOutExcelFileName()
+                + "\n ToZipFile   =" + ToZipFile.genOutZipFileName()
+                + "\n FileType    =" + getType();
     }
     
     public Map<String,String> toMap(){
@@ -85,8 +92,8 @@ public class ExchangePath {
         retmap.put("SrcPath", SrcPath);
         retmap.put("Key", MappingKey);
         retmap.put("TrunkUrl", getTrunkURL(SrcPath));
-        retmap.put("ToExcelFile", propvalue.genOutExcelFileName());
-        retmap.put("ToZipFile", propvalue.genOutZipFileName());
+        retmap.put("ToExcelFile", ExcelFiles.genOutExcelFileName());
+        retmap.put("ToZipFile", ToZipFile.genOutZipFileName());
         
         
         return retmap;
@@ -111,19 +118,61 @@ public class ExchangePath {
         return MappingKey.indexOf("w.") == 0;
     }
     
+    public String getType(){
+        if (inWar()) 
+            return Type_WAR;
+        else if(SrcPath.lastIndexOf(".java") > 0 || inJar()) 
+            return Type_JAR;
+        else
+            return Type_CHG;
+    }
+    
     
     public boolean isJava() {
         
         return SrcPath.lastIndexOf(".java") > 0;
     }
 
+        //顺序搜索：c-w.META-INF-w-j
+        static String[] sortaStr={"c.","w.-INF","w.","j."};
     private static String[] findSrcPath(String srcPath){
+//        for (String akey : propvalue.pkgmap.keySet()) {
+//            // 分离源路径 和 目标路径
+//            String[] apath = StringUtil.split(propvalue.pkgmap.get(akey), "|");
+//            if (srcPath.contains(apath[0])) {
+//                // 如果路径中包含了“源路径”
+//                return new String[]{apath[0],apath[1],akey};
+//            }
+//        }
+        
+        for(String s:sortaStr){   //依次搜索
+        
+            String[] astr=findSrcPath(srcPath,s);
+            if(Array.getLength(astr)>2) return astr;
+        } 
+        return new String[]{};
+    }
+    
+    private static String[] findSrcPath(String srcPath,String skey){
+        String lkey="",rkey="";
+        if(skey.contains("-")){
+            String[] atmp=skey.split("-");
+            lkey=atmp[0];
+            rkey=atmp[1];
+           
+        }else
+            lkey=skey;
+        
         for (String akey : propvalue.pkgmap.keySet()) {
-            // 分离源路径 和 目标路径
-            String[] apath = StringUtil.split(propvalue.pkgmap.get(akey), "|");
-            if (srcPath.contains(apath[0])) {
-                // 如果路径中包含了“源路径”
-                return new String[]{apath[0],apath[1],akey};
+            if((akey.indexOf(lkey) == 0 && rkey.isEmpty())
+                    ||(akey.indexOf(lkey) == 0 && (!rkey.isEmpty()&&akey.lastIndexOf(rkey)>0))){
+                // 分离源路径 和 目标路径
+                String[] apath = StringUtil.split(propvalue.pkgmap.get(akey), "|");
+                if (srcPath.contains(apath[0])) {
+                    // 如果路径中包含了“源路径”
+                    return new String[]{apath[0],apath[1],akey};
+                }
+                
             }
         }
         
@@ -135,8 +184,11 @@ public class ExchangePath {
      * 
      * @param srcPath
      * @return
+     * @throws Exception 
      */
-    public static ExchangePath exchange(String srcPath) {
+    public static ExchangePath exchange(String srcPath) throws Exception {
+        if(propvalue==null) throw new Exception("PropValue 没有初始化！");
+        
         ExchangePath ep =null;
         
         String[] xpath = findSrcPath(srcPath);
@@ -166,7 +218,7 @@ public class ExchangePath {
     }
 
     public static String getTrunkURL(String srcPath){
-        String fromPath = PathUtils.autoPathRoot(srcPath, "trunk");
+        String fromPath = PathUtils.autoPathRoot(srcPath, "trunk");  //??
         // svn库的文件绝对路径URL
         String sUrl = propvalue.svnurl +   fromPath;
         
@@ -178,12 +230,16 @@ public class ExchangePath {
         return getTrunkURL(SrcPath);
     }
     
+    public String getSvnURL(){
+        return propvalue.svnurl +   PathUtils.autoPathRoot(SrcPath, propvalue.keyRootFolder);
+    }
+    
     public String getOutZipFileName(){
         return getOutZipFile();
     }
     
     public static String getOutZipFile(){
-        return propvalue.genOutZipFileName();
+        return ToZipFile.genOutZipFileName();
     }
     
     public String getFileName(){
@@ -191,15 +247,20 @@ public class ExchangePath {
     }
     
    public static void main(String[] args) {
-        InitExchangePath( new PropValue("/svntools.properties"));
-        
-       System.out.println(exchange("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
-        //System.out.println(ExchangePath.propvalue.exchangeFilePath("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
-        System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
-        System.out.println(exchange("trunk/engineering/src/gt3nf/web/gt3nf-task/.settings/org.eclipse.wst.common.component"));
-       // System.out.println(ExchangePath.propvalue.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
-        //System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
+        InitExchangePath(  PropValue.getInstance("/svntools.properties"));
 
+       //System.out.println(exchange("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
+        //System.out.println(ExchangePath.propvalue.exchangeFilePath("/trunk/engineering/src/tax/java/com.foresee.tax.service/src/com/foresee/tax/service/gt3/bigdata/constants/DsjclRwConstant.java"));
+        //System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
+        //System.out.println(exchange("trunk/engineering/src/gt3nf/web/gt3nf-task/.settings/org.eclipse.wst.common.component"));
+       // System.out.println(ExchangePath.propvalue.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));
+        try {
+            System.out.println(exchange("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        //System.out.println(exchange("trunk/engineering/src/gt3nf/web/gt3nf-task/.settings/org.eclipse.wst.common.component"));
     }
 
  

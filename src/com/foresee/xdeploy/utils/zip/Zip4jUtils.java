@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.foresee.xdeploy.utils.PathUtils;
-import com.foresee.xdeploy.utils.StreamUtils;
+import com.foresee.xdeploy.utils.tmp.StreamUtils;
 
 import net.lingala.zip4j.core.ZipFile;
 import net.lingala.zip4j.exception.ZipException;
@@ -429,7 +429,8 @@ public class Zip4jUtils {
         } 
        
     }
-    public static void ZipCopyFile2Zip(ZipFile fromZipFile, String fromFile, ZipFile toZipFile, String toFile) {
+    public static int ZipCopyFile2Zip(ZipFile fromZipFile, String fromFile, ZipFile toZipFile, String toFile) {
+        int retint=0;
         ZipInputStream is = null;
 
         try {
@@ -446,12 +447,16 @@ public class Zip4jUtils {
                 is = fromZipFile.getInputStream(fileHeader);
 
                 AddStreamToZip(toZipFile, is, toFile);
+                
+                retint++;
 
             }else{
                 System.err.println("   !!未找到："+fromFile+"@"+fromZipFile.getFile().getName());
+                retint=-1;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            retint=-1;
         } finally {
             if (is != null) {
                 try {
@@ -461,6 +466,7 @@ public class Zip4jUtils {
                 }
             }
         }
+        return retint;
        
     }
 

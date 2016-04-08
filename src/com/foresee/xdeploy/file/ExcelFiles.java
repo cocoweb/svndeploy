@@ -9,6 +9,7 @@ import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_Ver;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -100,8 +101,9 @@ public class ExcelFiles extends XdeployBase{
 
     public static String genOutExcelFileName() {
         if (outexcelfilename == "") {
-            outexcelfilename = excelfiletemplate.substring(0, excelfiletemplate.indexOf(".")) + "-"
-                    + DateUtil.getCurrentDate("yyyyMMdd") + "-产品线-合并.xls";
+              
+            outexcelfilename = PropValue.getInstance().excelfiletemplate.substring(0, PropValue.getInstance().excelfiletemplate.indexOf(".")) + "-"
+                    + DateUtil.format(new Date(), "yyyyMMdd-HHmm") + "-产品线-合并.xls";
         }
         return outexcelfilename;
     }

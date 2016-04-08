@@ -1,6 +1,5 @@
 package com.foresee.xdeploy.file;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -29,9 +28,23 @@ public class PropValue extends ParamPropValue  {
     
     public List<String> pkgList = null;
 
-    public PropValue(String strFileName) {
+    protected PropValue(String strFileName) {
         super(strFileName);
         initProp();
+    }
+    
+    private static PropValue SingletonPV=null;
+    
+    public static synchronized PropValue getInstance(String strFileName){
+        if (SingletonPV==null){
+            SingletonPV = new PropValue(strFileName);
+        }
+        
+        return SingletonPV;
+    }
+    
+    public static synchronized PropValue getInstance(){
+        return getInstance("/svntools.properties");
     }
 
    
@@ -62,17 +75,18 @@ public class PropValue extends ParamPropValue  {
     }
 
     private static String outexcelfilename="";
+    @Deprecated
     public String genOutExcelFileName(){
         if(outexcelfilename==""){
             outexcelfilename= excelfiletemplate.substring(0,  excelfiletemplate.indexOf(".")) 
-                + "-" + DateUtil.getCurrentDate("yyyyMMdd")
+                + "-" + DateUtil.getCurrentDate("yyyyMMdd-HHmm")
                 + "-产品线-合并.xls";
         }
         return outexcelfilename;
     }
     
     private static String outzipfilename ="";
-    
+    @Deprecated
     public String genOutZipFileName(){
         if(outzipfilename==""){
        // return PathUtils.addFolderEnd(pv.getProperty("zip.tofolder")) + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
@@ -85,7 +99,8 @@ public class PropValue extends ParamPropValue  {
 
     public static void main(String[] args) {
         // TODO Auto-generated method stub
-        PropValue pv = new PropValue("/svntools.properties");
+        PropValue         pv = PropValue.getInstance("/svntools.properties");
+
         System.out.println(pv.pkgmap);
 
 //        System.out.println(
@@ -96,12 +111,18 @@ public class PropValue extends ParamPropValue  {
 
         System.out.println(pv.excelFolder);
         System.out.println(pv.tempPath);
-        System.out.println(pv.genOutZipFileName());
+        
         System.out.println(pv.getProperty("zip.tofolder"));
         
-        ExchangePath aa = ExchangePath.exchange("/trunk/engineering/src/gt3nf/java/gov.chinatax.gt3nf/src/gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.java");
+        ExchangePath aa;
+        try {
+            aa = ExchangePath.exchange("/trunk/engineering/src/gt3nf/java/gov.chinatax.gt3nf/src/gov/chinatax/gt3nf/sb/dkdjdsdjbg/entry/impl/DkdjdsdjSbService.java");
+            System.out.println(aa);
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         
-        System.out.println(aa);
 
     }
 

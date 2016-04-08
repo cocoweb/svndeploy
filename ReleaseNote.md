@@ -46,6 +46,19 @@
 3、比对检查zip、excel
 
 ##Release Note
+v0.27-20160408
+1、fromsvn/fromzip时自动去重   OK
+2、fromsvn/fromzip 的zip文件重复的问题
+3、增加路径转换 mapping.c; fromzip直接从svn获取文件
+      #路径转换
+     mapping.c.vfs_home                =src/portal/vfs_home|vfs_home
+4、mapping搜索顺序：c.-w.-INF-w.-j.
+   mapping.w.gt3nf-admin.-INF    =/portal/web/gt3nf-admin/src/META-INF|gt3nf-admin/WEB-INF/classes/META-INF
+   mapping.w.remind-web.-INF    =/portal/web/remind-web/src/META-INF|remind-web/WEB-INF/classes/META-INF
+   mapping.w.gt3nf-portal.-INF    =/portal/web/gt3nf-portal/src/META-INF|gt3nf-portal/WEB-INF/classes/META-INF
+
+
+
 v0.26-20160405
 修改清单第一个无效，导致无法导出svn问题
 加入web工程检查，定义在配置文件中的  #package相关，比如war、jar   package.list=

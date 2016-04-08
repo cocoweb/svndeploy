@@ -20,7 +20,8 @@ public class SVNUtilTest {
     String svnWorkspace="E:/svn_home/yyy/trunk";
     String tmpDir ="E:/tmp/workspace/tmp/e";
     
-    PropValue pv = new PropValue("/svntools.properties");
+    PropValue         pv = PropValue.getInstance("/svntools.properties");
+
     String svnUrl ="file:///F:/svnroot/sinasvn20120830/xxx/baseline"; 
     
     String svnroot = "file:///F:/svnroot/sinasvn20120830/xxx";

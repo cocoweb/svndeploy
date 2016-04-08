@@ -9,7 +9,8 @@ import com.foresee.xdeploy.utils.svn.SvnClient;
 
 public class SvnClientTest {
     SvnClient sc = null;
-    PropValue pv = new PropValue("/svntools.properties");
+    PropValue pv = PropValue.getInstance("/svntools.properties");
+
     
     String fileurl = "https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/trunk/engineering/src/gt3nf/java/com.foresee.gt3nf.service/src/com/foresee/gt3nf/service/outerservice/backcaller/service/gt3/hxqz/sb/impl/qysds/QysdsKjqysdssbQcsCxService.java";
 

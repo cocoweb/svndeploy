@@ -20,7 +20,7 @@ public class ExcelSvnHelperTest {
 
     @BeforeClass
     public void beforeClass() {
-        pv = new PropValue("/svntools.properties");
+        pv = PropValue.getInstance("/svntools.properties");
         efh = new ExcelSvnHelper();
 
     }

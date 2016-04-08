@@ -33,7 +33,7 @@ public class ExcelSvnHelper {
         for (String filepath : excelfiles.getExcelList()) {
             if (excelfiles.mergeToFileName.isEmpty()) 
                 svnfiles.addAll( loadSvnFiles(new File(filepath)).SvnFileList);
-            else
+            else  //同时合并excel文件
                 svnfiles.addAll(loadSvnFiles(filepath, excelfiles.mergeToFileName).SvnFileList);
         }
 
@@ -46,9 +46,10 @@ public class ExcelSvnHelper {
             }
 
         });
-
+        
         return svnfiles;
     }
+    
 
     public List<ArrayList<String>> loadSvnFilesList(ExcelFiles excelfiles) {
         return loadSvnFiles(excelfiles).SvnFileList;

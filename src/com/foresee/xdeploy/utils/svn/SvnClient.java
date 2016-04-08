@@ -225,7 +225,8 @@ public class SvnClient {
 	public static void main(String[] args) {
 		try {
 		    
-		    PropValue pv = new PropValue("/svntools.properties");
+		    PropValue    pv = PropValue.getInstance("/svntools.properties");
+
 			// SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password")).svnExport("https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/branch/20150812/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_ccstool.js",
 			// "3063", "p:/tmp/c/","branch");
 			ArrayList<String> xlist = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"))
