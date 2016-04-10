@@ -105,7 +105,7 @@ public class Mainwin2 {
     private void initialize() throws IOException {
         frame = new JFrame();
         frame.setTitle("版本清单工具");
-        frame.setBounds(100, 100, 897, 583);
+        frame.setBounds(100, 100, 989, 583);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.getContentPane().setLayout(new BorderLayout(5, 5));
         
@@ -153,7 +153,7 @@ public class Mainwin2 {
         final JButton btnNewButton = new JButton("List 输出清单");
         panel_3.add(btnNewButton);
         
-        final JButton btnNewButton_1 = new JButton("从清单导出文件");
+        final JButton btnNewButton_1 = new JButton("清单导出文件 fromsvn");
         panel_3.add(btnNewButton_1);
         btnNewButton_1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
@@ -181,20 +181,20 @@ public class Mainwin2 {
         GroupLayout gl_panel = new GroupLayout(panel);
         gl_panel.setHorizontalGroup(
             gl_panel.createParallelGroup(Alignment.LEADING)
-                .addGroup(gl_panel.createSequentialGroup()
+                .addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
                     .addComponent(panel_3, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
-                    .addComponent(panel_5, GroupLayout.DEFAULT_SIZE, 215, Short.MAX_VALUE)
-                    .addPreferredGap(ComponentPlacement.UNRELATED)
+                    .addPreferredGap(ComponentPlacement.RELATED, 62, Short.MAX_VALUE)
+                    .addComponent(panel_5, GroupLayout.PREFERRED_SIZE, 223, GroupLayout.PREFERRED_SIZE)
+                    .addPreferredGap(ComponentPlacement.RELATED)
                     .addComponent(panel_4, GroupLayout.PREFERRED_SIZE, 153, GroupLayout.PREFERRED_SIZE))
         );
         gl_panel.setVerticalGroup(
-            gl_panel.createParallelGroup(Alignment.LEADING)
-                .addGroup(Alignment.TRAILING, gl_panel.createSequentialGroup()
+            gl_panel.createParallelGroup(Alignment.TRAILING)
+                .addGroup(gl_panel.createSequentialGroup()
                     .addGroup(gl_panel.createParallelGroup(Alignment.TRAILING)
-                        .addComponent(panel_5, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
-                        .addComponent(panel_3, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(panel_4, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(panel_3, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addComponent(panel_4, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE)
+                        .addComponent(panel_5, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 35, Short.MAX_VALUE))
                     .addContainerGap())
         );
         
@@ -210,7 +210,7 @@ public class Mainwin2 {
         });
         panel_3.add(btnsvn);
         
-        JButton btnNewButton_3 = new JButton("从War导出到zip");
+        JButton btnNewButton_3 = new JButton("从War导出到zip fromzip");
         btnNewButton_3.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 listTofileHelper.scanWarToZip();

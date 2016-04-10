@@ -53,7 +53,7 @@ public abstract class XdeployBase {
         // //StringUtil.replaceAll(xname,"、",",");
         xname = xname.replaceAll("[、，]", ","); // StringUtil.replaceAll(xname,"、",",");
         xname = xname.replaceAll("[_]", "-");
-        return xname;
+        return StringUtil.trim(xname);
     }
 
     public static String handleVerNo(String sVerNo) {

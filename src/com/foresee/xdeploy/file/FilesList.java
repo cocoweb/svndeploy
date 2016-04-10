@@ -9,16 +9,16 @@ import java.util.List;
 
 import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
 
-public class SvnFiles extends XdeployBase implements Iterable<SvnFile> {
+public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
     public List<ArrayList<String>> SvnFileList=new ArrayList<ArrayList<String>>();
     public ExcelFiles excelFiles;
 
-    public SvnFiles(ExcelFiles excelfiles) {
+    public FilesList(ExcelFiles excelfiles) {
         excelFiles= excelfiles;
        
     }
 
-    public SvnFiles() {
+    public FilesList() {
        
     }
     /**
@@ -55,39 +55,22 @@ public class SvnFiles extends XdeployBase implements Iterable<SvnFile> {
      * @see java.util.List#iterator()
      */
     @Override
-    public Iterator<SvnFile>  iterator() {
-        return new SvnFilesIterator( SvnFileList.iterator(),this);
+    public Iterator<FilesListItem>  iterator() {
+        return new FilesListIterator( SvnFileList.iterator(),this);
     }
     
-    private class SvnFilesIterator extends BaseSwitchIterator<SvnFile,ArrayList<String>>{
-        /* (non-Javadoc)
-         * @see com.foresee.xdeploy.utils.base.BaseSwitchIterator#hasNext()
-         */
-        @Override
-        public boolean hasNext() {
-            // TODO Auto-generated method stub
-            return super.hasNext();
-        }
+    private class FilesListIterator extends BaseSwitchIterator<FilesListItem,ArrayList<String>>{
 
-        /* (non-Javadoc)
-         * @see com.foresee.xdeploy.utils.base.BaseSwitchIterator#next()
-         */
-        @Override
-        public SvnFile next() {
-            // TODO Auto-generated method stub
-            return super.next();
-        }
+        FilesList filesList;
 
-        SvnFiles svnfiles;
-
-        public SvnFilesIterator(Iterator<ArrayList<String>> xiterator, SvnFiles svnFiles) {
+        public FilesListIterator(Iterator<ArrayList<String>> xiterator, FilesList Fileslist) {
             super(xiterator);
-            svnfiles = svnFiles;
+            filesList = Fileslist;
         }
 
         @Override
-        public SvnFile switchObject(ArrayList<String> xobj) {
-            return  new SvnFile(xobj,svnfiles);
+        public FilesListItem switchObject(ArrayList<String> xobj) {
+            return  new FilesListItem(xobj,filesList);
         }
 
       
@@ -107,9 +90,6 @@ public class SvnFiles extends XdeployBase implements Iterable<SvnFile> {
            
            if(tmplist2==null||!tmplist1.get(ColList_Path).equals(tmplist2.get(ColList_Path))){
                newlist.add(tmplist1);
-           }else{
-               //newlist.add(tmplist2);
-               //z++;
            }
        }
        

@@ -13,11 +13,11 @@ import com.foresee.test.util.io.FileCopyUtil;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExcelFiles;
-import com.foresee.xdeploy.file.ExcelSvnHelper;
+import com.foresee.xdeploy.file.ExcelListHelper;
 import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.file.SvnFile;
-import com.foresee.xdeploy.file.SvnFiles;
+import com.foresee.xdeploy.file.FilesListItem;
+import com.foresee.xdeploy.file.FilesList;
 import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.WarFile;
 import com.foresee.xdeploy.file.WarFiles;
@@ -33,7 +33,7 @@ public class ListToFileHelper {
     public static final String FILE = "FILE";
 
     public static PropValue pv = null;
-    ExcelSvnHelper excelsvnhelper = null;
+    ExcelListHelper excellisthelper = null;
 
     public ListToFileHelper() {
         this("/svntools.properties");
@@ -41,14 +41,14 @@ public class ListToFileHelper {
 
     public ListToFileHelper(String propFileName) {
         pv = PropValue.getInstance(propFileName);
-        excelsvnhelper = new ExcelSvnHelper();
+        excellisthelper = new ExcelListHelper();
     }
 
-    private SvnFiles loadSvnFiles() {
+    private FilesList loadSvnFiles() {
         ExcelFiles excelfiles = new ExcelFiles(pv);
 
         // 扫描并获取全部excel内容
-        return excelsvnhelper.loadSvnFiles(excelfiles);
+        return excellisthelper.loadFilesList(excelfiles);
 
     }
 
@@ -56,20 +56,18 @@ public class ListToFileHelper {
         System.out.println("===========显示待处理文件清单=================");
 
         // 扫描并获取全部excel内容
-        SvnFiles sfs = loadSvnFiles();
+        FilesList sfs = loadSvnFiles();
         
-        //sfs.removeDeuplicate();
-
         printList(sfs);
 
     }
 
-    public void printList(SvnFiles svnfiles) {
+    public void printList(FilesList fileslist) {
         StringBuffer bugStr = new StringBuffer();
         String a1_Path = ""; // 用来比较上下路径的标记
         String lastStr = "";
 
-        for (SvnFile sf : svnfiles) {
+        for (FilesListItem sf : fileslist) {
             String sPath = sf.getPath(pv.filekeyroot);
             sf.setKeyRoot(pv.filekeyroot);
             try {
@@ -100,7 +98,7 @@ public class ListToFileHelper {
             a1_Path = sPath;
 
         }
-        System.out.println("\n共有文件数量：" + Integer.toString(svnfiles.size()));
+        System.out.println("\n共有文件数量：" + Integer.toString(fileslist.size()));
         System.out.println("==空的版本号，将获取最新的版本。==请仔细检查清单格式，路径不对将无法从svn获取。");
         if (pv.getProperty("file.excel.merge").equals("true"))
              System.out.println(" >>>合并生成了EXCEL为：" + ExcelFiles.genOutExcelFileName());
@@ -120,7 +118,7 @@ public class ListToFileHelper {
         System.out.println("===========从svn库导出到临时目录，或者workspace=================");
 
         // 扫描并获取全部excel内容
-        SvnFiles sfs = loadSvnFiles();
+        FilesList sfs = loadSvnFiles();
         
         // 排重
         sfs.removeDeuplicate();
@@ -133,7 +131,7 @@ public class ListToFileHelper {
 
     }
 
-    public String svnToPath(SvnFiles svnfiles) {
+    public String svnToPath(FilesList fileslist) {
         SvnClient xclient = SvnClient.getInstance(pv.getProperty("svn.username"), pv.getProperty("svn.password"));
         ToZipFile tozipfile = new ToZipFile(xclient);
         
@@ -144,20 +142,20 @@ public class ListToFileHelper {
         long lVer = -1;
         String sMessage = "";
 
-        for (SvnFile svnfile : svnfiles) {
+        for (FilesListItem oItem : fileslist) {
 
             // for (ArrayList<String> aRow :
             // ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder,
             // pv.scanOption, pv.excelFolderFilter)) {
             try {
-                String fromPath = svnfile.getPath("trunk"); // PathUtils.autoPathRoot(sf.getPath()
+                String fromPath = oItem.getPath("trunk"); // PathUtils.autoPathRoot(sf.getPath()
                 // aRow.get(ColList_Path),
                 // "trunk");
                 ExchangePath expath = ExchangePath.exchange(fromPath);
 
                 String sUrl = expath.getSvnURL() ;//expath.getTrunkURL(); // pv.svnurl + fromPath; //
                                                     // svn库的文件绝对路径URL
-                String sVer = svnfile.getVer(); // aRow.get(ColList_Ver);
+                String sVer = oItem.getVer(); // aRow.get(ColList_Ver);
                 String toPath = PathUtils.autoUrlToPath(sUrl, exportToPath, pv.keyRootFolder);
 
                 // 判断是否目录，目录就不操作
@@ -202,7 +200,7 @@ public class ListToFileHelper {
                  
                     if (pv.getProperty("svn.tozip.enabled").equals("true")) {
                         // 将文件添加到zip文件
-                        tozipfile.addToZip(toPath, expath, svnfile);
+                        tozipfile.addToZip(toPath, expath, oItem);
 
                     }
 
@@ -223,20 +221,6 @@ public class ListToFileHelper {
         return exportToPath;
 
     }
-
-//    private void addToZip(String toPath, String zipFileName, ExchangePath expath, SvnFile svnfile) {
-//
-//        String[] packages =StringUtil.split(svnfile.getProj(),",、，"); 
-//        // if (spack.contains(","))
-//        // pakages = spack.split(",");
-//
-//        for (String pak : packages) {
-//            //System.out.println(pak + "@@" + expath.getToZipFolderPath());
-//            if(new File(toPath).exists())
-//                Zip4jUtils.zipFile(toPath, zipFileName, expath.getToZipFolderPath(pak));//??
-//        }
-//
-//    }
 
     public void commitsvn() {
         ExcelFiles excelfiles = new ExcelFiles(pv);
@@ -275,7 +259,7 @@ public class ListToFileHelper {
         System.out.println("===========从指定压缩文件war、zip、jar 导出到zip文件=================");
 
         // 扫描并获取全部excel内容
-        SvnFiles sfs = loadSvnFiles();
+        FilesList sfs = loadSvnFiles();
         // 排重
         sfs.removeDeuplicate();
 
@@ -283,7 +267,7 @@ public class ListToFileHelper {
 
     }
 
-    public void warToZip(SvnFiles svnfiles) {
+    public void warToZip(FilesList fileslist) {
 
         int fileCount = 0;
 
@@ -297,10 +281,10 @@ public class ListToFileHelper {
         
 
         // 扫描excel文件的清单
-        for (SvnFile svnfile : svnfiles) {
+        for (FilesListItem oitem : fileslist) {
 
             try {
-                fileCount += tozipfile.addToZip(warlist, svnfile);
+                fileCount += tozipfile.addToZip(warlist, oitem);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -323,7 +307,7 @@ public class ListToFileHelper {
     public void scanWorkspaceToPath() {
         System.out.println("===========从指定目录 导出到临时目录，或者workspace=================");
         // 扫描并获取全部excel内容
-        SvnFiles sfs = loadSvnFiles();
+        FilesList sfs = loadSvnFiles();
 
         String ciworkspace = pv.getProperty("ci.workspace");
         String citoFolder = pv.getProperty("ci.tofolder");
@@ -335,7 +319,7 @@ public class ListToFileHelper {
         // for (ArrayList<String> aRow :
         // ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder,
         // pv.scanOption, pv.excelFolderFilter)) {
-        for (SvnFile sf : sfs) {
+        for (FilesListItem sf : sfs) {
 
             try {
                 String sPath = ciworkspace + sf.getPath(); // 源文件路径citoFolder

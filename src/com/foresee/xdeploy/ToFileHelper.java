@@ -18,7 +18,7 @@ import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ScanIncrementFiles;
-import com.foresee.xdeploy.file.SvnFiles;
+import com.foresee.xdeploy.file.FilesList;
 import com.foresee.xdeploy.file.WarFile;
 import com.foresee.xdeploy.file.WarFiles;
 import com.foresee.xdeploy.utils.FileSystem;

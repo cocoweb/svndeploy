@@ -9,19 +9,19 @@ import org.testng.annotations.Test;
 
 import com.foresee.xdeploy.ListToFileHelper;
 import com.foresee.xdeploy.file.ExcelFiles;
-import com.foresee.xdeploy.file.ExcelSvnHelper;
+import com.foresee.xdeploy.file.ExcelListHelper;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.file.SvnFile;
-import com.foresee.xdeploy.file.SvnFiles;
+import com.foresee.xdeploy.file.FilesListItem;
+import com.foresee.xdeploy.file.FilesList;
 
 public class ExcelSvnHelperTest {
-    ExcelSvnHelper efh;
+    ExcelListHelper efh;
     PropValue pv = null;
 
     @BeforeClass
     public void beforeClass() {
         pv = PropValue.getInstance("/svntools.properties");
-        efh = new ExcelSvnHelper();
+        efh = new ExcelListHelper();
 
     }
 
@@ -47,9 +47,9 @@ public class ExcelSvnHelperTest {
 
         // 扫描并获取全部excel内容
         //ScanIncrementFiles scanFiles = ScanIncrementFiles.scanListfile(pv.excelfile, pv.excelFolder, pv.scanOption, pv.excelFolderFilter, sTofile);
-        SvnFiles sf = efh.loadSvnFiles(new ExcelFiles(pv));
+        FilesList sf = efh.loadFilesList(new ExcelFiles(pv));
         
-        Iterator<SvnFile> it = sf.iterator();
+        Iterator<FilesListItem> it = sf.iterator();
         while (it.hasNext()) {
             System.out.println(it.next().getPath());
         }

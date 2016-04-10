@@ -45,6 +45,17 @@ public abstract class BasePropValue {
         return exprop.getProperty(key);
     }
 
+    /**
+     * @param key
+     * @param defaultValue
+     * @return
+     * @see com.foresee.test.util.exfile.ExtProperties#getProperty(java.lang.String, java.lang.String)
+     */
+    public String getProperty(String key, String defaultValue) {
+        return exprop.getProperty(key, defaultValue);
+    }
+
+
     public Map<String, String> getSectionItems(String sectionName) {
         return exprop.getSectionItems(sectionName);
     }

@@ -59,4 +59,15 @@ public class ParamPropValue extends BasePropValue {
 	    
 	     return sValue;
 	}
+
+    /**
+     * @param key
+     * @param defaultValue
+     * @return
+     * @see java.util.Properties#getProperty(java.lang.String, java.lang.String)
+     */
+    public String getProperty(String key, String defaultValue) {
+        String sValue = getProperty(key);
+        return sValue.isEmpty()?defaultValue:sValue;
+    }
 }

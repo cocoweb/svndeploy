@@ -27,11 +27,13 @@ public class ListToFile {
     }
 
     public static void echoCommandInfo() {
+        
+        helpPrint(cmdCLIOptions());
 
-        System.out.println("We need some arguments!");
+        System.out.println("Mode II -> We need some arguments!");
         System.out.println("Example：java ListToFile.class FROMSVN");
         System.out.println("  args1 = []|[LIST]|[FROMSVN]|[FROMCI][DIFFVER][help]");
-        System.out.println("          []       :无参数时同LIST，显示待处理文件清单和版本");
+        System.out.println("          []       :无参数时,会进入窗口模式");
         System.out.println("          [LIST]   :显示待处理文件清单和版本");
         System.out.println("          [FROMSVN]:从svn库svn.tofolder导出到临时目录svn.tofolder，或者workspace ,or ZIP");
         System.out.println("          [FROMZIP]:从指定压缩文件war、zip、jar 导出到临时目录");
@@ -141,7 +143,7 @@ public class ListToFile {
 
         hf.setLeftPadding(4);
         hf.setDescPadding(1);
-        hf.printHelp("ListToFile", "  参数说明：", options
+        hf.printHelp("Mode I =>ListToFile", "  参数说明：", options
               , "\n  Example: \n"
                 + "    java ListToFile --fromsvn or  java ListToFile -s \n"
                 + "    java ListToFile --list    or  java ListToFile -l\n" 
@@ -164,8 +166,9 @@ public class ListToFile {
 
             if (cmds.hasOption('h')) {
                 // 打印使用帮助
-                helpPrint(options);
-                //return;
+                //helpPrint(options);
+                echoCommandInfo();
+                return ;
             }
 
             ListToFileHelper listTofileHelper = null;

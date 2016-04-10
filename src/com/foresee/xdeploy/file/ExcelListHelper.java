@@ -1,8 +1,8 @@
 package com.foresee.xdeploy.file;
 
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Ver;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,23 +18,23 @@ import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleCopyRow;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleScanRow;
 
-public class ExcelSvnHelper {
+public class ExcelListHelper {
 
     public static final String SheetName = "功能清单";
     
 
-    public ExcelSvnHelper() {
+    public ExcelListHelper() {
         // TODO Auto-generated constructor stub
     }
 
-    public SvnFiles loadSvnFiles(ExcelFiles excelfiles) {
-        final SvnFiles svnfiles = new SvnFiles(excelfiles);
+    public FilesList loadFilesList(ExcelFiles excelfiles) {
+        final FilesList svnfiles = new FilesList(excelfiles);
 
         for (String filepath : excelfiles.getExcelList()) {
             if (excelfiles.mergeToFileName.isEmpty()) 
-                svnfiles.addAll( loadSvnFiles(new File(filepath)).SvnFileList);
+                svnfiles.addAll( loadFilesList(new File(filepath)).SvnFileList);
             else  //同时合并excel文件
-                svnfiles.addAll(loadSvnFiles(filepath, excelfiles.mergeToFileName).SvnFileList);
+                svnfiles.addAll(loadFilesList(filepath, excelfiles.mergeToFileName).SvnFileList);
         }
 
         // 排序返回的清单
@@ -52,7 +52,7 @@ public class ExcelSvnHelper {
     
 
     public List<ArrayList<String>> loadSvnFilesList(ExcelFiles excelfiles) {
-        return loadSvnFiles(excelfiles).SvnFileList;
+        return loadFilesList(excelfiles).SvnFileList;
     }
 
     /**
@@ -61,8 +61,8 @@ public class ExcelSvnHelper {
      * @param xfile
      * @return
      */
-    public SvnFiles loadSvnFiles(File xfile) {
-        final SvnFiles svnfiles = new SvnFiles();
+    public FilesList loadFilesList(File xfile) {
+        final FilesList svnfiles = new FilesList();
         final String filename = xfile.getName();
 
         try {
@@ -90,8 +90,8 @@ public class ExcelSvnHelper {
 
     public int iExcelRowCount = 1;
 
-    public SvnFiles loadSvnFiles(final String sfile, String tofilename) {
-        final SvnFiles svnfiles = new SvnFiles();
+    public FilesList loadFilesList(final String sfile, String tofilename) {
+        final FilesList svnfiles = new FilesList();
 
         try {
             ExcelMoreUtil.copyExcelDataToFile(sfile, tofilename, SheetName, new IHandleCopyRow() {
@@ -118,7 +118,7 @@ public class ExcelSvnHelper {
 
     public List<ArrayList<String>> loadSvnFilesList(File xfile) {
 
-        return loadSvnFiles(xfile).SvnFileList;
+        return loadFilesList(xfile).SvnFileList;
 
     }
 

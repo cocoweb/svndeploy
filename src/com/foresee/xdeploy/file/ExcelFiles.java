@@ -108,7 +108,7 @@ public class ExcelFiles extends XdeployBase{
         return outexcelfilename;
     }
 
-    public static void addRowToList(SvnFiles xsvnfiles, HSSFRow xlocalrow, String filename) {
+    public static void addRowToList(FilesList xsvnfiles, HSSFRow xlocalrow, String filename) {
         localrow = xlocalrow;
     
         for (String xfield : handlePathList(getValue(ColExcel_Path))) {

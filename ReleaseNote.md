@@ -47,16 +47,19 @@
 
 ##Release Note
 v0.27-20160408
-1、fromsvn/fromzip时自动去重   OK
-2、fromsvn/fromzip 的zip文件重复的问题
+1、fromsvn/fromzip时自动清单去重  
+2、fromsvn/fromzip 及窗口模式下的zip文件重复的问题
 3、增加路径转换 mapping.c; fromzip直接从svn获取文件
       #路径转换
      mapping.c.vfs_home                =src/portal/vfs_home|vfs_home
-4、mapping搜索顺序：c.-w.-INF-w.-j.
-   mapping.w.gt3nf-admin.-INF    =/portal/web/gt3nf-admin/src/META-INF|gt3nf-admin/WEB-INF/classes/META-INF
-   mapping.w.remind-web.-INF    =/portal/web/remind-web/src/META-INF|remind-web/WEB-INF/classes/META-INF
-   mapping.w.gt3nf-portal.-INF    =/portal/web/gt3nf-portal/src/META-INF|gt3nf-portal/WEB-INF/classes/META-INF
-
+     
+4、mapping搜索顺序：c.-w.META-INF-w.-j.
+    #w.META-INF, 从war中抽取文件（源代码编译打包后，路径发生了变化）
+	mapping.w.META-INF.gt3nf-admin    =/portal/web/gt3nf-admin/src/META-INF|gt3nf-admin/WEB-INF/classes/META-INF
+	mapping.w.META-INF.remind-web    =/portal/web/remind-web/src/META-INF|remind-web/WEB-INF/classes/META-INF
+	mapping.w.META-INF.gt3nf-portal    =/portal/web/gt3nf-portal/src/META-INF|gt3nf-portal/WEB-INF/classes/META-INF
+   
+5、重构zip、war文件的处理
 
 
 v0.26-20160405

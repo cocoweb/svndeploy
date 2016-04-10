@@ -45,6 +45,15 @@ zip.tofolder={temppath}
 
 ##以下为路径转换配置，使用 | 隔离
     #如： [源路径]|[包路径]
+    #搜索顺序：c.->w.META-INF->w.->j.
+sortmapping = c.,w.META-INF,w.,j.    
+    
+    #w.META-INF, 从war中抽取文件（源代码编译打包后，路径发生了变化）
+mapping.w.META-INF.gt3nf-admin    =/portal/web/gt3nf-admin/src/META-INF|gt3nf-admin/WEB-INF/classes/META-INF
+mapping.w.META-INF.remind-web    =/portal/web/remind-web/src/META-INF|remind-web/WEB-INF/classes/META-INF
+mapping.w.META-INF.gt3nf-portal    =/portal/web/gt3nf-portal/src/META-INF|gt3nf-portal/WEB-INF/classes/META-INF
+
+    #war包，从war中抽取文件
 mapping.w.gt3nf-wsbs0	              =gt3nf/web/gt3nf-wsbs/WebContent|gt3nf-wsbs/
 mapping.w.gt3nf-wsbs1                 =gt3nf-wsbs/src|gt3nf-wsbs
 mapping.w.gt3nf-skin		          =gt3nf/web/gt3nf-skin/WebContent/|gt3nf-skin/
@@ -61,12 +70,10 @@ mapping.w.gt3nf-thirdparty-client     =gt3nf/web/gt3nf-thirdparty-client/src|gt3
 mapping.w.tycx-wsbs0                  =tycx/web/tycx-wsbs/WebContent|tycx-wsbs
 mapping.w.tycx-wsbs1                  =tycx/web/tycx-wsbs/src|tycx-wsbs
 mapping.w.remind-web                  =remind-web/src|remind-web
-#mapping.w.tycx-service               =tycx/java/com.foresee.tycx.service/src|tycx-service
 mapping.w.gt3nf-task0                 =gt3nf/web/gt3nf-task/WebContent|gt3nf-task
 mapping.w.gt3nf-task1                 =gt3nf-task/src|gt3nf-task
-mapping.w.com.vfs_home                =src/portal/vfs_home|vfs_home
 
-	#jar包
+	#jar包，从war中jar的抽取class文件
 mapping.j.com.foresee.gt3nf.service   =gt3nf/java/com.foresee.gt3nf.service/src|com.foresee.gt3nf.service
 mapping.j.com.foresee.gt3nf.wsbs      =gt3nf/java/com.foresee.gt3nf.wsbs/src|com.foresee.gt3nf.wsbs
 mapping.j.gov.chinatax.gt3nf0         =gt3nf/java/gov.chinatax.gt3nf/src|gov.chinatax.gt3nf
@@ -96,6 +103,9 @@ mapping.j.com.foresee.gt3nf.outerservice           =com.foresee.gt3nf.outerservi
 mapping.j.com.foresee.etax.bizcore                 =com.foresee.etax.bizcore/src|com.foresee.etax.bizcore
 mapping.j.com.foresee.gt3nf.bizfront               =com.foresee.gt3nf.bizfront/src|com.foresee.gt3nf.bizfront
 
+   #路径转换，直接从svn获取
+mapping.c.vfs_home                =src/portal/vfs_home|vfs_home
+
 ##############################
 
 #目录Copy相关
@@ -106,7 +116,7 @@ ci.keyroot=engineering
 
 
 #package相关，比如war、jar
-package.list=gt3nf-service,gt3nf-wsbs,gt3nf-skin,gt3nf-portal,gt3nf-admin,gt3nf-thirdparty-front,km-web,tycx-wsbs,tycx-service
+package.list=gt3nf-service,gt3nf-wsbs,gt3nf-skin,gt3nf-portal,gt3nf-admin,gt3nf-thirdparty-front,gt3nf-thirdparty-service,km-web,tycx-wsbs,tycx-service,remind-web
 
 
 #按照svn版本号，提取增量清单

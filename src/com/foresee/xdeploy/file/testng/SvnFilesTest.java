@@ -6,28 +6,28 @@ import java.util.Iterator;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import com.foresee.xdeploy.file.ExcelSvnHelper;
-import com.foresee.xdeploy.file.SvnFile;
-import com.foresee.xdeploy.file.SvnFiles;
+import com.foresee.xdeploy.file.ExcelListHelper;
+import com.foresee.xdeploy.file.FilesListItem;
+import com.foresee.xdeploy.file.FilesList;
 
 public class SvnFilesTest {
-    ExcelSvnHelper efh;
+    ExcelListHelper efh;
 
     @BeforeClass
     public void beforeClass() {
-        efh = new ExcelSvnHelper();
+        efh = new ExcelListHelper();
     }
 
     @Test
     public void iterator() {
-        SvnFiles sflist = efh.loadSvnFiles(new File("p:/因开发所致环境变更记录表模版-20150823-杜英恒-产品线.xls"));
-        Iterator<SvnFile> it = sflist.iterator();
+        FilesList sflist = efh.loadFilesList(new File("p:/因开发所致环境变更记录表模版-20150823-杜英恒-产品线.xls"));
+        Iterator<FilesListItem> it = sflist.iterator();
         while (it.hasNext()) {
             System.out.println(it.next().getPath());
         }
         System.out.println();
 
-        for (SvnFile sf : sflist) {
+        for (FilesListItem sf : sflist) {
             System.out.print(sf);
         }
     }

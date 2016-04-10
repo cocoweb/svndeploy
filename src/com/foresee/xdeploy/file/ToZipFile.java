@@ -18,8 +18,8 @@ public class ToZipFile extends XdeployBase {
     public String toZipPath = "";
     public ZipFile toZipFile = null;
     PropValue pv = null;
-    
-    public SvnClient svnclient=null;
+
+    public SvnClient svnclient = null;
 
     public ToZipFile(String zipPath, PropValue propvalue) {
         toZipPath = zipPath;
@@ -36,7 +36,7 @@ public class ToZipFile extends XdeployBase {
     public ToZipFile() {
         this(PropValue.getInstance());
     }
-    
+
     public ToZipFile(SvnClient xclient) {
         this(PropValue.getInstance());
         svnclient = xclient;
@@ -50,10 +50,10 @@ public class ToZipFile extends XdeployBase {
      * @param sf
      * @return
      */
-    public int addToZip(WarFiles warlist,  SvnFile sf) {
+    public int addToZip(WarFiles warlist, FilesListItem sf) {
         int fileCount = 0;
 
-        ExchangePath expath=sf.getExchange();
+        ExchangePath expath = sf.getExchange();
 
         String[] packages = StringUtil.split(sf.getProj(), ",、，"); // sf.getProj().split(",");
         for (String pak : packages) {
@@ -61,38 +61,33 @@ public class ToZipFile extends XdeployBase {
             // 包含就抽取到目标路径
             WarFile warfile = warlist.getWarFile(pak);
             if (warfile != null) {
-                fileCount+= warfile.copyToZip(this, sf);
-                
+                fileCount += warfile.copyToZip(this, sf);
+
                 if (expath.isJava()) {
                     // 同时抽取java源文件加入到zip中（直接从svn获取）
-                    fileCount+=exportSvnToZip( sf);
-                    
+                    fileCount += exportSvnToZip(sf);
+
                 }
 
             } else {
-                System.err.println("   !!没能抽取  :" + expath.SrcPath+" @ "+ pak);
+                System.err.println("   !!没能抽取  :" + expath.SrcPath + " @ " + pak);
             }
 
         }
         return fileCount;
     }
-    
-    public int exportSvnToZip( SvnFile sf){
-        int retint=0;
-        
-        ExchangePath expath=sf.getExchange();
+
+    public int exportSvnToZip(FilesListItem sf) {
+        int retint = 0;
+
+        ExchangePath expath = sf.getExchange();
         // 同时抽取java源文件加入到zip中（直接从svn获取）
         String tmpFilePath = pv.tempPath + "/" + expath.getFileName();
 
         try {
             svnclient.svnExport(expath.getSvnURL(), sf.getVer(), tmpFilePath, pv.keyRootFolder);
-//            if(expath.getType().equals(ExchangePath.Type_CHG)){
-//                Zip4jUtils.zipFile(tmpFilePath, toZipFile, expath.getToZipFolderPath());
-//                
-//            }else{
-                // 将文件添加到zip文件
-                Zip4jUtils.zipFile(tmpFilePath, toZipFile, expath.getToZipFolderPath());
-//            }
+            // 将文件添加到zip文件
+            Zip4jUtils.zipFile(tmpFilePath, toZipFile, expath.getToZipFolderPath());
 
             retint++;
             FileUtil.delFile(tmpFilePath);
@@ -100,8 +95,7 @@ public class ToZipFile extends XdeployBase {
             e.printStackTrace();
             retint--;
         }
-        
-        
+
         return retint;
     }
 
@@ -112,7 +106,7 @@ public class ToZipFile extends XdeployBase {
      * @param expath
      * @param svnfile
      */
-    public void addToZip(String fromFilePath, ExchangePath expath, SvnFile svnfile) {
+    public void addToZip(String fromFilePath, ExchangePath expath, FilesListItem svnfile) {
 
         String[] packages = StringUtil.split(svnfile.getProj(), ",、，");
 
@@ -132,23 +126,26 @@ public class ToZipFile extends XdeployBase {
             // "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
             outzipfilename = PathUtils.addFolderEnd(propvalue.getProperty("zip.tofolder")) + "QGTG-YHCS."
                     + DateUtil.format(new Date(), "yyyyMMdd-HHmm") + ".zip";
-            
+
         }
         return outzipfilename;
     }
-    public static String genOutZipFileName(){
+
+    public static String genOutZipFileName() {
         return genOutZipFileName(PropValue.getInstance());
     }
-    public static String getOutZipFileName(){
-        outzipfilename = "";   //重新生成新的zip文件
+
+    public static String getOutZipFileName() {
+        outzipfilename = ""; // 重新生成新的zip文件
         String ss = genOutZipFileName(PropValue.getInstance());
-        System.out.println(ss);
+       // System.out.println(ss);
         return ss;
     }
 
     public void FileInfo() {
         // 对zip文件进行检查，对比excel的文件，和zip中的文件
-        if (new File(toZipPath).exists())   Zip4jUtils.InfoZipFile(toZipPath);
+        if (new File(toZipPath).exists())
+            Zip4jUtils.InfoZipFile(toZipPath);
     }
 
 }

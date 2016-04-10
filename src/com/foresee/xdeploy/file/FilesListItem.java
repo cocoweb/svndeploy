@@ -12,11 +12,11 @@ import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
 import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_ProjPackage;
 import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Ver;
 
-public class SvnFile extends XdeployBase {
+public class FilesListItem extends XdeployBase {
     
     String FilePath="";
     ArrayList<String> svnfileDefList = null;
-    SvnFiles parentSvnFiles =null;
+    FilesList parentFileslist =null;
     String keyRoot="";
     
     /* (non-Javadoc)
@@ -32,9 +32,9 @@ public class SvnFile extends XdeployBase {
 
     }
 
-    public SvnFile(ArrayList<String> listString, SvnFiles svnfiles) {
+    public FilesListItem(ArrayList<String> listString, FilesList fileslist) {
         svnfileDefList =  listString;
-        parentSvnFiles = svnfiles;
+        parentFileslist = fileslist;
     }
 
     public String getURL(){
@@ -71,6 +71,7 @@ public class SvnFile extends XdeployBase {
         keyRoot = keyroot;
     }
     
+    
     public boolean checkProject() throws Exception{
         List<String> alist = PropValue.getInstance().pkgList;
         boolean bret = false;
@@ -102,6 +103,11 @@ public class SvnFile extends XdeployBase {
         }
         return ep;
     }
+    
+    public boolean isType(String sType){
+        return getExchange().getType().equals(sType);
+    }
+
 
 
 }

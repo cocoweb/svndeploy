@@ -1,9 +1,10 @@
 package com.foresee.xdeploy.file;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 
@@ -38,6 +39,10 @@ public class WarFile {
             e.printStackTrace();
         }
     }
+    public WarFile(File file,String warname) {
+        this(file);
+        setWarName(warname);
+    }
 
     public String getWarName() {
         return warName;
@@ -54,6 +59,22 @@ public class WarFile {
     public String getPath() {
         return warFile.getPath();
     }
+    
+    public String getSource(FilesListItem sf){
+        String retstr = "";
+        if(sf.isType(ExchangePath.Type_JAR)){
+            retstr = getJarPath(sf.getExchange().JARName) +" @ " +warZipFile.getFile().getName();
+            
+        }else if(sf.isType(ExchangePath.Type_WAR)){
+            retstr = warZipFile.getFile().getName();
+        }else
+            retstr = " SVN <<"+sf.getExchange().getSvnURL();
+        
+        return retstr;
+        
+    }
+    
+    Map<String,String> JarMap = new HashMap<String,String>();
 
     /**
      * 根据Jar名称，获取Jar文件在war中的路径
@@ -63,80 +84,71 @@ public class WarFile {
      */
     public String getJarPath(String jarName) {
         try {
-            return Zip4jUtils.getFileNameFromZIP(warZipFile, jarName);
+            if(JarMap.containsKey(jarName))
+                return JarMap.get(jarName);
+            else {
+                String filename = Zip4jUtils.getFileNameFromZIP(warZipFile, jarName);
+                JarMap.put(jarName, filename);
+            
+                return filename;
+                
+            }
         } catch (ZipException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return "";
     }
+    
+    Map<String,ZipFile> JarFileMap = new HashMap<String,ZipFile>();
 
     public ZipFile getJarZipFile(String jarName) {
-        return Zip4jUtils.getZipFileFromZIP(warZipFile, jarName);
+        ZipFile tmpZip=null;
+        if (JarFileMap.containsKey(jarName)){
+            tmpZip= JarFileMap.get(jarName);
+        }else{
+            tmpZip= Zip4jUtils.getZipFileFromZIP(warZipFile, jarName);
+            JarFileMap.put(jarName, tmpZip);
+        }
+        return tmpZip;
+        
+        //return Zip4jUtils.getZipFileFromZIP(warZipFile, jarName);
 
     }
-    public int copyToZip(ToZipFile zipOutFile, SvnFile sf) {
+    /**
+     * 将文件加入到指定的zip中
+     * 
+     * @param zipOutFile
+     * @param sf
+     * @return
+     */
+    public int copyToZip(ToZipFile zipOutFile, FilesListItem sf) {
         int retint = -1;
         
         
         ExchangePath expath=sf.getExchange();
         
         //判断文件类型 war、jar、chg
-        if(expath.getType().equals(ExchangePath.Type_JAR)){
+        if(sf.isType(ExchangePath.Type_JAR)){
             // 从jar抽取class、xml
             // java文件 或者 在mapping.j中找到的文件
             
             // 同时抽取java源文件加入到zip中
             retint = copyJavaToZip(zipOutFile.toZipFile, expath);
-
-            if (retint >= 0) {
-                System.out.println("     抽取JAR class :" + expath.ToZipPath);
-            } else {
-                System.err.println("   !!抽取JAR失败  :\n" + expath);
-            }
             
-        }else if(expath.getType().equals(ExchangePath.Type_WAR)){
+        }else if(sf.isType(ExchangePath.Type_WAR)){
             retint = copyFileToZip(zipOutFile.toZipFile, expath);
-
-            if (retint < 0) {
-                System.err.println("    ！抽取失败  :" + expath);
-            } else
-                System.out.println("     抽取文件  :" + expath.ToZipPath);
             
         }else{
             retint = zipOutFile.exportSvnToZip( sf);
             
-            //retint = Zip4jUtils.ZipCopyFile2Zip(warZipFile, sPath, zipOutFile, dPath);
-                    //copyFileToZip(zipOutFile, expath.FromPath, expath.getToZipPath(warName));
-            if (retint < 0) {
-                System.err.println("    ！抽取失败  :" + expath);
-            } else
-                System.out.println("     抽取文件  :" + expath.ToZipPath);
-            
         }
-
-
-//        // 从jar抽取class、xml
-//        // java文件 或者 在mapping.j中找到的文件
-//        if (expath.SrcPath.lastIndexOf(".java") > 0 || expath.inJar()) {
-//
-//            // 同时抽取java源文件加入到zip中
-//            retint = copyJavaToZip(zipOutFile, expath);
-//
-//            if (retint == 0) {
-//                System.out.println("     抽取class :" + expath.ToZipPath);
-//            } else {
-//                System.err.println("   !!抽取失败  :\n" + expath);
-//            }
-//
-//        } else {
-//            retint = copyFileToZip(zipOutFile, expath);
-//
-//            if (retint == -1) {
-//                System.err.println("    ！抽取失败  :" + expath);
-//            } else
-//                System.out.println("     抽取文件  :" + expath.ToZipPath);
-//        }
+        
+        if (retint >=0) {
+            System.out.println("     抽取 "+ (sf.isType(ExchangePath.Type_JAR)?"Class":"文件") 
+                    +" : " + expath.ToZipPath +" @ "+getSource(sf));
+        } else
+            System.err.println("    ！抽取失败  :" + expath);
 
         return retint;
 

@@ -38,27 +38,24 @@ public class WarFiles {
         if (sWarName.contains(","))
             sWarName = sWarName.split(",")[0];
 
-        for (File xfile : clFiles) {
-            if (xfile.getName().contains(sWarName)) {
-                
-                return getWarFileInstance(xfile, sWarName);
-            }
-
-        }
-        return null;
+        return getWarFileInstance(sWarName);
 
     }
     
-    public WarFile getWarFileInstance(File ofile,String sWarName){
+    public WarFile getWarFileInstance(String sWarName){
         WarFile wf =null;
-        if (mapWar.containsKey(ofile.getName())){
-            wf =mapWar.get(ofile.getName());
+        if (mapWar.containsKey(sWarName)){
+            wf =mapWar.get(sWarName);
         }else{
-            wf = new WarFile(ofile);
-            wf.setWarName(sWarName);
+            for (File xfile : clFiles) {
+                if (xfile.getName().contains(sWarName)) {
+                    wf = new WarFile(xfile,sWarName);
+                    
+                    mapWar.put(sWarName, wf);
+                    break;
+                }
+            }
             
-            mapWar.put(ofile.getName(), wf);
-           
         }
         return wf;
         
