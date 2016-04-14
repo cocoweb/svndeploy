@@ -4,9 +4,9 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.foresee.test.util.PathUtils;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
-import com.foresee.test.util.PathUtils;
 
 /**
  * 路径转换器
@@ -60,6 +60,11 @@ public class ExchangePath {
     // 顺序搜索：c-w.META-INF-w-j
     static String[] sortaStr = { "c.", "w.META-INF", "w.", "j." };
 
+    /**
+     * 对ExchangePath 路径转换器进行全局初始化
+     * 在系统启动时，需要调用一次
+     * @param pv
+     */
     public static void InitExchangePath(PropValue pv) {
         propvalue = pv;
         String sortmapping = propvalue.getProperty("sortmapping","c.,w.META-INF,w.,j.");
@@ -121,8 +126,8 @@ public class ExchangePath {
         return "-------" + "\n JARName     =" + JARName + "\n FromPath    =" + FromPath + "\n ToZipPath   =" + getToZipPath()
                 + "\n SrcPath     =" + SrcPath + "\n Key         =" + MappingKey
                 // + "\n TrunkURL =" + getTrunkURL(SrcPath)
-                + "\n SvnURL      =" + getSvnURL() + "\n ToExcelFile =" + ExcelFiles.genOutExcelFileName() + "\n ToZipFile   ="
-                + ToZipFile.genOutZipFileName() + "\n FileType    =" + getType();
+                + "\n SvnURL      =" + getSvnURL() + "\n ToExcelFile =" + ExcelFiles.getOutExcelFileName() + "\n ToZipFile   ="
+                + ToZipFile.getOutZipFileName() + "\n FileType    =" + getPathType();
     }
 
     public Map<String, String> toMap() {
@@ -133,33 +138,49 @@ public class ExchangePath {
         retmap.put("SrcPath", SrcPath);
         retmap.put("Key", MappingKey);
         retmap.put("TrunkUrl", getTrunkURL(SrcPath));
-        retmap.put("ToExcelFile", ExcelFiles.genOutExcelFileName());
-        retmap.put("ToZipFile", ToZipFile.genOutZipFileName());
+        retmap.put("ToExcelFile", ExcelFiles.getOutExcelFileName());
+        retmap.put("ToZipFile", ToZipFile.getOutZipFileName());
 
         return retmap;
     }
 
     /**
+     * 获取输出到zip中的相对路径
      * @return the toZipPath
      */
     public String getToZipPath() {
         return ToZipPath;
     }
 
+    /**
+     * 根据输入的根目录，获取输出到zip中的相对路径
+     * @param keyRoot
+     * @return  
+     */
     public String getToZipPath(String keyRoot) {
         return keyRoot + ToZipPath.substring(ToZipPath.indexOf("/"));
 
     }
 
+    /**
+     * @return 该文件在jar里面
+     */
     public boolean inJar() {
         return MappingKey.indexOf("j.") == 0;
     }
 
+    /**
+     * @return  该文件在war里面
+     */
     public boolean inWar() {
         return MappingKey.indexOf("w.") == 0;
     }
 
-    public String getType() {
+    /**
+     * @return 获取该文件转换器的路径类型
+     * war、jar、chg
+     */
+    public String getPathType() {
         if (inWar())
             return Type_WAR;
         else if (SrcPath.lastIndexOf(".java") > 0 || inJar())
@@ -168,11 +189,19 @@ public class ExchangePath {
             return Type_CHG;
     }
 
+    /**
+     * @return  如果是Java文件，即返回true
+     */
     public boolean isJava() {
 
         return SrcPath.lastIndexOf(".java") > 0;
     }
 
+    /**
+     * 在mapping列表中搜索转换串
+     * @param srcPath
+     * @return
+     */
     private static String[] findSrcPath(String srcPath) {
 
         for (String s : sortaStr) { // 依次搜索
@@ -185,7 +214,7 @@ public class ExchangePath {
     }
 
     /**
-     * 在mapping列表中搜索匹配的转换串
+     * 在过滤mapping列表中搜索匹配的转换串
      * 
      * @param srcPath
      * @param skey   过滤mapping列表的key
@@ -240,10 +269,17 @@ public class ExchangePath {
       return new String[] {};
   }
 
+    /**
+     * @return 输出到zip时的 相对目录路径（不含文件名）
+     */
     public String getToZipFolderPath() {
         return FileUtil.getFolderPath(ToZipPath);
     }
 
+    /**
+     * @param keyRoot 指定根目录
+     * @return  输出到zip时的 相对目录路径（不含文件名）
+     */
     public String getToZipFolderPath(String keyRoot) {
         String ss = getToZipFolderPath();
         return keyRoot + ss.substring(ss.indexOf("/"));
@@ -258,24 +294,62 @@ public class ExchangePath {
 
     }
 
+    /**
+     * @return svn主干URL，绝对路径
+     */
     public String getTrunkURL() {
         return getTrunkURL(SrcPath);
     }
 
+    /**
+     * @return  svn绝对路径，svn.url+相对路径
+     */
     public String getSvnURL() {
         return propvalue.svnurl + PathUtils.autoPathRoot(SrcPath, propvalue.keyRootFolder);
     }
 
+    /**
+     * @return 获取输出的zip文件路径
+     */
     public String getOutZipFileName() {
         return getOutZipFile();
     }
 
+    /**
+     * @return 获取输出的zip文件路径
+     */
     public static String getOutZipFile() {
-        return ToZipFile.genOutZipFileName();
+        return ToZipFile.getOutZipFileName();
     }
 
+    /**
+     * @return  文件记录单纯的文件名  如 xxxxx.jsp
+     */
     public String getFileName() {
         return PathUtils.getFileNameWithExt(SrcPath);
+    }
+    
+    /**
+     * @return 返回临时目录下的文件绝对路径
+     */
+    public String getToTempFilePath(){
+        return propvalue.tempPath + "/" + getFileName();
+    }
+    
+    /**
+     * @return export ，copy 输出时的文件绝对路径
+     */
+    public String  getToFilePath(){
+        return PathUtils.autoUrlToPath(getSvnURL(), propvalue.svntofolder, propvalue.keyRootFolder);
+    }
+    
+    
+    /**
+     * @return svn工作区的绝对路径  ci.workspace
+     */
+    public String getWorkspaceFilePath(){
+        return propvalue.getProperty("ci.workspace") 
+                + PathUtils.autoPathRoot(FromPath, propvalue.filekeyroot);
     }
 
     public static void main(String[] args) {
@@ -297,115 +371,3 @@ public class ExchangePath {
 
 }
 
-/**
- * 按照配置 * 转换路径 每一个srcPath（excel中的清单文件）都有以下几个对应环境的路径： 1、在svn主干中的路径 2、在svn基线中的路径
- * 3、在war包中的路径 如果是jar里面的java文件，就包含两种：a) war中jar文件的路径 b)jar里面的文件路径
- * 4、输出到zip增量包里面的路径
- * 
- * 
- * @param srcPath
- * @return
- */
-// public static String exchange(String srcPath) {
-// for (String akey : pkgmap.keySet()) {
-// // 分离源路径 和 目标路径
-// String[] apath = StringUtil.split(pkgmap.get(akey), "|");
-// if (srcPath.contains(apath[0]) && akey.contains("w.")) { // 如果路径中包含了“源路径”
-// // return PathUtils.autoPathRoot(srcPath, xKeyRoot, string2)
-// return PathUtils.addFolderEnd(apath[1]) +
-// PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) +
-// apath[0].length()));
-// }else if(srcPath.contains(apath[0])){
-// return PathUtils.addFolderEnd(apath[1]) +
-// PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) +
-// apath[0].length()));
-// }
-// }
-//
-// return PathUtils.trimFolderStart(srcPath);
-// }
-/**
- * 按照配置 * 转换路径 每一个srcPath（excel中的清单文件）都有以下几个对应环境的路径： 1、在svn主干中的路径 2、在svn基线中的路径
- * 3、在war包中的路径 如果是jar里面的java文件，就包含两种：a) war中jar文件的路径 b)jar里面的文件路径
- * 4、输出到zip增量包里面的路径
- * 
- * 
- * @param srcPath
- * @return
- */
-// public String exchangePath(String srcPath) {
-// for (String akey : pkgmap.keySet()) {
-// // 分离源路径 和 目标路径
-// String[] apath = StringUtil.split(pkgmap.get(akey), "|");
-// if (srcPath.contains(apath[0]) && akey.contains("w.")) { // 如果路径中包含了“源路径”
-// // return PathUtils.autoPathRoot(srcPath, xKeyRoot, string2)
-// return PathUtils.addFolderEnd(apath[1]) +
-// PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) +
-// apath[0].length()));
-// }else if(srcPath.contains(apath[0])){
-// return PathUtils.addFolderEnd(apath[1]) +
-// PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) +
-// apath[0].length()));
-// }
-// }
-//
-// return PathUtils.trimFolderStart(srcPath);
-// }
-//
-// public String exchangeWarPath(String srcPath) {
-// srcPath = exchangePath(srcPath);
-// return srcPath.substring(srcPath.indexOf("/") + 1);
-//
-// }
-//
-// /**
-// * 根据配置转换路径
-// *
-// * @param srcPath
-// * @return str[0]=key or jarname
-// * str[1]=fromPath jar包中的源路径
-// * str[2]=topath 转换后的Path,保存到Zip中
-// * str[3]=srcpath 原始路径
-// */
-// public ExchangePath exchangeJarPath(String srcPath) {
-// if (srcPath.contains(".java")||srcPath.contains(".xml")) { // 不是java文件就不处理
-//
-// for (String akey : pkgmap.keySet()) {
-// // 分离源路径 和 目标路径
-// String[] apath = StringUtil.split(pkgmap.get(akey), "|");
-// if (akey.contains("j.")&& srcPath.contains(apath[0])) { // 如果路径中包含了“源路径”
-// String jarName = akey.substring(2);
-// String fromPath =
-// PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) +
-// apath[0].length()))
-// .replace(".java", ".class");
-// String toPath = PathUtils.addFolderEnd(apath[1])+fromPath;
-//
-// return new ExchangePath(jarName,fromPath,toPath,srcPath,akey);
-// }
-// }
-// }
-// return new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
-// }
-//
-// public ExchangePath exchangeFilePath(String srcPath) {
-// if (srcPath.contains(".java")||srcPath.contains(".xml")) { //
-// 不是java、xml文件就不处理
-//
-// for (String akey : pkgmap.keySet()) {
-// // 分离源路径 和 目标路径
-// String[] apath = StringUtil.split(pkgmap.get(akey), "|");
-// if ( akey.contains("j.")&& srcPath.contains(apath[0])) { // 如果路径中包含了“源路径”
-// String jarName = akey.substring(2);
-// String fromPath =
-// PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(apath[0]) +
-// apath[0].length()))
-// .replace(".java", ".class");
-// String toPath = PathUtils.addFolderEnd(apath[1])+fromPath;
-//
-// return new ExchangePath(jarName,fromPath,toPath,srcPath,akey);
-// }
-// }
-// }
-// return new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath) );
-// }

@@ -98,8 +98,7 @@ public class PropValue extends ParamPropValue  {
     }
 
     public static void main(String[] args) {
-        // TODO Auto-generated method stub
-        PropValue         pv = PropValue.getInstance("/svntools.properties");
+       PropValue         pv = PropValue.getInstance("/svntools.properties");
 
         System.out.println(pv.pkgmap);
 

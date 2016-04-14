@@ -3,11 +3,8 @@ package com.foresee.xdeploy.file;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.utils.PathUtils;
-import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
 
 public abstract class XdeployBase {
 
@@ -38,10 +35,6 @@ public abstract class XdeployBase {
         return PathUtils.addFolderStart(StringUtil.trim(sPath));
     }
 
-    protected static HSSFRow localrow;
-    public static String getValue(int col) {
-        return POIExcelMakerUtil.getCellValue(localrow.getCell(col)).toString();
-    }
 
     public static List<String> handlePathList(String sPath) {
         String[] xstr = StringUtil.split(sPath);

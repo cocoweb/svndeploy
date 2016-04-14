@@ -1,10 +1,10 @@
-package com.foresee.xdeploy;
+package com.foresee.xdeploy.tmp;
 
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_FileName;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Man;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_FileName;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_Man;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_Path;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_Ver;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,7 +17,6 @@ import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.file.ScanIncrementFiles;
 import com.foresee.xdeploy.file.FilesList;
 import com.foresee.xdeploy.file.WarFile;
 import com.foresee.xdeploy.file.WarFiles;

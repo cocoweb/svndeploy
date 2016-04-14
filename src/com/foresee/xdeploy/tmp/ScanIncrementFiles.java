@@ -1,13 +1,13 @@
-package com.foresee.xdeploy.file;
+package com.foresee.xdeploy.tmp;
 
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_Man;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_Path;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_ProjPackage;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_ROWNo;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ExcelCols.ColExcel_Ver;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.ScanIncrementFiles.ListCols.ColList_Ver;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ExcelCols.ColExcel_Man;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ExcelCols.ColExcel_Path;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ExcelCols.ColExcel_ProjPackage;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ExcelCols.ColExcel_ROWNo;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ExcelCols.ColExcel_Ver;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_Path;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.tmp.ScanIncrementFiles.ListCols.ColList_Ver;
 
 import java.io.File;
 import java.io.IOException;

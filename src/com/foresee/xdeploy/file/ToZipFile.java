@@ -3,13 +3,10 @@ package com.foresee.xdeploy.file;
 import java.io.File;
 import java.util.Date;
 
-import org.tmatesoft.svn.core.SVNException;
-
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.utils.PathUtils;
-import com.foresee.xdeploy.utils.svn.SvnClient;
 import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -19,7 +16,7 @@ public class ToZipFile extends XdeployBase {
     public ZipFile toZipFile = null;
     PropValue pv = null;
 
-    public SvnClient svnclient = null;
+    SVNRepository SVNRepo = null;
 
     public ToZipFile(String zipPath, PropValue propvalue) {
         toZipPath = zipPath;
@@ -29,7 +26,7 @@ public class ToZipFile extends XdeployBase {
     }
 
     public ToZipFile(PropValue propvalue) {
-        this(ToZipFile.getOutZipFileName(), propvalue);
+        this(ToZipFile.getNewOutZipFileName(), propvalue);
 
     }
 
@@ -37,10 +34,16 @@ public class ToZipFile extends XdeployBase {
         this(PropValue.getInstance());
     }
 
-    public ToZipFile(SvnClient xclient) {
+//    public ToZipFile(SvnClient xclient) {
+//        this(PropValue.getInstance());
+//        svnclient = xclient;
+//    }
+    
+    public ToZipFile(SVNRepository svnrepo) {
         this(PropValue.getInstance());
-        svnclient = xclient;
+        SVNRepo = svnrepo;
     }
+
 
     /**
      * 从war包提取文件，并添加到zip
@@ -50,7 +53,7 @@ public class ToZipFile extends XdeployBase {
      * @param sf
      * @return
      */
-    public int addToZip(WarFiles warlist, FilesListItem sf) {
+    public int takeWarFileToZip(WarFiles warlist, FilesListItem sf) {
         int fileCount = 0;
 
         ExchangePath expath = sf.getExchange();
@@ -77,15 +80,35 @@ public class ToZipFile extends XdeployBase {
         return fileCount;
     }
 
+    /**
+     * 将文件添加到zip
+     * 
+     * @param svnfile
+     */
+    public void takeFileToZip( FilesListItem svnfile) {
+    
+        String[] packages = StringUtil.split(svnfile.getProj(), ",、，");
+    
+        for (String pak : packages) {
+            // System.out.println(pak + "@@" + expath.getToZipFolderPath());
+            if (new File(svnfile.getExchange().getToFilePath()).exists())
+                Zip4jUtils.zipFile(svnfile.getExchange().getToFilePath(), toZipPath, svnfile.getExchange().getToZipFolderPath(pak));// ??
+        }
+    
+    }
+
     public int exportSvnToZip(FilesListItem sf) {
         int retint = 0;
 
         ExchangePath expath = sf.getExchange();
         // 同时抽取java源文件加入到zip中（直接从svn获取）
-        String tmpFilePath = pv.tempPath + "/" + expath.getFileName();
+        String tmpFilePath = expath.getToTempFilePath();
+        //pv.tempPath + "/" + expath.getFileName();
 
         try {
-            svnclient.svnExport(expath.getSvnURL(), sf.getVer(), tmpFilePath, pv.keyRootFolder);
+            SVNRepo.Export(sf, tmpFilePath);
+            
+            //svnclient.svnExport(expath.getSvnURL(), sf.getVer(), tmpFilePath, pv.keyRootFolder);
             // 将文件添加到zip文件
             Zip4jUtils.zipFile(tmpFilePath, toZipFile, expath.getToZipFolderPath());
 
@@ -106,7 +129,7 @@ public class ToZipFile extends XdeployBase {
      * @param expath
      * @param svnfile
      */
-    public void addToZip(String fromFilePath, ExchangePath expath, FilesListItem svnfile) {
+    private void addToZip(String fromFilePath, ExchangePath expath, FilesListItem svnfile) {
 
         String[] packages = StringUtil.split(svnfile.getProj(), ",、，");
 
@@ -117,10 +140,14 @@ public class ToZipFile extends XdeployBase {
         }
 
     }
-
     private static String outzipfilename = "";
 
-    public static String genOutZipFileName(PropValue propvalue) {
+    /**
+     * 获取输出的zip文件名
+     * @param propvalue
+     * @return
+     */
+    public static String getOutZipFileName(PropValue propvalue) {
         if (outzipfilename == "") {
             // return PathUtils.addFolderEnd(pv.getProperty("zip.tofolder")) +
             // "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
@@ -131,17 +158,24 @@ public class ToZipFile extends XdeployBase {
         return outzipfilename;
     }
 
-    public static String genOutZipFileName() {
-        return genOutZipFileName(PropValue.getInstance());
+    public static String getOutZipFileName() {
+        return getOutZipFileName(PropValue.getInstance());
     }
 
-    public static String getOutZipFileName() {
+    /**
+     * 重新生成新的zip文件
+     * @return  zip文件名
+     */
+    public static String getNewOutZipFileName() {
         outzipfilename = ""; // 重新生成新的zip文件
-        String ss = genOutZipFileName(PropValue.getInstance());
+        String ss = getOutZipFileName(PropValue.getInstance());
        // System.out.println(ss);
         return ss;
     }
 
+    /**
+     * 输出zip文件信息
+     */
     public void FileInfo() {
         // 对zip文件进行检查，对比excel的文件，和zip中的文件
         if (new File(toZipPath).exists())

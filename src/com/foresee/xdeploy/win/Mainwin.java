@@ -30,7 +30,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.table.DefaultTableModel;
 
-import com.foresee.xdeploy.ToFileHelper;
+import com.foresee.xdeploy.tmp.ToFileHelper;
 import com.foresee.xdeploy.utils.ConsoleTextArea;
 
 public class Mainwin {

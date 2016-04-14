@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.foresee.test.util.PathUtils;
 import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -44,26 +45,48 @@ public class WarFile {
         setWarName(warname);
     }
 
+    /**
+     * @return war包名
+     */
     public String getWarName() {
         return warName;
     }
 
+    /**
+     * 设置war包名
+     * @param warname
+     */
     public void setWarName(String warname) {
         warName = warname;
     }
 
+    /**
+     * @return War文件名
+     */
     public String getName() {
         return warFile.getName();
     }
 
+    /**
+     * @return War文件绝对路径
+     */
     public String getPath() {
         return warFile.getPath();
     }
     
+    /**
+     * 获取一个清单记录的文件来源定位 字符串
+     * 
+     * @param sf
+     * @return
+     * remind-web-2.0.23100.168.04098.00-15972.war
+     * <br>com.foresee.portal.biz-2.0.15803.jar @ gt3nf-admin-2.0.23100.168.04098.00-15972.war
+     * <br>SVN <<https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/trunk/engineering/src/portal/vfs_home/bdmbdy/xml/dm_dj_cyqyjbb.xml
+     */
     public String getSource(FilesListItem sf){
         String retstr = "";
         if(sf.isType(ExchangePath.Type_JAR)){
-            retstr = getJarPath(sf.getExchange().JARName) +" @ " +warZipFile.getFile().getName();
+            retstr = PathUtils.getFileNameWithExt(getJarPath(sf.getExchange().JARName)) +" @ " +warZipFile.getFile().getName();
             
         }else if(sf.isType(ExchangePath.Type_WAR)){
             retstr = warZipFile.getFile().getName();
@@ -74,7 +97,14 @@ public class WarFile {
         
     }
     
+    /**
+     * Jar文件名缓存列表map
+     */
     Map<String,String> JarMap = new HashMap<String,String>();
+    /**
+     * jar文件 ZipFile对象缓存 map
+     */
+    Map<String,ZipFile> JarFileMap = new HashMap<String,ZipFile>();
 
     /**
      * 根据Jar名称，获取Jar文件在war中的路径
@@ -94,14 +124,18 @@ public class WarFile {
                 
             }
         } catch (ZipException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         return "";
     }
     
-    Map<String,ZipFile> JarFileMap = new HashMap<String,ZipFile>();
 
+    /**
+     * 获取Jar文件对象 ZipFile
+     * 每个Jar只创建一次
+     * @param jarName
+     * @return
+     */
     public ZipFile getJarZipFile(String jarName) {
         ZipFile tmpZip=null;
         if (JarFileMap.containsKey(jarName)){
@@ -112,8 +146,6 @@ public class WarFile {
         }
         return tmpZip;
         
-        //return Zip4jUtils.getZipFileFromZIP(warZipFile, jarName);
-
     }
     /**
      * 将文件加入到指定的zip中
@@ -137,7 +169,12 @@ public class WarFile {
             retint = copyJavaToZip(zipOutFile.toZipFile, expath);
             
         }else if(sf.isType(ExchangePath.Type_WAR)){
-            retint = copyFileToZip(zipOutFile.toZipFile, expath);
+            //retint = copyFileToZip(zipOutFile.toZipFile, expath);
+            if(expath.MappingKey.contains("META-INF")){  //w.META-INF 类型
+                retint = copyFileToZip(zipOutFile.toZipFile, expath.ToZipPath.substring(expath.ToZipPath.indexOf("/")+1), expath.getToZipPath(warName));
+            }else  // w.类型
+                retint = copyFileToZip(zipOutFile.toZipFile, expath.FromPath, expath.getToZipPath(warName));
+
             
         }else{
             retint = zipOutFile.exportSvnToZip( sf);
@@ -205,18 +242,20 @@ public class WarFile {
 
     }
 
+    @Deprecated
     private int copyFileToZip(ZipFile zipOutFile, ExchangePath expath) {
         if (expath.FromPath.isEmpty())
             return -1;
         
-        if(expath.MappingKey.contains("META-INF")){
+        if(expath.MappingKey.contains("META-INF")){  //w.META-INF 类型
             return copyFileToZip(zipOutFile, expath.ToZipPath.substring(expath.ToZipPath.indexOf("/")+1), expath.getToZipPath(warName));
-        }else
+        }else  // c.类型
             return copyFileToZip(zipOutFile, expath.FromPath, expath.getToZipPath(warName));
 
     }
 
     private int copyFileToZip(ZipFile zipOutFile, String sPath, String dPath) {
+        if (sPath.isEmpty())    return -1;
 
         return Zip4jUtils.ZipCopyFile2Zip(warZipFile, sPath, zipOutFile, dPath);
 
@@ -319,9 +358,5 @@ public class WarFile {
 
     }
 
-    public static void main(String[] args) {
-        // TODO Auto-generated method stub
-
-    }
 
 }

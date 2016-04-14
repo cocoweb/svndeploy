@@ -1,6 +1,5 @@
 package com.foresee.xdeploy;
 
-import java.lang.reflect.Array;
 import java.util.Comparator;
 import java.util.Properties;
 
@@ -11,13 +10,10 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.OptionGroup;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
-import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.file.ScanIncrementFiles;
-import com.foresee.xdeploy.win.Mainwin;
 import com.foresee.xdeploy.win.Mainwin2;
 
 public class ListToFile {

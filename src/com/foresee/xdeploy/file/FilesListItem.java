@@ -17,7 +17,7 @@ public class FilesListItem extends XdeployBase {
     String FilePath="";
     ArrayList<String> svnfileDefList = null;
     FilesList parentFileslist =null;
-    String keyRoot="";
+    //String keyRoot="";
     
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -26,7 +26,7 @@ public class FilesListItem extends XdeployBase {
     public String toString() {
         return "Ver:[" + getVer() + "] |"
                 + getProj() + "| " 
-                + getPath(keyRoot) + "  " 
+                + getPath(PropValue.getInstance().filekeyroot) + "  " 
                 + getMan()
                 + " << " + getExcelName() + "\n";
 
@@ -67,9 +67,9 @@ public class FilesListItem extends XdeployBase {
     }
     
     
-    public void setKeyRoot(String keyroot){
-        keyRoot = keyroot;
-    }
+//    public void setKeyRoot(String keyroot){
+//        keyRoot = keyroot;
+//    }
     
     
     public boolean checkProject() throws Exception{
@@ -97,15 +97,15 @@ public class FilesListItem extends XdeployBase {
             try {
                 ep = ExchangePath.exchange(getPath());
             } catch (Exception e) {
-                // TODO Auto-generated catch block
+                
                 e.printStackTrace();
             }
         }
         return ep;
     }
     
-    public boolean isType(String sType){
-        return getExchange().getType().equals(sType);
+    public boolean isType(String sPathType){
+        return getExchange().getPathType().equals(sPathType);
     }
 
 
