@@ -10,7 +10,7 @@ import com.foresee.xdeploy.file.ExcelListHelper;
 import com.foresee.xdeploy.file.FilesListItem;
 import com.foresee.xdeploy.file.FilesList;
 
-public class SvnFilesTest {
+public class FilesListTest {
     ExcelListHelper efh;
 
     @BeforeClass

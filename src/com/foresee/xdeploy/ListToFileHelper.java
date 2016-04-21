@@ -23,7 +23,7 @@ public class ListToFileHelper {
     public static final String FILE = "FILE";
 
     public static PropValue pv = null;
-    ExcelListHelper excellisthelper = null;
+    ExcelListHelper excellisthelper = new ExcelListHelper();;
 
     public ListToFileHelper() {
         this("/svntools.properties");
@@ -31,7 +31,7 @@ public class ListToFileHelper {
 
     public ListToFileHelper(String propFileName) {
         pv = PropValue.getInstance(propFileName);
-        excellisthelper = new ExcelListHelper();
+        //excellisthelper = new ExcelListHelper();
     }
 
  
@@ -39,7 +39,7 @@ public class ListToFileHelper {
         System.out.println("===========显示待处理文件清单=================");
 
         // 扫描并获取全部excel内容
-        FilesList fileslist = excellisthelper.loadFilesList(new ExcelFiles());
+        FilesList fileslist = excellisthelper.createFilesList();
 
         StringBuffer bugStr = new StringBuffer();
         String a1_Path = ""; // 用来比较上下路径的标记
@@ -48,6 +48,8 @@ public class ListToFileHelper {
         for (FilesListItem sf : fileslist) {
             String sPath = sf.getPath(pv.filekeyroot);
             //sf.setKeyRoot(pv.filekeyroot);
+            
+            //检查web工程名
             try {
                 sf.checkProject();
             } catch (Exception e) {
@@ -94,7 +96,7 @@ public class ListToFileHelper {
         System.out.println("===========从svn库导出到临时目录，或者workspace=================");
 
         // 扫描并获取全部excel内容
-        FilesList sfs = excellisthelper.loadFilesList(new ExcelFiles());
+        FilesList sfs = excellisthelper.createFilesList();
 
         // 排重
         sfs.removeDeuplicate();
@@ -171,6 +173,7 @@ public class ListToFileHelper {
                         } catch (SVNException e) {
                             e.printStackTrace();
                             System.err.println(" -->>>文件版本不存在：[" + sVer + "]" + sUrl);
+                            continue;
                         }
 
                     }
@@ -210,7 +213,7 @@ public class ListToFileHelper {
         System.out.println("===========从指定压缩文件war、zip、jar 导出到zip文件=================");
 
         // 扫描并获取全部excel内容
-        FilesList fileslist = excellisthelper.loadFilesList(new ExcelFiles());
+        FilesList fileslist = excellisthelper.createFilesList();
         // 排重
         fileslist.removeDeuplicate();
 
@@ -246,7 +249,7 @@ public class ListToFileHelper {
     public void scanWorkspaceToPath() {
         System.out.println("===========从指定目录 导出到临时目录，或者workspace=================");
         // 扫描并获取全部excel内容
-        FilesList sfs = excellisthelper.loadFilesList(new ExcelFiles());
+        FilesList sfs = excellisthelper.createFilesList();
 
         String ciworkspace = pv.getProperty("ci.workspace");
         String citoFolder = pv.getProperty("ci.tofolder");

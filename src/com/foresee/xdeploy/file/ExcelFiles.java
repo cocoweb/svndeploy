@@ -8,6 +8,7 @@ import java.util.Date;
 import com.foresee.test.util.io.File2Util;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
+import com.foresee.xdeploy.file.base.XdeployBase;
 
 public class ExcelFiles extends XdeployBase{
     public static final String BATCH = "BATCH";
@@ -20,7 +21,7 @@ public class ExcelFiles extends XdeployBase{
 
     public String scanOption = BATCH; // 默认批量扫描
 
-    public ArrayList<String> fileList = new ArrayList<String>();
+    private ArrayList<String> fileList = new ArrayList<String>();
 
     public ExcelFiles(String sfilePath, String sFolderPath, String scanOption) {
         super();
@@ -70,21 +71,27 @@ public class ExcelFiles extends XdeployBase{
         return mergeToFileName;
     }
 
+    /**
+     * @return excel文件名的列表
+     */
     public ArrayList<String> getExcelList() {
-        if (scanOption.equals(FILE)) {
-            System.out.println("Loading List >>> " + sfilePath);
-            fileList.add(sfilePath);
-
-        } else {
-
-            // 遍历文件夹，并过滤
-            Collection<File> clFiles = File2Util.getAllFiles(sFolderPath, sFilter);
-            for (File xfile : clFiles) {
-                System.out.println("Loading List >>> " + xfile.getPath());
-                fileList.add(xfile.getPath());
-
+        if(fileList.isEmpty()){  
+            //如果为空，就读取文件名； 只获取一次
+            if (scanOption.equals(FILE)) {
+                System.out.println("Loading List >>> " + sfilePath);
+                fileList.add(sfilePath);
+    
+            } else {
+    
+                // 遍历文件夹，并过滤
+                Collection<File> clFiles = File2Util.getAllFiles(sFolderPath, sFilter);
+                for (File xfile : clFiles) {
+                    System.out.println("Loading List >>> " + xfile.getPath());
+                    fileList.add(xfile.getPath());
+    
+                }
+    
             }
-
         }
         return fileList;
 

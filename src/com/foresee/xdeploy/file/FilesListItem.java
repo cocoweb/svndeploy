@@ -1,16 +1,17 @@
 package com.foresee.xdeploy.file;
 
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_FileName;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Man;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Ver;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.PathUtils;
-
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_FileName;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Man;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Ver;
 
 public class FilesListItem extends XdeployBase {
     

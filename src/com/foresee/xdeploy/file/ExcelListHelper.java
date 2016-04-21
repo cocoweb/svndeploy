@@ -1,13 +1,13 @@
 package com.foresee.xdeploy.file;
 
-import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_Man;
-import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_Path;
-import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_ProjPackage;
-import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_ROWNo;
-import static com.foresee.xdeploy.file.XdeployBase.ExcelCols.ColExcel_Ver;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_ProjPackage;
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Ver;
+import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Man;
+import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Path;
+import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_ProjPackage;
+import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_ROWNo;
+import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Ver;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_ProjPackage;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Ver;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,18 +20,32 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
+import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
 import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleCopyRow;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleScanRow;
 
+/**
+ * Excel 文件清单的处理
+ * @author allan
+ *
+ */
 public class ExcelListHelper  extends XdeployBase {
 
     public static final String SheetName = "功能清单";
     
 
     public ExcelListHelper() {
-        // TODO Auto-generated constructor stub
+    }
+    
+    /**
+     * 创建文件清单对象
+     * 
+     * @return
+     */
+    public FilesList createFilesList(){
+        return loadFilesList(new ExcelFiles());
     }
 
     public FilesList loadFilesList(ExcelFiles excelfiles) {

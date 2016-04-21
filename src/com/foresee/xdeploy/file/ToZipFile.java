@@ -6,6 +6,7 @@ import java.util.Date;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 

@@ -24,11 +24,29 @@ public class ExchangePathTest {
 //      
 //      System.out.println(xx.getToZipFolderPath("service"));
 //      System.out.println(ExchangePath.exchange("/trunk/engineering/src/gt3nf/web/gt3nf-wsbs/WebContent/forms/TAX_910610010066.txt"));
-      System.out.println(ExchangePath.exchange("trunk/engineering/src/portal/web/gt3nf-admin/src/META-INF/conf/properties/ajaxUpload.filetype.properties"));
+//      System.out.println(ExchangePath.exchange("trunk/engineering/src/portal/web/gt3nf-admin/src/META-INF/conf/properties/ajaxUpload.filetype.properties"));
+      System.out.println(ExchangePath.exchange("/trunk/engineering/src/tycx/web/tycx-service/WebContent/WEB-INF/web.xml"));
+      System.out.println(ExchangePath.exchange("/trunk/engineering/src/tycx/java/com.foresee.tycx.service/ivy.xml"));
     } catch (Exception e) {
         // TODO Auto-generated catch block
         e.printStackTrace();
     }
+      
+  }
+  
+  @Test
+  public void getToZipFolderPath(){
+      try {
+        ExchangePath ep =ExchangePath.exchange("/trunk/engineering/src/tycx/web/tycx00-service/WebContent/WEB-INF/web.xml");
+        
+        System.out.println(ep);
+        
+        System.out.println(ep.getToZipFolderPath("ddd"));
+    } catch (Exception e) {
+        // TODO Auto-generated catch block
+        e.printStackTrace();
+    }
+      
       
   }
 }

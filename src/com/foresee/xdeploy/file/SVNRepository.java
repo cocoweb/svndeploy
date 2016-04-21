@@ -45,6 +45,10 @@ public class SVNRepository {
         return new SVNRepository();
     }
     
+    public static SVNRepository getInstance(String svn_baseurl){
+      return new SVNRepository(svn_baseurl);
+  }
+
     
     /**
      * @param xUrl

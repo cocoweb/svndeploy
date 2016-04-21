@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.file;
+package com.foresee.xdeploy.file.base;
 
 import java.util.Arrays;
 import java.util.List;

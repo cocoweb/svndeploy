@@ -1,12 +1,13 @@
 package com.foresee.xdeploy.file;
 
-import static com.foresee.xdeploy.file.XdeployBase.ListCols.ColList_Path;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Path;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
+import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
 
 public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
@@ -81,7 +82,7 @@ public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
         return SvnFileList.size();
     }
 
-   public void removeDeuplicate(){
+   public  List<ArrayList<String>> removeDeuplicate(){
        List<ArrayList<String>> newlist = new ArrayList<ArrayList<String>>();
 
        for(int z=0;z<SvnFileList.size();z++){
@@ -95,11 +96,11 @@ public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
        
        SvnFileList.clear(); 
        SvnFileList.addAll(newlist);
+       
+       return newlist;
    }
 
-    public static void main(String[] args) throws Exception {
-     }
-
+ 
  
 
 }

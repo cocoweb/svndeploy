@@ -282,7 +282,9 @@ public class ExchangePath {
      */
     public String getToZipFolderPath(String keyRoot) {
         String ss = getToZipFolderPath();
-        return keyRoot + ss.substring(ss.indexOf("/"));
+        if(ss.indexOf("/")>0) ss=ss.substring(ss.indexOf("/"));
+
+        return keyRoot + ss;
     }
 
     public static String getTrunkURL(String srcPath) {
