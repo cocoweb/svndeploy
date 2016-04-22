@@ -185,7 +185,7 @@ public class WarFile {
             System.out.println("     抽取 "+ (sf.isType(ExchangePath.Type_JAR)?"Class":"文件") 
                     +" : " + expath.ToZipPath +" @ "+getSource(sf));
         } else
-            System.err.println("    ！抽取失败  :" + expath);
+            System.err.println("    ！抽取失败  :" + expath+"\n  >>> @ "+getSource(sf));
 
         return retint;
 

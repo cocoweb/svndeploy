@@ -230,7 +230,11 @@ public class ListToFileHelper {
         for (FilesListItem oitem : fileslist) {
 
             try {
-                fileCount += tozipfile.takeWarFileToZip(warlist, oitem);
+                // 判断是否目录，目录就不操作
+                if (PathUtils.isFolder(oitem.getPath())) {
+                    System.out.println("   >>>目录不处理" + oitem.getPath());
+                }else 
+                    fileCount += tozipfile.takeWarFileToZip(warlist, oitem);
 
             } catch (Exception e) {
                 e.printStackTrace();

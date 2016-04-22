@@ -76,17 +76,27 @@ public class FilesListItem extends XdeployBase {
     public boolean checkProject() throws Exception{
         List<String> alist = PropValue.getInstance().pkgList;
         boolean bret = false;
+        ExchangePath ep = getExchange();
         
         String[] packages =StringUtil.split(getProj(),",、，"); 
-        
-
+        //判断web工程名是否在清单中
         for (String pak : packages) {
             if (alist.indexOf(pak)<0){
                 bret = false;
                 throw new Exception("无效的web工程名："+getProj());
-            }else bret =true;
+            }else{
+                //判断web工程名与mapping中是否一致
+                if(ep.inWar() && !ep.MappingKey.contains(getProj())){
+                    bret = false;
+                    throw new Exception("无效的web工程名："+getProj()+" | "+ep.MappingKey);
+                }else{
+                   bret =true;
+                    
+                }
+            }
        
         }
+        
         
         return bret;
         
