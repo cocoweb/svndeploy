@@ -22,7 +22,7 @@ public class ListToFile {
     public ListToFile() {
     }
 
-    public static void echoCommandInfo() {
+    public static void echoCommandInfo() { 
         
         helpPrint(cmdCLIOptions());
 

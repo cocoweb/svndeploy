@@ -8,6 +8,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
+import java.util.List;
 
 import javax.swing.BoxLayout;
 import javax.swing.GroupLayout;
@@ -23,6 +24,8 @@ import javax.swing.JTable;
 import javax.swing.LayoutStyle.ComponentPlacement;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import javax.swing.SwingUtilities;
+import javax.swing.SwingWorker;
 import javax.swing.border.BevelBorder;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
@@ -40,6 +43,10 @@ public class Mainwin2 {
     private JTable table;
     JCheckBox chckbxlog ;
     JCheckBox chckbxsvn;
+     JButton btnExportSVN ;
+     JButton btnScanList;
+     JButton btnWar2Zip;
+     JButton btnCommitSvn ;
 
     static ListToFileHelper listTofileHelper =null;
 
@@ -150,23 +157,36 @@ public class Mainwin2 {
         FlowLayout flowLayout_1 = (FlowLayout) panel_3.getLayout();
         flowLayout_1.setAlignment(FlowLayout.LEFT);
         
-        final JButton btnNewButton = new JButton("List 输出清单");
-        panel_3.add(btnNewButton);
+        btnScanList = new JButton("List 输出清单");
+        panel_3.add(btnScanList);
         
-        final JButton btnNewButton_1 = new JButton("清单导出文件 fromsvn");
-        panel_3.add(btnNewButton_1);
-        btnNewButton_1.addActionListener(new ActionListener() {
+        btnExportSVN = new JButton("清单导出文件 fromsvn");
+        panel_3.add(btnExportSVN);
+        btnExportSVN.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                disableButton(btnNewButton,btnNewButton_1);
-                listTofileHelper.scanSvnToPath();
-                enableButton(btnNewButton,btnNewButton_1);
+                //disableButton(btnNewButton,btnNewButton_1,btnNewButton_3);
+                new xworker(){
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        listTofileHelper.scanSvnToPath();
+                        return null;
+                    }
+                    
+                }.execute();
+
             }
         });
-        btnNewButton.addActionListener(new ActionListener() {
+        btnScanList.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                disableButton(btnNewButton,btnNewButton_1);
-                listTofileHelper.scanPrintList();
-                enableButton(btnNewButton,btnNewButton_1);
+                new xworker(){
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        listTofileHelper.scanPrintList();
+                        return null;
+                    }
+                    
+                }.execute();
+
             }
         });
         
@@ -198,25 +218,40 @@ public class Mainwin2 {
                     .addContainerGap())
         );
         
-        JButton btnsvn = new JButton("提交svn");
-        btnsvn.addActionListener(new ActionListener() {
+         btnCommitSvn = new JButton("提交svn");
+        btnCommitSvn.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                disableButton(btnNewButton,btnNewButton_1);
+                new xworker(){
+
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        listTofileHelper.commitsvn();
+                        return null;
+                    }
+                    
+                }.execute();
                 
-                listTofileHelper.commitsvn();
-                
-                enableButton(btnNewButton,btnNewButton_1);
             }
         });
-        panel_3.add(btnsvn);
+        panel_3.add(btnCommitSvn);
         
-        JButton btnNewButton_3 = new JButton("从War导出到zip fromzip");
-        btnNewButton_3.addActionListener(new ActionListener() {
+         btnWar2Zip = new JButton("从War导出到zip fromzip");
+        btnWar2Zip.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                listTofileHelper.scanWarToZip();
+                new xworker(){
+
+                    @Override
+                    protected Object doInBackground() throws Exception {
+                        listTofileHelper.scanWarToZip();
+                        return null;
+                    }
+                    
+                }.execute();
+
+
             }
         });
-        panel_3.add(btnNewButton_3);
+        panel_3.add(btnWar2Zip);
         panel_5.setLayout(new BoxLayout(panel_5, BoxLayout.X_AXIS));
         
         final JLabel lblMessage = new JLabel("");
@@ -269,4 +304,32 @@ public class Mainwin2 {
         });
 
     }
+    
+    /**
+     * 用来包装UI界面下的长时间任务执行
+     * 
+     * @author allan
+     *
+     */
+    abstract class xworker extends SwingWorker{
+
+        private xworker() {
+            //禁用按钮
+            disableButton(btnScanList,btnExportSVN,btnWar2Zip,btnCommitSvn);
+        }
+        
+        /* (non-Javadoc)
+         * @see javax.swing.SwingWorker#done()
+         */
+        @Override
+        protected void done() {
+            //打开按钮
+            enableButton(btnScanList,btnExportSVN,btnWar2Zip,btnCommitSvn);
+            super.done();
+        }
+
+        
+        
+    }
+    
 }

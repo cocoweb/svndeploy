@@ -60,5 +60,7 @@ public class PropertyIterator extends ObjectIterator{
         //currentElement = currentProperty;
         return currentProperty;
     }
+
+
  
 }

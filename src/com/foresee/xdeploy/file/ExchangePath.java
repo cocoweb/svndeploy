@@ -4,9 +4,11 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.PathUtils;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.base.XdeployBase;
 
 /**
  * 路径转换器
@@ -52,7 +54,7 @@ public class ExchangePath {
 
     public String JARName = "";
     public String FromPath = "";
-    public String ToZipPath = "";
+    private String ToZipPath = "";
     // * 1、在svn主干中的路径 SrcPath
     public String SrcPath = "";
     public String MappingKey = "";
@@ -98,6 +100,7 @@ public class ExchangePath {
      * @return
      * @throws Exception
      */
+    @Deprecated
     public static ExchangePath exchange(String srcPath) throws Exception {
         if (propvalue == null)
             throw new Exception("PropValue 没有初始化！");
@@ -111,7 +114,9 @@ public class ExchangePath {
             String jarName = xpath[1];
             String fromPath = PathUtils.trimFolderStart(srcPath.substring(srcPath.indexOf(xpath[0]) + xpath[0].length()))
                     .replace(".java", ".class");
-            String toPath = PathUtils.addFolderEnd(xpath[1]) + fromPath;
+            
+            String toPath =parserToPath(fromPath, xpath[1]); 
+                    //PathUtils.addFolderEnd(xpath[1]) + fromPath;
 
             ep = new ExchangePath(jarName, fromPath, toPath, srcPath, xpath[2]);
 
@@ -119,6 +124,31 @@ public class ExchangePath {
             ep = new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath));
 
         return ep;
+    }
+    private static FilesListItem filelistitem;
+    public static ExchangePath createExchange(FilesListItem oitem) throws Exception {
+    	lr.save_string(oitem.getProj(), XdeployBase.LIST_Project);
+    	filelistitem=oitem;
+    	
+        ExchangePath ep = exchange(oitem.getPath());
+        
+        return ep;
+    }
+    
+    /**
+     * 处理输出路径，对其中的{FILEName}参数进行处理
+     * @param frompath
+     * @param switchroot
+     * @return
+     */
+    private static String parserToPath(String frompath,String switchroot){
+        if(switchroot.contains("{"+XdeployBase.LIST_FileName+"}")){
+            lr.save_string(PathUtils.getFileNameWithExt(frompath), XdeployBase.LIST_FileName) ;
+            
+            return lr.eval_string(switchroot);
+        }else{
+            return PathUtils.addFolderEnd(switchroot) + frompath;
+        }
     }
 
     @Override
@@ -134,7 +164,7 @@ public class ExchangePath {
         Map<String, String> retmap = new HashMap<String, String>();
         retmap.put("JARName", JARName);
         retmap.put("FromPath", FromPath);
-        retmap.put("ToZipPath", ToZipPath);
+        retmap.put("ToZipPath", getToZipPath());
         retmap.put("SrcPath", SrcPath);
         retmap.put("Key", MappingKey);
         retmap.put("TrunkUrl", getTrunkURL(SrcPath));
@@ -142,24 +172,6 @@ public class ExchangePath {
         retmap.put("ToZipFile", ToZipFile.getOutZipFileName());
 
         return retmap;
-    }
-
-    /**
-     * 获取输出到zip中的相对路径
-     * @return the toZipPath
-     */
-    public String getToZipPath() {
-        return ToZipPath;
-    }
-
-    /**
-     * 根据输入的根目录，获取输出到zip中的相对路径
-     * @param keyRoot
-     * @return  
-     */
-    public String getToZipPath(String keyRoot) {
-        return keyRoot + ToZipPath.substring(ToZipPath.indexOf("/"));
-
     }
 
     /**
@@ -200,7 +212,7 @@ public class ExchangePath {
     /**
      * 在mapping列表中搜索转换串
      * @param srcPath
-     * @return
+     * @return   数组，[0]=原匹配串，[1]=转换串，[2]=mapping关键字名
      */
     private static String[] findSrcPath(String srcPath) {
 
@@ -210,7 +222,9 @@ public class ExchangePath {
             if (Array.getLength(astr) > 2)
                 return astr;
         }
-        return new String[] {};
+        
+        return findSrcPathX(srcPath);
+        //return new String[] {};
     }
 
     /**
@@ -235,6 +249,37 @@ public class ExchangePath {
         }
 
         return new String[] {};
+    }
+    
+    /**
+     * 搜索mappingx 配置列表
+     * @param srcPath
+     * @return
+     */
+    private static String[] findSrcPathX(String srcPath){
+        for (String s : sortaStr) { // 依次搜索
+            for (String akey : propvalue.getSectionItems("mappingx").keySet()) {
+                if (akey.indexOf(s)==0){
+                    //String packages=lr.eval_string("{"+XdeployBase.LIST_Project+"}");
+                    //可能存在多个web工程
+                    for(String pak:filelistitem.getProjs()){//StringUtil.split(packages, ",、，")){
+                        //临时存放WEBProject
+                        lr.save_string(pak, XdeployBase.LIST_Project);
+                        
+                        // 分离源路径 和 目标路径
+                        String[] apath = StringUtil.split(lr.eval_string(propvalue.getSectionItems("mappingx").get(akey)), "|");
+                        if (srcPath.contains(apath[0])) {
+                            // 如果路径中包含了“源路径”
+                            return new String[] { apath[0], apath[1], akey };
+                        }
+                    }
+                }
+            }
+            
+        }
+        
+        return new String[] {};
+        
     }
     /**
      * skey 可以支持 用-号分隔的左右过滤符号
@@ -270,10 +315,36 @@ public class ExchangePath {
   }
 
     /**
+     * 根据输入的根目录，获取输出到zip中的相对路径
+     * @param keyRoot
+     * @return  
+     */
+    public String getToZipPath(String keyRoot) {
+        return keyRoot + getToZipPath().substring(getToZipPath().indexOf("/"));
+    
+    }
+    //expath.getToZipPath().substring(expath.getToZipPath().indexOf("/")+1)
+    
+    /**
+     * @return 去掉头部 root/ 的路径
+     */
+    public String getToZipPathNoRoot(){
+    	return getToZipPath().substring(getToZipPath().indexOf("/")+1);
+    }
+
+    /**
+     * 获取输出到zip中的相对路径
+     * @return the toZipPath
+     */
+    public String getToZipPath() {
+        return lr.eval_string(ToZipPath);
+    }
+
+    /**
      * @return 输出到zip时的 相对目录路径（不含文件名）
      */
     public String getToZipFolderPath() {
-        return FileUtil.getFolderPath(ToZipPath);
+        return FileUtil.getFolderPath(getToZipPath());
     }
 
     /**
@@ -286,6 +357,8 @@ public class ExchangePath {
 
         return keyRoot + ss;
     }
+    
+    
 
     public static String getTrunkURL(String srcPath) {
         String fromPath = PathUtils.autoPathRoot(srcPath, "trunk"); // ??

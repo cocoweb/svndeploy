@@ -28,6 +28,10 @@ public abstract class XdeployBase {
     
     }
 
+    public static final String LIST_Project = "WEBProject";
+    
+    public static final String LIST_FileName = "FILEName";
+
 
     public static String handlePath(String sPath) {
     

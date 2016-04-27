@@ -37,7 +37,7 @@ public class ExchangePathTest {
   @Test
   public void getToZipFolderPath(){
       try {
-        ExchangePath ep =ExchangePath.exchange("/trunk/engineering/src/tycx/web/tycx00-service/WebContent/WEB-INF/web.xml");
+        ExchangePath ep =ExchangePath.exchange("/engineering/src/repository/com.foresee/public/repository/asm/asm/jars/asm-1.5.3.jar");
         
         System.out.println(ep);
         

@@ -9,6 +9,7 @@ import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Ver;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.PathUtils;
@@ -36,6 +37,8 @@ public class FilesListItem extends XdeployBase {
     public FilesListItem(ArrayList<String> listString, FilesList fileslist) {
         svnfileDefList =  listString;
         parentFileslist = fileslist;
+        
+        
     }
 
     public String getURL(){
@@ -47,6 +50,10 @@ public class FilesListItem extends XdeployBase {
     }
     public String getProj(){
         return svnfileDefList.get(ColList_ProjPackage);
+    }
+    
+    public String[] getProjs(){
+    	return StringUtil.split(getProj(), ",、，");
     }
     
     public String getPath(String filekeyroot){
@@ -106,7 +113,8 @@ public class FilesListItem extends XdeployBase {
     public ExchangePath getExchange(){
         if (ep==null){
             try {
-                ep = ExchangePath.exchange(getPath());
+                ep = ExchangePath.createExchange(this);
+                		//ExchangePath.exchange(getPath());
             } catch (Exception e) {
                 
                 e.printStackTrace();

@@ -171,7 +171,7 @@ public class WarFile {
         }else if(sf.isType(ExchangePath.Type_WAR)){
             //retint = copyFileToZip(zipOutFile.toZipFile, expath);
             if(expath.MappingKey.contains("META-INF")){  //w.META-INF 类型
-                retint = copyFileToZip(zipOutFile.toZipFile, expath.ToZipPath.substring(expath.ToZipPath.indexOf("/")+1), expath.getToZipPath(warName));
+                retint = copyFileToZip(zipOutFile.toZipFile, expath.getToZipPathNoRoot(), expath.getToZipPath(warName));
             }else  // w.类型
                 retint = copyFileToZip(zipOutFile.toZipFile, expath.FromPath, expath.getToZipPath(warName));
 
@@ -183,7 +183,7 @@ public class WarFile {
         
         if (retint >=0) {
             System.out.println("     抽取 "+ (sf.isType(ExchangePath.Type_JAR)?"Class":"文件") 
-                    +" : " + expath.ToZipPath +" @ "+getSource(sf));
+                    +" : " + expath.getToZipPath() +" @ "+getSource(sf));
         } else
             System.err.println("    ！抽取失败  :" + expath+"\n  >>> @ "+getSource(sf));
 
@@ -207,7 +207,7 @@ public class WarFile {
             retint = copyJavaToZip(zipOutFile, expath);
 
             if (retint == 0) {
-                System.out.println("     抽取class :" + expath.ToZipPath);
+                System.out.println("     抽取class :" + expath.getToZipPath());
             } else {
                 System.err.println("   !!抽取失败  :\n" + expath);
             }
@@ -218,13 +218,13 @@ public class WarFile {
             if (retint == -1) {
                 System.err.println("    ！抽取失败  :" + expath);
             } else
-                System.out.println("     抽取文件  :" + expath.ToZipPath);
+                System.out.println("     抽取文件  :" + expath.getToZipPath());
         }
 
         return retint;
 
     }
-
+    @Deprecated
     private int copyFileToZip(ExchangePath expath) {
         try {
 
@@ -232,7 +232,7 @@ public class WarFile {
                 return -1;
 
             ZipFile zipOutFile = new ZipFile(expath.getOutZipFileName());
-            return copyFileToZip(zipOutFile, expath.FromPath, expath.ToZipPath);
+            return copyFileToZip(zipOutFile, expath.FromPath, expath.getToZipPath());
 
         } catch (ZipException e) {
             e.printStackTrace();
@@ -248,7 +248,7 @@ public class WarFile {
             return -1;
         
         if(expath.MappingKey.contains("META-INF")){  //w.META-INF 类型
-            return copyFileToZip(zipOutFile, expath.ToZipPath.substring(expath.ToZipPath.indexOf("/")+1), expath.getToZipPath(warName));
+            return copyFileToZip(zipOutFile, expath.getToZipPath().substring(expath.getToZipPath().indexOf("/")+1), expath.getToZipPath(warName));
         }else  // c.类型
             return copyFileToZip(zipOutFile, expath.FromPath, expath.getToZipPath(warName));
 
@@ -260,7 +260,7 @@ public class WarFile {
         return Zip4jUtils.ZipCopyFile2Zip(warZipFile, sPath, zipOutFile, dPath);
 
     }
-
+    @Deprecated
     private int copyJavaToZip(ExchangePath exPath) {
         return copyJavaToZip(exPath.getOutZipFileName(), exPath.FromPath, exPath.JARName);
     }
@@ -268,7 +268,7 @@ public class WarFile {
     private int copyJavaToZip(ZipFile toZipFile, ExchangePath exPath) {
         return copyJavaToZip(toZipFile, exPath.FromPath, exPath.JARName);
     }
-
+    @Deprecated
     private int copyJavaToZip(String toZip, ExchangePath exPath) {
         return copyJavaToZip(toZip, exPath.FromPath, exPath.JARName);
 

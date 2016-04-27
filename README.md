@@ -46,6 +46,24 @@
 3、比对检查zip、excel
 
 ##Release Note
+v0.32-20160427
+改善窗口显示性能
+
+v0.31-20160426
+1、增加Mappingx扩展未知war包的处理
+mappingx.w.META-INF.warname   =/web/{WEBProject}/src/META-INF|{WEBProject}/WEB-INF/classes/META-INF
+mappingx.w.warname0            ={WEBProject}/WebContent|{WEBProject}
+mappingx.w.warname1            ={WEBProject}/src|{WEBProject}
+
+2、增加抽取jar包的保存文件路径处理
+mapping.c.repository         =src/repository/com.foresee/public/repository|{WEBProject}/WEB-INF/libs/{FILEName}
+
+
+
+v0.30-20160425
+增加mapping路径参数化功能，  {WEBProject}为excel的工程名
+mapping.c.repository     =src/repository/com.foresee/public/repository|{WEBProject}/WEB-INF/libs
+
 v0.29-20160422
 1、列出清单时，加入web工程判断，是否正确
 2、fromzip目录不做处理,改善错误日志输出

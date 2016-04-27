@@ -3,6 +3,10 @@ package com.foresee.xdeploy.file;
 import java.io.File;
 import java.util.Date;
 
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+
+import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
@@ -54,64 +58,73 @@ public class ToZipFile extends XdeployBase {
      * @param sf
      * @return
      */
-    public int takeWarFileToZip(WarFiles warlist, FilesListItem sf) {
+    public int takeWarFileToZip(final WarFiles warlist, final FilesListItem sf) {
         int fileCount = 0;
+        final ExchangePath expath = sf.getExchange();
+        fileCount=scanPackages(sf.getProjs(),new IHandlePackage(){
 
-        ExchangePath expath = sf.getExchange();
-
-        String[] packages = StringUtil.split(sf.getProj(), ",、，"); // sf.getProj().split(",");
-        for (String pak : packages) {
-            // 判断清单中的工程名，是否包含在 war包中
-            // 包含就抽取到目标路径
-            WarFile warfile = warlist.getWarFile(pak);
-            if (warfile != null) {
-                fileCount += warfile.copyToZip(this, sf);
-
-                if (expath.isJava()) {
-                    // 同时抽取java源文件加入到zip中（直接从svn获取）
-                    fileCount += exportSvnToZip(sf);
-
+            @Override
+            public int handlePackage(ToZipFile self, String pak) {
+                int fileCount = 0;
+                // 判断清单中的工程名，是否包含在 war包中
+                // 包含就抽取到目标路径
+                WarFile warfile = warlist.getWarFile(pak);
+                if (warfile != null) {
+                    fileCount += warfile.copyToZip(self, sf);
+    
+                    if (expath.isJava()) {
+                        // 同时抽取java源文件加入到zip中（直接从svn获取）
+                        fileCount += exportSvnToZip(sf,pak);
+    
+                    }
+    
+                } else {
+                    System.err.println("   !!没能抽取  :" + expath.SrcPath + " @ " + pak);
                 }
-
-            } else {
-                System.err.println("   !!没能抽取  :" + expath.SrcPath + " @ " + pak);
+                
+                return fileCount;
             }
+            
+        });
 
-        }
         return fileCount;
     }
+
 
     /**
      * 将文件添加到zip
      * 
      * @param svnfile
      */
-    public void takeFileToZip( FilesListItem svnfile) {
-    
-        String[] packages = StringUtil.split(svnfile.getProj(), ",、，");
-    
-        for (String pak : packages) {
-            // System.out.println(pak + "@@" + expath.getToZipFolderPath());
-            if (new File(svnfile.getExchange().getToFilePath()).exists())
-                Zip4jUtils.zipFile(svnfile.getExchange().getToFilePath(), toZipPath, svnfile.getExchange().getToZipFolderPath(pak));// ??
-        }
-    
+    public void takeFileToZip( final FilesListItem svnfile) {
+        scanPackages(svnfile.getProjs(),new IHandlePackage(){
+
+            @Override
+            public int handlePackage(ToZipFile self, String pak) {
+                if (new File(svnfile.getExchange().getToFilePath()).exists())
+                    Zip4jUtils.zipFile(svnfile.getExchange().getToFilePath(), toZipPath, svnfile.getExchange().getToZipFolderPath(pak));// ??
+                return 0;
+                
+            }
+        });
+     
     }
 
-    public int exportSvnToZip(FilesListItem sf) {
+    
+    public int exportSvnToZip(FilesListItem sf,String pak){
         int retint = 0;
-
         ExchangePath expath = sf.getExchange();
         // 同时抽取java源文件加入到zip中（直接从svn获取）
         String tmpFilePath = expath.getToTempFilePath();
-        //pv.tempPath + "/" + expath.getFileName();
+        // pv.tempPath + "/" + expath.getFileName();
 
         try {
             SVNRepo.Export(sf, tmpFilePath);
-            
-            //svnclient.svnExport(expath.getSvnURL(), sf.getVer(), tmpFilePath, pv.keyRootFolder);
+
+            // svnclient.svnExport(expath.getSvnURL(), sf.getVer(),
+            // tmpFilePath, pv.keyRootFolder);
             // 将文件添加到zip文件
-            Zip4jUtils.zipFile(tmpFilePath, toZipFile, expath.getToZipFolderPath());
+            Zip4jUtils.zipFile(tmpFilePath, toZipFile, lr.eval_string(expath.getToZipFolderPath()));
 
             retint++;
             FileUtil.delFile(tmpFilePath);
@@ -119,8 +132,52 @@ public class ToZipFile extends XdeployBase {
             e.printStackTrace();
             retint--;
         }
+        return retint;
+
+    }
+
+    public int exportSvnToZip(final FilesListItem sf) {
+        int retint = 0;
+
+        retint = scanPackages(sf.getProjs(), new IHandlePackage() {
+
+            @Override
+            public int handlePackage(ToZipFile self, String pak) {
+                return exportSvnToZip(sf,pak);
+            }
+
+        }
+
+        );
 
         return retint;
+    }
+    /**
+     * 处理package包的接口
+     * 
+     */
+    public interface IHandlePackage {
+        public int handlePackage(ToZipFile self,String pak);
+    }
+    
+    /**
+     * 扫描package字符串
+     * @param sProj
+     * @param handlepackage
+     * @return
+     */
+    public int scanPackages(String[] Projs,IHandlePackage handlepackage){
+        int ret=0;
+        //String[] packages = StringUtil.split(sProj, ",、，");
+        
+        for (String pak : Projs) {
+            // web工程参数保存
+            lr.save_string(pak, LIST_Project);
+            
+            ret = handlepackage.handlePackage(this,pak);
+        }
+        return ret;
+        
     }
 
     /**
@@ -129,7 +186,7 @@ public class ToZipFile extends XdeployBase {
      * @param fromFilePath
      * @param expath
      * @param svnfile
-     */
+     */@Deprecated
     private void addToZip(String fromFilePath, ExchangePath expath, FilesListItem svnfile) {
 
         String[] packages = StringUtil.split(svnfile.getProj(), ",、，");

@@ -46,12 +46,18 @@ zip.tofolder={temppath}
 ##以下为路径转换配置，使用 | 隔离
     #如： [源路径]|[包路径]
     #搜索顺序：c.->w.META-INF->w.->j.
-sortmapping = c.,w.META-INF,w.,j.    
+sortmapping = c.,w.META-INF,w.,j.  
+  
+mappingx.w.META-INF.warname   =/web/{WEBProject}/src/META-INF|{WEBProject}/WEB-INF/classes/META-INF
+mappingx.w.warname0            ={WEBProject}/WebContent|{WEBProject}
+mappingx.w.warname1            ={WEBProject}/src|{WEBProject}
+    
     
     #w.META-INF, 从war中抽取文件（源代码编译打包后，路径发生了变化）
 mapping.w.META-INF.gt3nf-admin    =/portal/web/gt3nf-admin/src/META-INF|gt3nf-admin/WEB-INF/classes/META-INF
 mapping.w.META-INF.remind-web    =/portal/web/remind-web/src/META-INF|remind-web/WEB-INF/classes/META-INF
 mapping.w.META-INF.gt3nf-portal    =/portal/web/gt3nf-portal/src/META-INF|gt3nf-portal/WEB-INF/classes/META-INF
+mapping.w.META-INF.gt3nf-service   =/gt3nf/web/gt3nf-service/src/META-INF|gt3nf-service/WEB-INF/classes/META-INF
 
     #war包，从war中抽取文件
 mapping.w.gt3nf-wsbs0	              =gt3nf/web/gt3nf-wsbs/WebContent|gt3nf-wsbs/
@@ -72,6 +78,7 @@ mapping.w.tycx-wsbs1                  =tycx/web/tycx-wsbs/src|tycx-wsbs
 mapping.w.remind-web                  =remind-web/src|remind-web
 mapping.w.gt3nf-task0                 =gt3nf/web/gt3nf-task/WebContent|gt3nf-task
 mapping.w.gt3nf-task1                 =gt3nf-task/src|gt3nf-task
+mapping.w.tycx-service                =tycx-service/WebContent|tycx-service
 
 	#jar包，从war中jar的抽取class文件
 mapping.j.com.foresee.gt3nf.service   =gt3nf/java/com.foresee.gt3nf.service/src|com.foresee.gt3nf.service
@@ -81,11 +88,11 @@ mapping.j.gov.chinatax.gt3nf1         =gov.chinatax.gt3nf/src\|gov.chinatax.gt3n
 mapping.j.com.foresee.tax.nsrqx       =tax/java/com.foresee.tax.nsrqx/src|com.foresee.tax.nsrqx
 mapping.j.com.foresee.portal.biz      =com.foresee.portal.biz/src|com.foresee.portal.biz
 mapping.j.com.foresee.portal          =com.foresee.portal/src|com.foresee.portal
-mapping.j.com.foresee.tycx.service    =com.foresee.tycx.service|com.foresee.tycx.service
 mapping.j.com.foresee.etax.bizfront   =etax/java/com.foresee.etax.bizfront/src|com.foresee.etax.bizfront
 mapping.j.com.foresee.tax.service     =tax/java/com.foresee.tax.service/src|com.foresee.tax.service
 mapping.j.com.foresee.gt3nf.task      =src/gt3nf/java/com.foresee.gt3nf.task/src|com.foresee.gt3nf.task
-mapping.j.com.foresee.tycx.service    =tycx/java/com.foresee.tycx.service/src|com.foresee.tycx.service
+mapping.j.com.foresee.tycx.service0    =tycx/java/com.foresee.tycx.service/src|com.foresee.tycx.service
+mapping.j.com.foresee.tycx.service1    =com.foresee.tycx.service|com.foresee.tycx.service
 mapping.j.com.foresee.gt3nf.thirdpartyfront =com.foresee.gt3nf.thirdpartyfront/src|com.foresee.gt3nf.thirdpartyfront
 mapping.j.com.foresee.etax.servicecaller    =com.foresee.etax.servicecaller/src|com.foresee.etax.servicecaller
 mapping.j.com.foresee.fbrp            =com.foresee.fbrp/src|com.foresee.fbrp
@@ -103,8 +110,13 @@ mapping.j.com.foresee.gt3nf.outerservice           =com.foresee.gt3nf.outerservi
 mapping.j.com.foresee.etax.bizcore                 =com.foresee.etax.bizcore/src|com.foresee.etax.bizcore
 mapping.j.com.foresee.gt3nf.bizfront               =com.foresee.gt3nf.bizfront/src|com.foresee.gt3nf.bizfront
 
-   #路径转换，直接从svn获取
+   #路径转换，直接从svn获取   {WEBProject}为excel的工程名
 mapping.c.vfs_home                =src/portal/vfs_home|vfs_home
+mapping.c.repository         =src/repository/com.foresee/public/repository|{WEBProject}/WEB-INF/libs/{FILEName}
+
+
+#package相关，比如war、jar
+package.list=gt3nf-service,gt3nf-wsbs,gt3nf-skin,gt3nf-portal,gt3nf-admin,gt3nf-thirdparty-front,gt3nf-thirdparty-service,km-web,tycx-wsbs,tycx-service,remind-web
 
 ##############################
 
@@ -114,9 +126,6 @@ ci.tofolder={workspace}/e
 ci.keyroot=engineering
 
 
-
-#package相关，比如war、jar
-package.list=gt3nf-service,gt3nf-wsbs,gt3nf-skin,gt3nf-portal,gt3nf-admin,gt3nf-thirdparty-front,gt3nf-thirdparty-service,km-web,tycx-wsbs,tycx-service,remind-web
 
 
 #按照svn版本号，提取增量清单

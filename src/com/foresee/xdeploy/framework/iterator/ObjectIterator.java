@@ -44,6 +44,11 @@ public abstract class ObjectIterator  implements IObjectIterator{
         return currentElement;
     }
     
+	@Override
+	public void remove() {
+		// TODO Auto-generated method stub
+		
+	}
     
 
 }
