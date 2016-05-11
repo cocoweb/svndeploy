@@ -23,7 +23,7 @@ public class FilesListTest {
 
     @Test
     public void iterator() {
-        FilesList sflist = efh.loadFilesList(new File("E:/tmp/workspace/xls/因开发所致环境变更记录表模版-20160331-杜英恒-涉税文书.xls"));
+        FilesList sflist = efh.loadFilesList(new File("E:/tmp/workspace/xls/因开发所致环境变更记录表模版-20160331-杜英恒-涉税文书.xls"),"");
         Iterator<FilesListItem> it = sflist.iterator();
         while (it.hasNext()) {
             System.out.println(it.next().getPath());

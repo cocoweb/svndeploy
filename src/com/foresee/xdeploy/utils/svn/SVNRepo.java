@@ -1,18 +1,20 @@
-package com.foresee.xdeploy.file;
+package com.foresee.xdeploy.utils.svn;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNDiffStatus;
 
 import com.foresee.test.util.io.FileCopyUtil;
+import com.foresee.xdeploy.file.FilesListItem;
+import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.utils.PathUtils;
-import com.foresee.xdeploy.utils.svn.SVNUtil;
-import com.foresee.xdeploy.utils.svn.SvnClient;
 
-public class SVNRepository {
+public class SVNRepo {
     
     String svn_UserName="";
     String svn_password="";
@@ -22,14 +24,14 @@ public class SVNRepository {
     SvnClient svnclient=null;
 
 
-    private  SVNRepository() {
+    private  SVNRepo() {
         svn_UserName=PropValue.getInstance().getProperty("svn.username");
         svn_password=PropValue.getInstance().getProperty("svn.password");
         
         svnclient = SvnClient.getInstance(svn_UserName, svn_password);
     }
     
-    private SVNRepository(String svn_baseurl) {
+    private SVNRepo(String svn_baseurl) {
         this();
         svn_BaseURL = svn_baseurl;
         
@@ -37,16 +39,16 @@ public class SVNRepository {
     
    //static SVNRepository localsvn=null;
     
-    public static SVNRepository getInstance(){
+    public static SVNRepo getInstance(){
 //        SVNRepository localsvn=null;
 //        if(localsvn==null){
 //            localsvn=new SVNRepository();
 //        }
-        return new SVNRepository();
+        return new SVNRepo();
     }
     
-    public static SVNRepository getInstance(String svn_baseurl){
-      return new SVNRepository(svn_baseurl);
+    public static SVNRepo getInstance(String svn_baseurl){
+      return new SVNRepo(svn_baseurl);
   }
 
     
@@ -132,7 +134,7 @@ public class SVNRepository {
         return svnclient.svnDiff(xUrl, startVersion, endVersion, svndiffkeyroot);
     }
     
-    public ArrayList<String> Diff(){
+    public ArrayList<SVNDiffStatus> Diff(){
         PropValue pv =PropValue.getInstance();
         
         String svnurl = pv.getProperty("svndiff.url");
@@ -143,7 +145,7 @@ public class SVNRepository {
         System.out.println("startversion=" + startversion + ": endversion=" + endversion + ": svnURL=" + svnurl);
         
         try {
-            return svnclient.svnDiff(svnurl, startversion, endversion, svndiffkeyroot);
+            return svnclient.svnDiff1(svnurl, startversion, endversion, svndiffkeyroot);
         } catch (SVNException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -151,5 +153,27 @@ public class SVNRepository {
         return null;
 
     }
+    
+    public List<SvnResource> svnLogPathList(String xUrl, String startVersion, String endVersion, String svndiffkeyroot) throws SVNException{
+    	return svnclient.getLogPathList(xUrl, startVersion, endVersion, svndiffkeyroot);
+    }
+    
+	public List<SvnResource> LogPathList(){
+		PropValue pv = PropValue.getInstance();
+
+		String svnurl = pv.getProperty("svndiff.url");
+		String startversion = pv.getProperty("svndiff.startversion");
+		String endversion = pv.getProperty("svndiff.endversion");
+		String svndiffkeyroot = pv.getProperty("svndiff.keyroot");
+
+		System.out.println("startversion=" + startversion + ": endversion=" + endversion + ": svnURL=" + svnurl);
+		try {
+			return svnclient.getLogPathList(svnurl, startversion, endversion, svndiffkeyroot);
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 }

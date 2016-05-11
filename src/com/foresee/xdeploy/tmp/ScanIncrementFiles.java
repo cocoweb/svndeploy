@@ -246,7 +246,7 @@ public class ScanIncrementFiles {
 
                         @Override
                         public void handleRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork,
-                                HSSFWorkbook sourceWork) {
+                                HSSFWorkbook sourceWork, int iCount) {
                             for (int i = sourceRow.getFirstCellNum(); i <= sourceRow.getLastCellNum(); i++) {
                                 HSSFCell sourceCell = sourceRow.getCell(i);
                                 HSSFCell targetCell = targetRow.getCell(i);

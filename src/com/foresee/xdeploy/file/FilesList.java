@@ -4,11 +4,13 @@ import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Path;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
 import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
+import com.foresee.xdeploy.utils.svn.ListUtil;
 
 public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
     public List<ArrayList<String>> SvnFileList=new ArrayList<ArrayList<String>>();
@@ -99,6 +101,21 @@ public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
        
        return newlist;
    }
+
+	public List<ArrayList<String>> removeDeuplicate1() {
+		return ListUtil.removeDeuplicate(SvnFileList, new Comparator<ArrayList<String>>() {
+
+			@Override
+			public int compare(ArrayList<String> o1, ArrayList<String> o2) {
+				if (o2 == null || !o1.get(ColList_Path).equals(o2.get(ColList_Path))) {
+
+					return 0;
+				} else
+					return -1;
+			}
+
+		});
+	}
 
  
  

@@ -2,8 +2,10 @@ package com.foresee.xdeploy;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.wc.SVNDiffStatus;
 
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
@@ -13,10 +15,11 @@ import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.FilesList;
 import com.foresee.xdeploy.file.FilesListItem;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.file.SVNRepository;
 import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.WarFiles;
 import com.foresee.xdeploy.utils.PathUtils;
+import com.foresee.xdeploy.utils.svn.SVNRepo;
+import com.foresee.xdeploy.utils.svn.SvnResource;
 
 public class ListToFileHelper {
     public static final String BATCH = "BATCH";
@@ -105,13 +108,13 @@ public class ListToFileHelper {
 
         // export svn文件后，自动提交到基线分支
         if (pv.getProperty("svn.autocommit").equals("true"))
-            SVNRepository.CommitSvn(pv.getProperty("svn.workspace"), pv.svntofolder, "提交文件：" + sfs.excelFiles);
+            SVNRepo.CommitSvn(pv.getProperty("svn.workspace"), pv.svntofolder, "提交文件：" + sfs.excelFiles);
 
     }
 
     public String svnToPath(FilesList fileslist) {
 
-        SVNRepository svnrepo = SVNRepository.getInstance();
+        SVNRepo svnrepo = SVNRepo.getInstance();
         ToZipFile tozipfile = new ToZipFile(svnrepo);
 
         String exportToPath = pv.svntofolder;
@@ -202,7 +205,7 @@ public class ListToFileHelper {
 
     public void commitsvn() {
         ExcelFiles excelfiles = new ExcelFiles(pv);
-        SVNRepository.CommitSvn(pv.getProperty("svn.workspace"), pv.svntofolder, "提交文件：" + excelfiles);
+        SVNRepo.CommitSvn(pv.getProperty("svn.workspace"), pv.svntofolder, "提交文件：" + excelfiles);
 
     }
 
@@ -219,7 +222,7 @@ public class ListToFileHelper {
 
         int fileCount = 0;
 
-        SVNRepository svnrepo = SVNRepository.getInstance();
+        SVNRepo svnrepo = SVNRepo.getInstance();
         ToZipFile tozipfile = new ToZipFile(svnrepo);
 
         // war包的清单
@@ -288,17 +291,34 @@ public class ListToFileHelper {
     public void svnDiffToPath() {
         System.out.println("===========根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单=================");
 
-        SVNRepository svnrepo = SVNRepository.getInstance();
+        SVNRepo svnrepo = SVNRepo.getInstance();
 
-        ArrayList<String> alist = svnrepo.Diff();
-        Collections.sort(alist); // 排序
+        List<SvnResource> alist = svnrepo.LogPathList();
+        
+//        String rootURL = pv.getProperty("svndiff.url");
+//        rootURL = rootURL.substring(0, rootURL.lastIndexOf(pv.getProperty("svndiff.keyroot")));
+       
 
-        for (String spath : alist) {
-            System.out.println(spath);
+        for (SvnResource sr : alist) {
+        	String surl = sr.getUrl();
+        	String spath = pv.getProperty("svn.tofolder") + sr.getPath();
+        	
+        	try {
+				long v = svnrepo.Export(surl, sr.getVersion(), spath, "");
+	            System.out.println("ver:"+Long.toString(v)+ " | "+ sr.getPath());
+			} catch (SVNException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+            //System.out.println(pv.getProperty("svndiff.url")+spath);
 
         }
+        
+//        updateClient.doExport(change.getURL(), destination, 
+//        		this.endingRevision, this.endingRevision, null, true, SVNDepth.getInfinityOrEmptyDepth(true)); 
 
-        System.out.println("变动文件数=" + Integer.toString(alist.size()));
+        System.out.println(">>>变动文件数=" + Integer.toString(alist.size()));
+        System.out.println("   文件保存在："+pv.getProperty("svn.tofolder") );
 
     }
 

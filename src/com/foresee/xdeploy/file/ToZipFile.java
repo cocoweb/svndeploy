@@ -3,15 +3,13 @@ package com.foresee.xdeploy.file;
 import java.io.File;
 import java.util.Date;
 
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.PathUtils;
+import com.foresee.xdeploy.utils.svn.SVNRepo;
 import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -21,21 +19,21 @@ public class ToZipFile extends XdeployBase {
     public ZipFile toZipFile = null;
     PropValue pv = null;
 
-    SVNRepository SVNRepo = null;
+    SVNRepo SvnRepo = null;
 
-    public ToZipFile(String zipPath, PropValue propvalue) {
+    protected ToZipFile(String zipPath, PropValue propvalue) {
         toZipPath = zipPath;
         toZipFile = Zip4jUtils.genZipFile(zipPath);
 
         pv = propvalue;
     }
 
-    public ToZipFile(PropValue propvalue) {
+    protected ToZipFile(PropValue propvalue) {
         this(ToZipFile.getNewOutZipFileName(), propvalue);
 
     }
 
-    public ToZipFile() {
+    protected ToZipFile() {
         this(PropValue.getInstance());
     }
 
@@ -44,9 +42,9 @@ public class ToZipFile extends XdeployBase {
 //        svnclient = xclient;
 //    }
     
-    public ToZipFile(SVNRepository svnrepo) {
+    public ToZipFile(SVNRepo svnrepo) {
         this(PropValue.getInstance());
-        SVNRepo = svnrepo;
+        SvnRepo = svnrepo;
     }
 
 
@@ -119,7 +117,7 @@ public class ToZipFile extends XdeployBase {
         // pv.tempPath + "/" + expath.getFileName();
 
         try {
-            SVNRepo.Export(sf, tmpFilePath);
+            SvnRepo.Export(sf, tmpFilePath);
 
             // svnclient.svnExport(expath.getSvnURL(), sf.getVer(),
             // tmpFilePath, pv.keyRootFolder);

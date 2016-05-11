@@ -27,11 +27,11 @@ public class WarFile {
 
     private String warName = "";
 
-    public WarFile(String fileName) {
+    protected WarFile(String fileName) {
         this(new File(fileName));
     }
 
-    public WarFile(File file) {
+    protected WarFile(File file) {
         warFile = file;
         try {
             warZipFile = new ZipFile(file);

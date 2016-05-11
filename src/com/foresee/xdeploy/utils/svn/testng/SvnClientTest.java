@@ -1,10 +1,15 @@
 package com.foresee.xdeploy.utils.svn.testng;
 
 import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+
 import org.testng.annotations.BeforeClass;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.wc.SVNDiffStatus;
 
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.svn.SvnClient;
 
 public class SvnClientTest {
@@ -42,5 +47,36 @@ public class SvnClientTest {
 		};
 
 
+    }
+    
+    @Test
+    public void svnLogRead(){
+    	String xurl = "https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/trunk/engineering/src/gt3nf/java/com.foresee.gt3nf.service/src/com/foresee/gt3nf/service/outerservice/backcaller/service/gt3/hxqz/sb/impl";
+    	try {
+			System.out.println(sc.getLogPathList(xurl, "8000", "10000", ""));
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    @Test
+    public void svnDiff(){
+    	String xurl = "https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/trunk/engineering/src/gt3nf/java/com.foresee.gt3nf.service/src/com/foresee/gt3nf/service/outerservice/backcaller/service/gt3/hxqz/sb/impl";
+    	String endver = "10000";
+    	try {
+    		ArrayList<SVNDiffStatus> ll = sc.svnDiff1(xurl, "5000", endver, "");
+    		for(SVNDiffStatus s : ll){
+    			long v = sc.svnExport(s.getURL().toString(), endver, "p:/yy"+PathUtils.autoPathRoot(s.getPath(),""), "");
+    			
+    			System.out.println("ver:"+Long.toString(v)+ " | "+ s.getURL().toString());
+    			
+//    	        sc.doExport(change.getURL(), destination, 
+//        		this.endingRevision, this.endingRevision, null, true, SVNDepth.getInfinityOrEmptyDepth(true)); 
+    		}
+		} catch (SVNException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

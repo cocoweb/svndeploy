@@ -3,6 +3,7 @@ package com.foresee.xdeploy.file;
 import java.lang.reflect.Array;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.PathUtils;
@@ -127,6 +128,7 @@ public class ExchangePath {
     }
     private static FilesListItem filelistitem;
     public static ExchangePath createExchange(FilesListItem oitem) throws Exception {
+    	//保存工程名，作为项目参数
     	lr.save_string(oitem.getProj(), XdeployBase.LIST_Project);
     	filelistitem=oitem;
     	
@@ -235,18 +237,20 @@ public class ExchangePath {
      * @return  数组，[0]=原匹配串，[1]=转换串，[2]=mapping关键字名
      */
     private static String[] findSrcPath(String srcPath, String skey) {
-
-        for (String akey : propvalue.pkgmap.keySet()) {
-            if (akey.indexOf(skey)==0){
+    	
+    	for(Entry<String, String> entry:propvalue.pkgmap.entrySet()){
+            if (entry.getKey().indexOf(skey)==0){
                 // 分离源路径 和 目标路径
-                String[] apath = StringUtil.split(propvalue.pkgmap.get(akey), "|");
+                String[] apath = StringUtil.split(entry.getValue(), "|");
                 if (srcPath.contains(apath[0])) {
                     // 如果路径中包含了“源路径”
-                    return new String[] { apath[0], apath[1], akey };
+                    return new String[] { apath[0], apath[1], entry.getKey() };
                 }
 
             }
-        }
+    		
+    	}
+
 
         return new String[] {};
     }
@@ -258,19 +262,20 @@ public class ExchangePath {
      */
     private static String[] findSrcPathX(String srcPath){
         for (String s : sortaStr) { // 依次搜索
-            for (String akey : propvalue.getSectionItems("mappingx").keySet()) {
-                if (akey.indexOf(s)==0){
-                    //String packages=lr.eval_string("{"+XdeployBase.LIST_Project+"}");
+            
+        	for(Entry<String, String> entry:propvalue.getSectionItems("mappingx").entrySet()){
+        		if (entry.getKey().indexOf(s)==0){
+                    
                     //可能存在多个web工程
                     for(String pak:filelistitem.getProjs()){//StringUtil.split(packages, ",、，")){
                         //临时存放WEBProject
                         lr.save_string(pak, XdeployBase.LIST_Project);
                         
                         // 分离源路径 和 目标路径
-                        String[] apath = StringUtil.split(lr.eval_string(propvalue.getSectionItems("mappingx").get(akey)), "|");
+                        String[] apath = StringUtil.split(lr.eval_string(entry.getValue()), "|");
                         if (srcPath.contains(apath[0])) {
                             // 如果路径中包含了“源路径”
-                            return new String[] { apath[0], apath[1], akey };
+                            return new String[] { apath[0], apath[1], entry.getKey() };
                         }
                     }
                 }
@@ -298,14 +303,15 @@ public class ExchangePath {
       } else
           lkey = skey;
 
-      for (String akey : propvalue.pkgmap.keySet()) {
-          if ((akey.indexOf(lkey) == 0 && rkey.isEmpty())
-                  || (akey.indexOf(lkey) == 0 && (!rkey.isEmpty() && akey.lastIndexOf(rkey) > 0))) {
+      for(Entry<String, String> entry:propvalue.pkgmap.entrySet()){
+      //for (String akey : propvalue.pkgmap.keySet()) {
+          if ((entry.getValue().indexOf(lkey) == 0 && rkey.isEmpty())
+                  || (entry.getValue().indexOf(lkey) == 0 && (!rkey.isEmpty() && entry.getValue().lastIndexOf(rkey) > 0))) {
               // 分离源路径 和 目标路径
-              String[] apath = StringUtil.split(propvalue.pkgmap.get(akey), "|");
+              String[] apath = StringUtil.split(entry.getValue(), "|");
               if (srcPath.contains(apath[0])) {
                   // 如果路径中包含了“源路径”
-                  return new String[] { apath[0], apath[1], akey };
+                  return new String[] { apath[0], apath[1], entry.getValue() };
               }
 
           }

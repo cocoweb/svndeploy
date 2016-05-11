@@ -769,11 +769,89 @@ public class ExcelMoreUtil {
     }
 
     /**
+	 * 扫描数据的注入接口
+	 *
+	 */
+	public interface IHandleScanRow {
+	    /**
+	     * 处理一行数据
+	     * @param row
+	     * @param fromWB
+	     * @param iCount TODO
+	     */
+	    public void handleRow(HSSFRow row, HSSFWorkbook fromWB, int iCount);
+	    
+	    /**
+	     * @return  返回跳过的表头行数
+	     */
+	    public int skipRow();
+	}
+
+	public static void scanExcelData(String excelfile, String sheetName, IHandleScanRow xHandleScanRow)
+	        throws IOException {
+		//需要跳过的页头行数，默认=2
+	    int skipRows1 = xHandleScanRow ==null ? 2:xHandleScanRow.skipRow();
+	    // int skipRows2 = 2;
+	    Workbook fromWB = null;
+	
+	    try {
+	        // 读取file1的内容
+	        fromWB = loadWorkbook(excelfile);
+	        Sheet sh1 = fromWB.getSheet(sheetName);
+	        int rows1 = sh1.getPhysicalNumberOfRows();
+	
+	        for (int icount = 0; icount < rows1 - skipRows1; icount++) {
+	
+	            Row row1 = sh1.getRow(icount + skipRows1); // 获取一行from
+	            if (row1 != null) {
+	                // 判断这一行是否空数据
+	                Cell cell1 = row1.getCell(1);
+	                if (!isCellEmpty(cell1)){
+	                		//cell1 != null && !POIExcelMakerUtil.getCellValue(row1.getCell(1)).toString().equals("")) {
+	
+	                    if (xHandleScanRow == null) {
+	                        System.out.println("");
+	                        for(int i2 =0;i2<row1.getPhysicalNumberOfCells();i2++){
+	                            System.out.print(POIExcelMakerUtil.getCellValue(row1.getCell(i2))+" | ");
+	                        }
+	                        
+	
+	                    } else {
+	                        // 判断如果传入了接口，则调用接口进行处理
+	                        xHandleScanRow.handleRow((HSSFRow) row1, (HSSFWorkbook) fromWB, icount);
+	                    }
+	
+	                }
+	            }
+	
+	        }
+	
+	    } catch (Exception e) {
+	        // TODO Auto-generated catch block
+	        e.printStackTrace();
+	    } finally {
+	        if (fromWB != null)
+	            fromWB.close();
+	
+	    }
+	
+	}
+
+	/**
      * Copy数据的注入接口
-     * 
+    
+     * @author allan
+     *
      */
     public interface IHandleCopyRow {
-        public void handleRow(HSSFRow row2, HSSFRow row1, HSSFWorkbook toWB, HSSFWorkbook fromWB);
+        /**
+         * @param row2
+         * @param row1
+         * @param toWB
+         * @param fromWB
+         * @param iCount
+         */
+        public void handleRow(HSSFRow targetRow, HSSFRow sourceRow,  HSSFWorkbook toWB, HSSFWorkbook fromWB, int iCount);
     }
 
     public static void copyExcelDataToFile(String excelfile1, String excelfile2) throws IOException {
@@ -791,7 +869,8 @@ public class ExcelMoreUtil {
      *            追加复制的sheet名
      * @throws IOException
      */
-    public static void copyExcelDataToFile(String excelfile1, String excelfile2, String sheetName,
+    @Deprecated
+    public static void copyExcelDataToFile1(String excelfile1, String excelfile2, String sheetName,
             IHandleCopyRow xHandleCopyRow) throws IOException {
         int skipRows1 = 2;
         // int skipRows2 = 2;
@@ -826,7 +905,7 @@ public class ExcelMoreUtil {
                         } else {
                             // 判断如果传入了接口，则调用接口进行处理
                             xHandleCopyRow.handleRow((HSSFRow) row2, (HSSFRow) row1, (HSSFWorkbook) toWB,
-                                    (HSSFWorkbook) fromWB);
+                                    (HSSFWorkbook) fromWB, i1);
                         }
 
                     }
@@ -850,74 +929,74 @@ public class ExcelMoreUtil {
         }
 
     }
+    
+    
+    public static void copyExcelDataToFile(String excelfile1, String excelfile2, String sheetName,
+            final IHandleCopyRow xHandleCopyRow) throws IOException {
+    	try{
+        	final Workbook toWB = loadWorkbook(excelfile2);
+        	//final int[] icount={0};
 
-    /**
-     * 扫描数据的注入接口
-     *
-     */
-    public interface IHandleScanRow {
-        /**
-         * 处理一行数据
-         * @param row
-         * @param fromWB
-         */
-        public void handleRow(HSSFRow row, HSSFWorkbook fromWB);
-        
-        /**
-         * @return  返回跳过的表头行数
-         */
-        public int skipRow();
+	        try {
+	
+	            // 添加保存到file2中
+	            final Sheet sh2 = toWB.getSheet(sheetName);
+	            final int rows2 = sh2.getPhysicalNumberOfRows();
+	            
+	             // 读取扫描file1的内容
+	            scanExcelData(excelfile1, sheetName, new IHandleScanRow() {
+	                @Override
+	                public void handleRow(HSSFRow row, HSSFWorkbook fromWB, int iCount) {
+	                        	
+						Row row2 = sh2.createRow(rows2 + iCount); // 创建一行to
+						if (xHandleCopyRow == null) {
+							// 未传入接口，则直接用行Copy
+							try {
+								copyRow((HSSFRow) row2, (HSSFRow) row, (HSSFWorkbook) toWB, (HSSFWorkbook) fromWB,
+										((HSSFSheet) sh2).createDrawingPatriarch(), null);
+							} catch (Exception e) {
+
+								e.printStackTrace();
+							}
+
+						} else {
+							// 判断如果传入了接口，则调用接口进行处理
+							//处理行数 需要 +1
+							xHandleCopyRow.handleRow((HSSFRow) row2, (HSSFRow) row, (HSSFWorkbook) toWB,
+									(HSSFWorkbook) fromWB, iCount);
+						}
+
+	                }
+	
+	                @Override
+	                public int skipRow() {
+	                    return 2;
+	                }
+	
+	            });
+	            
+
+	            writeWorkbookToExcel(toWB, excelfile2);
+	
+	        } catch (Exception e) {
+	            // TODO Auto-generated catch block
+	            e.printStackTrace();
+	        } finally {
+	            if (toWB != null)
+	                toWB.close();
+	           
+	
+	        }
+    	}catch(Exception e){
+    		
+    	}
     }
 
-    public static void scanExcelData(String excelfile, String sheetName, IHandleScanRow xHandleScanRow)
-            throws IOException {
-        int skipRows1 = xHandleScanRow ==null ? 2:xHandleScanRow.skipRow();
-        // int skipRows2 = 2;
-        Workbook fromWB = null;
+    public static boolean isCellEmpty(Cell cell1){
+		return cell1 == null || POIExcelMakerUtil.getCellValue(cell1).toString().equals("");
+	}
 
-        try {
-            // 读取file1的内容
-            fromWB = loadWorkbook(excelfile);
-            Sheet sh1 = fromWB.getSheet(sheetName);
-            int rows1 = sh1.getPhysicalNumberOfRows();
-
-            for (int i1 = 0; i1 < rows1 - skipRows1; i1++) {
-
-                Row row1 = sh1.getRow(i1 + skipRows1); // 获取一行from
-                if (row1 != null) {
-                    // 判断这一行是否空数据
-                    Cell cell1 = row1.getCell(1);
-                    if (cell1 != null && !POIExcelMakerUtil.getCellValue(row1.getCell(1)).toString().equals("")) {
-
-                        if (xHandleScanRow == null) {
-                            System.out.println("");
-                            for(int i2 =0;i2<row1.getPhysicalNumberOfCells();i2++){
-                                System.out.print(POIExcelMakerUtil.getCellValue(row1.getCell(i2))+" | ");
-                            }
-                            
-
-                        } else {
-                            // 判断如果传入了接口，则调用接口进行处理
-                            xHandleScanRow.handleRow((HSSFRow) row1, (HSSFWorkbook) fromWB);
-                        }
-
-                    }
-                }
-
-            }
-
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        } finally {
-            if (fromWB != null)
-                fromWB.close();
-
-        }
-
-    }
-
-    public static void main(String[] args) {
+	public static void main(String[] args) {
         List<Object> rows = new ArrayList<Object>();
 
         List<Object> row = new ArrayList<Object>();
@@ -933,11 +1012,13 @@ public class ExcelMoreUtil {
         // listToWorkbook(rows, ExcelType.xls);
         // listToWorkbook(rows, ExcelType.xlsx);
 
-        WriteListToExcelFile(rows, "p:/bbb.xls");
+        //WriteListToExcelFile(rows, "p:/bbb.xls");
 
         try {
-            copyExcelDataToFile("p:/workspace/xls/因开发所致环境变更记录表模版-20150828-黄健-基础办税.xls", "p:/因开发所致环境变更记录表模版 - 副本.xls");
-            copyExcelDataToFile("p:/workspace/xls/因开发所致环境变更记录表模版-20150828-杜英恒-产品线.xls", "p:/因开发所致环境变更记录表模版 - 副本.xls");
+//            copyExcelDataToFile("p:/workspace/xls/因开发所致环境变更记录表模版-20150828-黄健-基础办税.xls", "p:/因开发所致环境变更记录表模版 - 副本.xls");
+//            copyExcelDataToFile("p:/workspace/xls/因开发所致环境变更记录表模版-20150828-杜英恒-产品线.xls", "p:/因开发所致环境变更记录表模版 - 副本.xls");
+            
+            copyExcelDataToFile("p:/因开发所致环境变更记录表模版-20150823-杜英恒-产品线.xls", "p:/因开发所致环境变更记录表模版 - 副本.xls", "功能清单", null);
         } catch (IOException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

@@ -9,7 +9,6 @@ import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Ver;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.PathUtils;
