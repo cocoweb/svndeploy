@@ -1,12 +1,8 @@
 package com.foresee.xdeploy;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.tmatesoft.svn.core.SVNException;
-import org.tmatesoft.svn.core.wc.SVNDiffStatus;
-
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExcelFiles;

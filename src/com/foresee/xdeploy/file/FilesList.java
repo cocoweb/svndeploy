@@ -9,8 +9,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import com.foresee.xdeploy.file.base.XdeployBase;
+import com.foresee.xdeploy.utils.ListUtil;
 import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
-import com.foresee.xdeploy.utils.svn.ListUtil;
 
 public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
     public List<ArrayList<String>> SvnFileList=new ArrayList<ArrayList<String>>();

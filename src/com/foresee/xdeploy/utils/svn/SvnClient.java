@@ -31,6 +31,7 @@ import org.tmatesoft.svn.core.wc.SVNWCUtil;
 
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.utils.ListUtil;
 import com.foresee.xdeploy.utils.PathUtils;
 
 public class SvnClient {

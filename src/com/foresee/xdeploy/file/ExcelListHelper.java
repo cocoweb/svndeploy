@@ -48,33 +48,8 @@ public class ExcelListHelper  extends XdeployBase {
         return loadFilesList(new ExcelFiles());
     }
 
-	//    public FilesList loadFilesList(File xfile) {
-	//        final FilesList svnfiles = new FilesList();
-	//        final String filename = xfile.getName();
-	//
-	//        try {
-	//            ExcelMoreUtil.scanExcelData(xfile.getPath(), SheetName, new IHandleScanRow() {
-	//                @Override
-	//                public void handleRow(HSSFRow row, HSSFWorkbook fromWB, int iCount) {
-	//                     addRowToList(svnfiles,row, filename);
-	//                }
-	//
-	//                @Override
-	//                public int skipRow() {
-	//                    return 2;
-	//                }
-	//
-	//            });
-	//        } catch (IOException e) {
-	//            // TODO Auto-generated catch block
-	//            e.printStackTrace();
-	//        }
-	//
-	//        return svnfiles;
-	//
-	//    }
 		    
-		static int iRowNum=0;
+	static int iRowNum=0;
 
     /**
 	     * 获取一个excel文件的内容
@@ -113,38 +88,7 @@ public class ExcelListHelper  extends XdeployBase {
         return loadFilesList(excelfiles).SvnFileList;
     }
 
-    //int iExcelRowCount = 1;
-	
-	//    public FilesList loadFilesList(final String sfile, String tofilename) {
-	//        final FilesList svnfiles = new FilesList();
-	//        //iExcelRowCount = 1;
-	//
-	//        try {
-	//            ExcelMoreUtil.copyExcelDataToFile(sfile, tofilename, SheetName, new IHandleCopyRow() {
-	//                // copy row 本地代码实现回调
-	//
-	//                @Override
-	//                public void handleRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork, HSSFWorkbook sourceWork, int iCount) {
-	//                    addRowToList(svnfiles,sourceRow, sfile);
-	//                    
-	//                    //合并到新的Excel文件
-	//                    copyRow(targetRow, sourceRow, targetWork, sourceWork, iCount);
-	//                    
-	////                    if(iExcelRowCount!=iCount) System.out.println("iCount="+Integer.toString(iCount)+": iExcelRowCount="+Integer.toString(iExcelRowCount));
-	////
-	////                    iExcelRowCount++; // 行计数
-	//
-	//                }
-	//
-	//            });
-	//        } catch (IOException e) {
-	//            // TODO Auto-generated catch block
-	//            e.printStackTrace();
-	//        }
-	//        
-	//        return svnfiles;
-	//
-	//    }
+
 	
 	    public List<ArrayList<String>> loadSvnFilesList(File xfile) {
 	
@@ -185,7 +129,6 @@ public class ExcelListHelper  extends XdeployBase {
                         
                     }
 
-					// copy row 本地代码实现回调
 					
 					protected  void copyRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork, HSSFWorkbook sourceWork,int iExcelRowCount) {
 					    for (int i = 0; i <= sourceRow.getLastCellNum(); i++) {
