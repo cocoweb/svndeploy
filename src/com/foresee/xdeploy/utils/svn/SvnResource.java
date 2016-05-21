@@ -1,5 +1,6 @@
 package com.foresee.xdeploy.utils.svn;
 
+import com.foresee.test.util.lang.StringUtil;
 
 /**
  * 资源对象
@@ -83,7 +84,7 @@ public class SvnResource implements Comparable<SvnResource>{
 
 	@Override
 	public String toString() {
-		return "SvnResource [path=" + path + ", SVNVersion=" + SVNVersion + "]";
+		return "[ver=" + SVNVersion+" : path=" + path +  "]";
 	}
 
 	@Override
@@ -98,6 +99,17 @@ public class SvnResource implements Comparable<SvnResource>{
 //		  return num;
 
 		return num;
+	}
+	
+	public static SvnResource parserStr(String str){
+		SvnResource sr = new SvnResource();
+		String tmpstr = StringUtil.locateString(str, "[", "]");
+		String [] astr = tmpstr.split(":");
+		sr.setSVNVersion(Long.parseLong(StringUtil.trim(StringUtil.parsarKVStrValue(astr[0]))));
+		sr.setPath(StringUtil.parsarKVStrValue(astr[1]));
+		
+		return sr;
+		
 	}
 
 }

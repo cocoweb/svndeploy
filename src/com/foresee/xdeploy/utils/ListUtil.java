@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import com.foresee.test.loadrunner.lrapi4j.lr;
+import com.foresee.xdeploy.file.ToZipFile;
+import com.foresee.xdeploy.file.ToZipFile.IHandlePackage;
+
 public class ListUtil {
 	/**
 	 * 顺序列表排重
@@ -47,6 +51,35 @@ public class ListUtil {
 		});
 	}
 
+	/**
+	 * 处理package包的接口
+	 * 
+	 */
+	public interface IHandleScan<T> {
+		public int handleItem(T pak);
+	}
 
+	public static <T> int scanArray(T[] Projs, IHandleScan<T> handlescan) {
+		int ret = 0;
+
+		for (T pak : Projs) {
+			if (handlescan != null)
+				ret = handlescan.handleItem(pak);
+		}
+		return ret;
+
+	}
+	public static <T> int scanList(List<T> Projs, IHandleScan<T> handlescan) {
+		int ret = 0;
+
+		for (T pak : Projs) {
+			if (handlescan != null)
+				ret = handlescan.handleItem(pak);
+		}
+		return ret;
+
+	}
+	
+	
 
 }

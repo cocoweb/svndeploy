@@ -174,7 +174,7 @@ public class ExcelListHelper  extends XdeployBase {
     
     protected  HSSFRow localrow;
     protected  String getValue(int col) {
-        return getValue(localrow,col).toString();
+        return com.foresee.xdeploy.utils.StringUtil.ChangeUTF8Space(getValue(localrow,col).toString());
     }
     
     protected  String getValue(HSSFRow xrow,int col) {
@@ -186,6 +186,8 @@ public class ExcelListHelper  extends XdeployBase {
         localrow = xlocalrow;
     
         for (String xfield : handlePathList(getValue(ColExcel_Path))) {
+//        	System.out.println("["+POIExcelMakerUtil.getCellValue(xlocalrow.getCell(ColExcel_Ver)).toString()+"]");
+//        	System.out.println("["+getValue(ColExcel_Ver)+"]");
             xsvnfiles.addItem(getValue(ColExcel_Ver), xfield, getValue(ColExcel_ProjPackage), getValue(ColExcel_Man), filename);
         }
     

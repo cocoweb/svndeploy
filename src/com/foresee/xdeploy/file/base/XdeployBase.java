@@ -52,9 +52,10 @@ public abstract class XdeployBase {
 	}
 
 	public static String handleVerNo(String sVerNo) {
-		// String xstr = StringUtil.trimEnd(StringUtil.trimStart(sVerNo, "#"));
+		
+		String xstr = StringUtil.trim(StringUtil.trimStart(sVerNo, "#"));
 
-		return com.foresee.xdeploy.utils.StringUtil.toNumericString(sVerNo);
+		return com.foresee.xdeploy.utils.StringUtil.toNumericString(xstr);
 	}
 
 

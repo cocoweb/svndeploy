@@ -32,4 +32,9 @@ public class ListToFileHelperTest {
     public void scanSvnToPath() {
         listTofileHelper.scanSvnToPath();
     }
+    
+    @Test
+    public void svnDiffToPath() {
+    	listTofileHelper.svnDiffToPath();
+    }
 }

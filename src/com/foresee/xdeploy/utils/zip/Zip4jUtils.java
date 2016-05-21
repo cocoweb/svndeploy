@@ -9,7 +9,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.foresee.xdeploy.tmp.StreamUtils;
+import com.foresee.test.util.io.StreamUtils;
 import com.foresee.xdeploy.utils.PathUtils;
 
 import net.lingala.zip4j.core.ZipFile;

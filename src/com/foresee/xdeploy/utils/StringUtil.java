@@ -1,5 +1,7 @@
 package com.foresee.xdeploy.utils;
 
+import java.io.UnsupportedEncodingException;
+
 public class StringUtil{
 	/**
 	 * 转换数字串，去除其中的非数字字符
@@ -47,5 +49,39 @@ public class StringUtil{
 	
 		return builder.toString();
 	}
+	
+	private static String UTFSpace ;
+	static {
+		try {
+			byte ubytes[] = {(byte) 0xC2,(byte) 0xA0};
+			UTFSpace= new String(ubytes,"utf-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	/**
+	 * 处理UTF8的变态空格 ，转换为20空格
+	 * @param targetStr
+	 * @return
+	 */
+	public static String ChangeUTF8Space(String targetStr)
+    {
+
+		return targetStr.replaceAll(UTFSpace, " ");
+        
+//        try
+//        {
+//            String currentStr = String.Empty;
+//            byte[] utf8Space = new byte[] { 0xc2, 0xa0 };
+//            String tempSpace = Encoding.GetEncoding("UTF-8").GetString(utf8Space);
+//            currentStr = targetStr.Replace(tempSpace, " ");
+//            return currentStr;
+//        }
+//        catch (Exception ex)
+//        {
+//            return targetStr;
+//        }
+    }
 
 }

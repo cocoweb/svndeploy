@@ -5,7 +5,7 @@
 	<property file="build.properties"/>
 	
 	<property name="out_path" value="${project_path}workspace/" />
-	<property name="jar.version" value="0.34" />
+	<property name="jar.version" value="0.35" />
 	<property name="jar.name" value="listcopy_${jar.version}.jar" />
 	
 	<!--定义一次，多个地方使用jar包路径                            -->
@@ -101,7 +101,7 @@
 				<exclude name="tmp/" />
 			</fileset>	
 		</zip>
-		<copy todir="p:/workspace">
+		<copy todir="e:/tmp/workspace">
 			<fileset dir="${project_path}/bin" includes="**/svntools.properties" />
 			<fileset dir="${project_path}/bin" includes="**/log4j.properties" />
 			<fileset dir="${out_path}" includes="*.bat" />

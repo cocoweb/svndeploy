@@ -3,6 +3,7 @@ package com.foresee.xdeploy;
 import java.util.List;
 
 import org.tmatesoft.svn.core.SVNException;
+
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExcelFiles;
@@ -291,6 +292,7 @@ public class ListToFileHelper {
 
         List<SvnResource> alist = svnrepo.LogPathList();
         
+        
 //        String rootURL = pv.getProperty("svndiff.url");
 //        rootURL = rootURL.substring(0, rootURL.lastIndexOf(pv.getProperty("svndiff.keyroot")));
        
@@ -308,13 +310,17 @@ public class ListToFileHelper {
 			}
             //System.out.println(pv.getProperty("svndiff.url")+spath);
 
+
         }
-        
-//        updateClient.doExport(change.getURL(), destination, 
-//        		this.endingRevision, this.endingRevision, null, true, SVNDepth.getInfinityOrEmptyDepth(true)); 
 
         System.out.println(">>>变动文件数=" + Integer.toString(alist.size()));
         System.out.println("   文件保存在："+pv.getProperty("svn.tofolder") );
+        
+//        List<SVNDiffStatus> xlist=svnrepo.Diff();
+//        for(SVNDiffStatus ss:xlist){
+//        	System.out.println(ss.getPath());
+//        }
+//        System.out.println(">>>===变动文件数=" + Integer.toString(xlist.size()));
 
     }
 
