@@ -49,15 +49,16 @@ public class ListToFileHelper {
             String sPath = sf.getPath(pv.filekeyroot);
             //sf.setKeyRoot(pv.filekeyroot);
             
+            String printStr ="";
             //检查web工程名
             try {
                 sf.checkProject();
+                printStr = sf.toString();
             } catch (Exception e) {
 
                 // e.printStackTrace();
                 System.out.println("   >>>" + e.getMessage() + "<<<  " + sf);
             }
-            String printStr = sf.toString();
 
             // 判断是否目录，目录就不操作
             if (PathUtils.isFolder(sPath)) {

@@ -48,9 +48,11 @@ zip.tofolder={temppath}
     #搜索顺序：c.->w.META-INF->w.->j.
 sortmapping = c.,w.META-INF,w.,j.  
   
-mappingx.w.META-INF.warname   =/web/{WEBProject}/src/META-INF|{WEBProject}/WEB-INF/classes/META-INF
-mappingx.w.warname0            ={WEBProject}/WebContent|{WEBProject}
-mappingx.w.warname1            ={WEBProject}/src|{WEBProject}
+mappingx.w.META-INF.{WEBProject}   =/web/{WEBProject}/src/META-INF|{WEBProject}/WEB-INF/classes/META-INF
+mappingx.w.{WEBProject}0            ={WEBProject}/WebContent|{WEBProject}
+mappingx.w.{WEBProject}1            ={WEBProject}/src|{WEBProject}
+mappingx.j.{JARName}             ={JARName}/src|{JARName}
+
     
     
     #w.META-INF, 从war中抽取文件（源代码编译打包后，路径发生了变化）

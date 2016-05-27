@@ -46,6 +46,18 @@
 	3、比对检查zip、excel
 
 ##Release Note
+    V0.37-20160528
+            添加jar包容错，加入mappingx增强   
+    mappingx.w.META-INF.{WEBProject}   =/web/{WEBProject}/src/META-INF|{WEBProject}/WEB-INF/classes/META-INF
+	mappingx.w.{WEBProject}0            ={WEBProject}/WebContent|{WEBProject}
+	mappingx.w.{WEBProject}1            ={WEBProject}/src|{WEBProject}
+	mappingx.j.{JARName}             ={JARName}/src|{JARName}
+
+    
+    v0.36-20160526
+            修改版本号排序问题
+    
+
 	v0.34-20160514
 	1、修改版本字符，后utf8空字符处理
 	2、完善Diff版本差异文件输出

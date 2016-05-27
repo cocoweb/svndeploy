@@ -301,6 +301,12 @@ public class POIExcelMakerUtil {
 			}
 		}
 	}
+	
+	public void insertRow(String sheetName, int rowNum) {
+		Sheet sheet = this.workBook.getSheet(sheetName);
+		sheet.shiftRows(rowNum, rowNum + 1, 1);
+		sheet.createRow(rowNum);
+	}
 
 	/**
 	 * 重命名一个sheet

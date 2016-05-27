@@ -1,10 +1,18 @@
 package com.foresee.xdeploy.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.apache.commons.collections4.Predicate;
+import org.apache.commons.collections4.iterators.FilterIterator;
 
 import com.foresee.test.loadrunner.lrapi4j.lr;
+import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.ToZipFile.IHandlePackage;
 
@@ -80,6 +88,46 @@ public class ListUtil {
 
 	}
 	
+	public interface ICheck<T>  {
+		
+		public boolean check(T c);
+	
+	}
+
+	public static <K,V> Entry<K,V> findMapEntry(Map<K,V> omap,ICheck<Entry<K, V>> check){
+        for(Iterator<Entry<K, V>> xiter = omap.entrySet().iterator();xiter.hasNext();){	
+    		
+     		Entry<K, V> entry = xiter.next();
+    		
+    		if (check.check(entry)){
+    			return entry;
+    		}
+    		
+//    		// 分离源路径 和 目标路径
+//            String[] apath = StringUtil.split(entry.getValue(), "|");
+//            if (srcPath.contains(apath[0])) {
+//                // 如果路径中包含了“源路径”
+//                return new String[] { apath[0], apath[1], entry.getKey() };
+//            }
+    	}
+		return null;
+		
+	}
+	
+	@SuppressWarnings("rawtypes")
+	public static <T> Iterator<T> getMapIterator(Map omap,Predicate<T> pp){
+		  return new FilterIterator<T>(omap.entrySet().iterator(),pp
+//				  new Predicate<Entry<String, String>>(){
+//
+//				@Override
+//				public boolean evaluate(Entry<String, String> entry) {
+//					
+//					return entry.getKey().indexOf(skey)==0;
+//				}
+//				  
+//			  }
+		  );
+	  }
 	
 
 }

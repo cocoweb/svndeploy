@@ -10,6 +10,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.swing.BoxLayout;
@@ -42,8 +43,11 @@ import javax.swing.table.DefaultTableModel;
 import org.tmatesoft.svn.core.SVNException;
 
 import com.beust.jcommander.internal.Lists;
+import com.foresee.test.util.io.FileUtil;
+import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.ListToFileHelper;
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.file.ToExcelFile;
 import com.foresee.xdeploy.utils.ConsoleTextArea;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.svn.SVNRepo;
@@ -200,24 +204,33 @@ public class Mainwin {
     	SVNRepo svnrepo = SVNRepo.getInstance();
     	ListModel lm = rightList.getModel();
     	
-    	for (int ii = 0;ii<lm.getSize();ii++){
+
+    	ToExcelFile teFile = ToExcelFile.createToExcelFile();
+    	
+    	for (int ii =1;ii<=lm.getSize();ii++){
     	
 	    	SvnResource sr = SvnResource.parserStr((String)lm.getElementAt(ii));
 	    	
 	    	String xUrl =PropValue.getInstance().getProperty("svn.url")+"/engineering"+sr.getPath();
 	    	String xPath =PropValue.getInstance().getProperty("svn.tofolder")+sr.getPath();
 	    	String xVersion = sr.getVersion();
+	    	
+	    	teFile.addRow(ii, sr.getSVNVersion(), sr.getPath());
+	    
 			
-	    	try {
-				svnrepo.Export(xUrl, xVersion, xPath, "");
-			} catch (SVNException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+//	    	try {
+//				//svnrepo.Export(xUrl, xVersion, xPath, "");
+//	    		
+//			} catch (SVNException e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
 	    	
 //			JOptionPane.showMessageDialog(null, "svnresource"+sr.getPath(), "标题条文字串"+sr.getSVNVersion(),
 //					JOptionPane.INFORMATION_MESSAGE);
     	}
+    	
+    	teFile.close();
     }
 
     /**

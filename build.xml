@@ -5,7 +5,7 @@
 	<property file="build.properties"/>
 	
 	<property name="out_path" value="${project_path}workspace/" />
-	<property name="jar.version" value="0.35" />
+	<property name="jar.version" value="0.37" />
 	<property name="jar.name" value="listcopy_${jar.version}.jar" />
 	
 	<!--定义一次，多个地方使用jar包路径                            -->
@@ -44,6 +44,9 @@
         	<include name="commons-lang-2.3.jar"/>
         	<include name="commons-codec-1.6.jar"/>
         </fileset>
+    	<fileset id="fileset005" dir="F:/OpenSource/apache-commons">
+    		<include name="commons-collections4-4.1.jar"/>
+    	</fileset>
     </path>
     <pathconvert property="mf.classpath" pathsep=" ">
           <mapper>
@@ -83,6 +86,7 @@
 	   	    <fileset refid="fileset002"/>
 	   	    <fileset refid="fileset003"/>
 	   	    <fileset refid="fileset004"/>
+	   	    <fileset refid="fileset005"/>
 
  
         </jar>

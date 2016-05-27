@@ -37,7 +37,7 @@ public class ExchangePathTest {
   @Test
   public void getToZipFolderPath(){
       try {
-        ExchangePath ep =ExchangePath.exchange("/engineering/src/repository/com.foresee/public/repository/asm/asm/jars/asm-1.5.3.jar");
+        ExchangePath ep =ExchangePath.exchange("trunk/engineering/src/etax/java/com.foresee.etax.bizfront/src/com/foresee/etax/bizfront/service/IBqbz.java");
         
         System.out.println(ep);
         
@@ -48,5 +48,18 @@ public class ExchangePathTest {
     }
       
       
+  }
+  
+  @Test
+  public void parserJarName(){
+	  String src ="trunk/engineering/src/etax/java/com.foresee.etax.bizfront/src/com/foresee/etax/bizfront/service/IBqbz.java";
+	  src = "/trunk/engineering/src/gt3nf/java/gov.chinatax.gt3nf/src/gov/chinatax/gt3nf/dj/tyfy/entry/impl/TyDjOmniBizEntryImpl.java";
+	  try {
+		  ExchangePath ep =ExchangePath.exchange(src);
+		System.out.println(ep.parserJarName(src));
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
   }
 }

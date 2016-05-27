@@ -33,9 +33,6 @@ import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleScanRow;
  */
 public class ExcelListHelper  extends XdeployBase {
 
-    public static final String SheetName = "功能清单";
-    
-
     public ExcelListHelper() {
     }
     
@@ -69,13 +66,13 @@ public class ExcelListHelper  extends XdeployBase {
 //            else  //同时合并excel文件
 //                svnfiles.addAll(loadFilesList(filepath, excelfiles.mergeToFileName).SvnFileList);
         }
-
+       
         // 排序返回的清单
         Collections.sort(svnfiles.SvnFileList, new Comparator<ArrayList<String>>() {
             @Override
             public int compare(ArrayList<String> o1, ArrayList<String> o2) {
-                return (o1.get(ColList_Path) +o1.get(ColList_Ver) +o1.get(ColList_ProjPackage)  ).compareTo(
-                        o2.get(ColList_Path) +o2.get(ColList_Ver)+ o2.get(ColList_ProjPackage) );
+                return (o1.get(ColList_Path) +String.format("%08d", Long.parseLong(o1.get(ColList_Ver))) +o1.get(ColList_ProjPackage)  ).compareTo(
+                        o2.get(ColList_Path) +String.format("%08d", Long.parseLong(o2.get(ColList_Ver)))+ o2.get(ColList_ProjPackage) );
             }
 
         });
@@ -103,7 +100,7 @@ public class ExcelListHelper  extends XdeployBase {
         try {
         	if (tofilename.isEmpty()){
         	
-	            ExcelMoreUtil.scanExcelData(filename, SheetName, new IHandleScanRow() {
+	            ExcelMoreUtil.scanExcelData(filename, XdeployBase.SheetName, new IHandleScanRow() {
 	                @Override
 	                public void handleRow(HSSFRow row, HSSFWorkbook fromWB, int iCount) {
 	                     addRowToList(svnfiles,row, filename);
@@ -116,7 +113,7 @@ public class ExcelListHelper  extends XdeployBase {
 	
 	            });
         	}else{
-                ExcelMoreUtil.copyExcelDataToFile(filename, tofilename, SheetName, new IHandleCopyRow() {
+                ExcelMoreUtil.copyExcelDataToFile(filename, tofilename, XdeployBase.SheetName, new IHandleCopyRow() {
                     // copy row 本地代码实现回调
 
                     @Override

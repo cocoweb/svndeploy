@@ -29,8 +29,12 @@ public abstract class XdeployBase {
 	}
 
 	public static final String LIST_Project = "WEBProject";
+	public static final String LIST_JARName = "JARName";
+	
 
 	public static final String LIST_FileName = "FILEName";
+
+	public static final String SheetName = "功能清单";
 
 	public static String handlePath(String sPath) {
 
@@ -46,7 +50,7 @@ public abstract class XdeployBase {
 	public static String handleProjectName(String xname) {
 		// xname = xname.replaceAll( "[\\p{P}+~$`^=|<>～｀＄＾＋＝｜＜＞￥×^_]" , ",");
 		// //StringUtil.replaceAll(xname,"、",",");
-		xname = xname.replaceAll("[、，]", ","); // StringUtil.replaceAll(xname,"、",",");
+		xname = xname.replaceAll("[、，/]", ","); // StringUtil.replaceAll(xname,"、",",");
 		xname = xname.replaceAll("[_]", "-");
 		return StringUtil.trim(xname);
 	}
