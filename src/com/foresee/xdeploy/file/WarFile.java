@@ -36,7 +36,6 @@ public class WarFile {
         try {
             warZipFile = new ZipFile(file);
         } catch (ZipException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -169,7 +168,6 @@ public class WarFile {
             retint = copyJavaToZip(zipOutFile.toZipFile, expath);
             
         }else if(sf.isType(ExchangePath.Type_WAR)){
-            //retint = copyFileToZip(zipOutFile.toZipFile, expath);
             if(expath.MappingKey.contains("META-INF")){  //w.META-INF 类型
                 retint = copyFileToZip(zipOutFile.toZipFile, expath.getToZipPathNoRoot(), expath.getToZipPath(warName));
             }else  // w.类型

@@ -18,7 +18,6 @@ public class FilesListItem extends XdeployBase {
     String FilePath="";
     ArrayList<String> svnfileDefList = null;
     FilesList parentFileslist =null;
-    //String keyRoot="";
     
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -36,7 +35,6 @@ public class FilesListItem extends XdeployBase {
     public FilesListItem(ArrayList<String> listString, FilesList fileslist) {
         svnfileDefList =  listString;
         parentFileslist = fileslist;
-        
         
     }
 
@@ -72,11 +70,6 @@ public class FilesListItem extends XdeployBase {
         return svnfileDefList.get(ColList_FileName);
        
     }
-    
-    
-//    public void setKeyRoot(String keyroot){
-//        keyRoot = keyroot;
-//    }
     
     
     public boolean checkProject() throws Exception{

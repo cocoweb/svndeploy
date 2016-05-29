@@ -5,7 +5,7 @@
 	<property file="build.properties"/>
 	
 	<property name="out_path" value="${project_path}workspace/" />
-	<property name="jar.version" value="0.37" />
+	<property name="jar.version" value="0.38" />
 	<property name="jar.name" value="listcopy_${jar.version}.jar" />
 	
 	<!--定义一次，多个地方使用jar包路径                            -->
@@ -21,7 +21,7 @@
     		<include name="zip4j_1.3.2.jar"/>
     	</fileset>
         <fileset id="fileset004" dir="${project_path}lib">
-            <include name="loadtestools-1.3.jar"/>
+            <include name="loadtestools-1.4.jar"/>
         	<include name="bsh-1.3.0.jar"/>
             <include name="log4j-1.2.15.jar"/>
             <include name="antlr-runtime-3.4.jar"/>
@@ -41,13 +41,21 @@
             <include name="svnkit-javahl16-1.8.3.jar"/>
             <include name="trilead-ssh2-1.0.0-build217.jar"/>
         	<include name="commons-cli-1.3.1.jar"/>
-        	<include name="commons-lang-2.3.jar"/>
         	<include name="commons-codec-1.6.jar"/>
         </fileset>
     	<fileset id="fileset005" dir="F:/OpenSource/apache-commons">
     		<include name="commons-collections4-4.1.jar"/>
+    		<include name="commons-lang-2.6.jar"/>
     	</fileset>
     </path>
+	
+	<fileset id="fileset-properties" dir="${project_path}/bin">
+		<include name="**/svntools.properties" />
+		<include name="**/mapping.properties" />
+		<include name="**/log4j.properties" />
+		
+	</fileset>
+
     <pathconvert property="mf.classpath" pathsep=" ">
           <mapper>
               <chainedmapper>
@@ -95,7 +103,8 @@
     <target name="create_run_jar" depends="create_listcopy_jar">
 		
 		<copy todir="${out_path}">
-			<fileset dir="${project_path}/bin" includes="**/svntools.properties" />
+			<fileset refid="fileset-properties"/>
+			
 			<fileset dir="${project_path}" includes="README.md" />
 			
 		</copy>
@@ -106,20 +115,22 @@
 			</fileset>	
 		</zip>
 		<copy todir="e:/tmp/workspace">
-			<fileset dir="${project_path}/bin" includes="**/svntools.properties" />
-			<fileset dir="${project_path}/bin" includes="**/log4j.properties" />
+			<fileset refid="fileset-properties"/>
+
 			<fileset dir="${out_path}" includes="*.bat" />
 			<fileset dir="${out_path}" includes="*.sh" />
 			<fileset dir="${out_path}" includes="${jar.name}" />
 			<fileset dir="${out_path}" includes="listcopy_src.zip" />
 		</copy>
 		<zip destfile="${out_path}workspace${jar.version}.zip">
+			<fileset refid="fileset-properties"/>
+
 			<fileset dir="${out_path}" >
 				<include name="${jar.name}"/>
 				<include name="listcopy_src.zip"/>
 				<include name="README.md"/>
 				<include name="readme.png"/>
-				<include name="svntools.properties"/>
+				
 				<include name="*.bat"/>
 				<include name="*.sh"/>
 				<include name="*.log"/>

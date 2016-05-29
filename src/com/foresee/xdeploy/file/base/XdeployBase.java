@@ -59,7 +59,7 @@ public abstract class XdeployBase {
 		
 		String xstr = StringUtil.trim(StringUtil.trimStart(sVerNo, "#"));
 
-		return com.foresee.xdeploy.utils.StringUtil.toNumericString(xstr);
+		return com.foresee.xdeploy.utils.CommonsUtil.toNumericString(xstr);
 	}
 
 

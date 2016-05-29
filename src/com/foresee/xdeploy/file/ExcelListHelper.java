@@ -3,7 +3,6 @@ package com.foresee.xdeploy.file;
 import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Man;
 import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Path;
 import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_ProjPackage;
-import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_ROWNo;
 import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Ver;
 import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Path;
 import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_ProjPackage;
@@ -16,15 +15,15 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import com.foresee.xdeploy.file.base.XdeployBase;
+import com.foresee.xdeploy.utils.CommonsUtil;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
-import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleCopyRow;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil.IHandleScanRow;
+import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
 
 /**
  * Excel 文件清单的处理
@@ -44,23 +43,29 @@ public class ExcelListHelper  extends XdeployBase {
     public FilesList createFilesList(){
         return loadFilesList(new ExcelFiles());
     }
-
 		    
-	static int iRowNum=0;
+    public ToExcelFile toExcelFile =null;// 默认为null，不用合并excel
+
+    static int iRowNum=0;
 
     /**
-	     * 获取一个excel文件的内容
-	     * 
-	     * @param xfile
-	     * @return
-	     */
+     * 获取一个excel文件的内容
+     * 
+     * @param xfile
+     * @return
+     */
 
 	public FilesList loadFilesList(ExcelFiles excelfiles) {
+		if (PropValue.getInstance().getProperty("file.excel.merge").equals("true")) { // 判断是否需要合并excel
+            // 生成excel输出文件
+        	toExcelFile =ToExcelFile.createToExcelFile(false);
+        }
+		
 		iRowNum = 0;
         final FilesList svnfiles = new FilesList(excelfiles);
 
         for (String filepath : excelfiles.getExcelList()) {
-        	svnfiles.addAll( loadFilesList(new File(filepath),excelfiles.mergeToFileName).SvnFileList);
+        	svnfiles.addAll( loadFilesList(new File(filepath)).SvnFileList);
 //            if (excelfiles.mergeToFileName.isEmpty()) 
 //                svnfiles.addAll( loadFilesList(new File(filepath),).SvnFileList);
 //            else  //同时合并excel文件
@@ -87,18 +92,18 @@ public class ExcelListHelper  extends XdeployBase {
 
 
 	
-	    public List<ArrayList<String>> loadSvnFilesList(File xfile) {
+	public List<ArrayList<String>> loadSvnFilesList(File xfile) {
 	
-	        return loadFilesList(xfile,"").SvnFileList;
-	
-	    }
+	    return loadFilesList(xfile).SvnFileList;
+	}
 
-	public FilesList loadFilesList(File xfile,String tofilename) {
+	public FilesList loadFilesList(File xfile) {
+		//String tofilename 
         final FilesList svnfiles = new FilesList();
         final String filename = xfile.getPath();
 
         try {
-        	if (tofilename.isEmpty()){
+        	if (this.toExcelFile==null){
         	
 	            ExcelMoreUtil.scanExcelData(filename, XdeployBase.SheetName, new IHandleScanRow() {
 	                @Override
@@ -113,7 +118,7 @@ public class ExcelListHelper  extends XdeployBase {
 	
 	            });
         	}else{
-                ExcelMoreUtil.copyExcelDataToFile(filename, tofilename, XdeployBase.SheetName, new IHandleCopyRow() {
+                ExcelMoreUtil.copyExcelDataToFile(filename, toExcelFile.excelFileName, XdeployBase.SheetName, new IHandleCopyRow() {
                     // copy row 本地代码实现回调
 
                     @Override
@@ -122,45 +127,14 @@ public class ExcelListHelper  extends XdeployBase {
                         addRowToList(svnfiles,sourceRow, filename);
                         
                         //合并到新的Excel文件
-                        copyRow(targetRow, sourceRow, targetWork, sourceWork, iCount);
+                        toExcelFile.copyRow(targetRow, sourceRow, targetWork, sourceWork, iCount);
                         
                     }
-
-					
-					protected  void copyRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork, HSSFWorkbook sourceWork,int iExcelRowCount) {
-					    for (int i = 0; i <= sourceRow.getLastCellNum(); i++) {
-						//for (int i = sourceRow.getFirstCellNum(); i <= sourceRow.getLastCellNum(); i++) {
-					        HSSFCell sourceCell = sourceRow.getCell(i);
-					        HSSFCell targetCell = targetRow.getCell(i);
-					
-					        if (sourceCell != null ||i==ColExcel_ROWNo) {
-					            if (targetCell == null) {
-					                targetCell = targetRow.createCell(i);
-					            }
-					
-					            switch (i) { // 根据列号进行处理
-					            case ColExcel_ROWNo:
-					                targetCell.setCellValue(iRowNum);  //iExcelRowCount);
-					                break;
-					            case ColExcel_Path:
-					                targetCell.setCellValue(handlePath(sourceCell.getStringCellValue()));
-					                break;
-					            default:
-					                // 拷贝单元格，包括内容和样式
-					                ExcelMoreUtil.copyCell(targetCell, sourceCell, targetWork, sourceWork, null);
-					
-					            }
-					
-					        }
-					    }
-					
-					}
 
                 });
 
         	}
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
@@ -171,7 +145,7 @@ public class ExcelListHelper  extends XdeployBase {
     
     protected  HSSFRow localrow;
     protected  String getValue(int col) {
-        return com.foresee.xdeploy.utils.StringUtil.ChangeUTF8Space(getValue(localrow,col).toString());
+        return CommonsUtil.ChangeUTF8Space(getValue(localrow,col).toString());
     }
     
     protected  String getValue(HSSFRow xrow,int col) {
@@ -179,6 +153,12 @@ public class ExcelListHelper  extends XdeployBase {
     }
 
 
+    /**
+     * 添加到文件清单列表中
+     * @param xsvnfiles
+     * @param xlocalrow
+     * @param filename
+     */
     protected  void addRowToList(FilesList xsvnfiles, HSSFRow xlocalrow, String filename) {
         localrow = xlocalrow;
     

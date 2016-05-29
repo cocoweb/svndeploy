@@ -3,6 +3,7 @@ package com.foresee.xdeploy.file.testng;
 import org.testng.annotations.Test;
 
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.MappingRule;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.utils.ListUtil;
 
@@ -21,11 +22,12 @@ import org.testng.annotations.BeforeClass;
 
 public class PropValueTest {
 	PropValue pv;
+	MappingRule mr;
 
 	@BeforeClass
 	public void beforeClass() {
 		pv = PropValue.getInstance();
-
+	    mr = MappingRule.getMappingRule(null);
 	}
 
 	@Test
@@ -77,7 +79,7 @@ public class PropValueTest {
 		
 		final String srcPath = "/trunk/engineering/src/portal/java/com.foresee.portal.biz/src/com/foresee/portal/biz/sssp/bizdata/CommBjtzsPdfServiceImpl.java";
 
-
+		
 		// PredicatedCollection<Entry<String, String>> pc =
 		// PredicatedCollection.predicatedCollection(pv.pkgmap.entrySet(), new
 		// Predicate<Entry<String, String>>(){
@@ -90,7 +92,7 @@ public class PropValueTest {
 		//
 		// });
 
-		Iterator<Entry<String, String>> fi = ListUtil.getMapIterator(pv.pkgmap, new Predicate<Entry<String, String>>() {
+		Iterator<Entry<String, String>> fi = ListUtil.getMapIterator(mr.getMapping(), new Predicate<Entry<String, String>>() {
 			@Override
 			public boolean evaluate(Entry<String, String> entry) {
 

@@ -12,6 +12,7 @@ import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.FilesList;
 import com.foresee.xdeploy.file.FilesListItem;
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.file.ToExcelFile;
 import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.WarFiles;
 import com.foresee.xdeploy.utils.PathUtils;
@@ -82,7 +83,7 @@ public class ListToFileHelper {
         System.out.println("\n共有文件数量：" + Integer.toString(fileslist.size()));
         System.out.println("==空的版本号，将获取最新的版本。==请仔细检查清单格式，路径不对将无法从svn获取。");
         if (pv.getProperty("file.excel.merge").equals("true"))
-            System.out.println(" >>>合并生成了EXCEL为：" + ExcelFiles.getOutExcelFileName());
+            System.out.println(" >>>合并生成了EXCEL为：" + ToExcelFile.getOutExcelFileName());
 
         if (bugStr.length() > 0) {
             System.err.println("\n<<<<文件有重复>>>>请注意核对，如下：");

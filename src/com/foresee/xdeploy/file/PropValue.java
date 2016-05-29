@@ -2,7 +2,6 @@ package com.foresee.xdeploy.file;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.utils.PathUtils;
@@ -24,7 +23,6 @@ public class PropValue extends ParamPropValue  {
     public String filekeyroot = "";
     public String excelFolderFilter = "";
     public String scanOption = ""; // 清单文件选项 默认BATCH为file.excel.folder目录下的批量，
-    public Map<String, String> pkgmap = null;
     
     public List<String> pkgList = null;
 
@@ -49,8 +47,6 @@ public class PropValue extends ParamPropValue  {
 
    
     protected void initProp() {
-         
-       // savePara( getExProp());
 
         workspace = getProperty("workspace");
         tempPath = getProperty("temppath");
@@ -64,13 +60,10 @@ public class PropValue extends ParamPropValue  {
         excelFolderFilter = getProperty("file.excel.filter");
         filekeyroot = getProperty("file.keyroot");
         excelfiletemplate = getProperty("file.excel.template");
-
-        pkgmap = getSectionItems("mapping");
         
         pkgList = Arrays.asList(getProperty("package.list").split(","));     
 
         ExchangePath.InitExchangePath(this);   //初始化路径转换器
-        // xprop.
 
     }
 
@@ -100,7 +93,7 @@ public class PropValue extends ParamPropValue  {
     public static void main(String[] args) {
        PropValue         pv = PropValue.getInstance("/svntools.properties");
 
-        System.out.println(pv.pkgmap);
+       // System.out.println(pv.pkgmap);
 
 //        System.out.println(
 //                pv.exchangePath("/trunk/engineering/src/gt3nf/web/gt3nf-skin/WebContent/etax/script/module/sbzs/init/sbInit_fqdqdzcpcljjsb.js"));

@@ -46,6 +46,10 @@
 	3、比对检查zip、excel
 
 ##Release Note
+    V0.38-20160529
+     分离出mapping.properties文件，减少误操作
+    重构相关代码
+
     V0.37-20160528
             添加jar包容错，加入mappingx增强   
     mappingx.w.META-INF.{WEBProject}   =/web/{WEBProject}/src/META-INF|{WEBProject}/WEB-INF/classes/META-INF

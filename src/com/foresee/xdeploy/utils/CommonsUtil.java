@@ -2,7 +2,7 @@ package com.foresee.xdeploy.utils;
 
 import java.io.UnsupportedEncodingException;
 
-public class StringUtil{
+public class CommonsUtil{
 	/**
 	 * 转换数字串，去除其中的非数字字符
 	 * @param str

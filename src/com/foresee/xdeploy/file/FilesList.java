@@ -46,12 +46,6 @@ public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
         return xrow;
     }
     
-    
-
-//    private List<String> handlePathList(String sPath) {
-//        String[] xstr = StringUtil.split(sPath);
-//        return Arrays.asList(xstr);
-//    }
 
     /**
      * @return
@@ -73,7 +67,7 @@ public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
 
         @Override
         public FilesListItem switchObject(ArrayList<String> xobj) {
-            return  new FilesListItem(xobj,filesList);
+            return new FilesListItem(xobj,filesList);
         }
 
       
