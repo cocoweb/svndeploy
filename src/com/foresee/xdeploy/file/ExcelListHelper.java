@@ -142,16 +142,21 @@ public class ExcelListHelper  extends XdeployBase {
 
     }
 
-    
-    protected  HSSFRow localrow;
-    protected  String getValue(int col) {
-        return CommonsUtil.ChangeUTF8Space(getValue(localrow,col).toString());
-    }
-    
-    protected  String getValue(HSSFRow xrow,int col) {
-        return POIExcelMakerUtil.getCellValue(xrow.getCell(col)).toString();
-    }
+	private class ExcelRow{
+	    protected  HSSFRow localrow;
+	    
+	    
+	    public ExcelRow(HSSFRow localrow) {
+			super();
+			this.localrow = localrow;
+		}
 
+		public  String getValue(int col) {
+	        return CommonsUtil.ChangeUTF8Space(
+	        		POIExcelMakerUtil.getCellValue(localrow.getCell(col))
+	        		.toString());
+	    }
+	}
 
     /**
      * 添加到文件清单列表中
@@ -160,12 +165,12 @@ public class ExcelListHelper  extends XdeployBase {
      * @param filename
      */
     protected  void addRowToList(FilesList xsvnfiles, HSSFRow xlocalrow, String filename) {
-        localrow = xlocalrow;
+    	ExcelRow localrow = new ExcelRow(xlocalrow);
     
-        for (String xfield : handlePathList(getValue(ColExcel_Path))) {
+        for (String xfield : handlePathList(localrow.getValue(ColExcel_Path))) {
 //        	System.out.println("["+POIExcelMakerUtil.getCellValue(xlocalrow.getCell(ColExcel_Ver)).toString()+"]");
 //        	System.out.println("["+getValue(ColExcel_Ver)+"]");
-            xsvnfiles.addItem(getValue(ColExcel_Ver), xfield, getValue(ColExcel_ProjPackage), getValue(ColExcel_Man), filename);
+            xsvnfiles.addItem(localrow.getValue(ColExcel_Ver), xfield, localrow.getValue(ColExcel_ProjPackage), localrow.getValue(ColExcel_Man), filename);
         }
     
     }

@@ -70,7 +70,14 @@ public class MappingRule {
 	}
 	
 	public String[] findSrcPath() {
-		return findSrcPath(filelistitem.getPath());
+		Entry<String, String> xentry =  findSrcPath(filelistitem.getPath());
+		
+		if (xentry != null) {
+			String[] apath = StringUtil.split(lr.eval_string(xentry.getValue()), "|");
+			return new String[] { apath[0], apath[1], lr.eval_string(xentry.getKey()) };
+		}
+		
+		return new String[] {};
 	}
 
 	/**
@@ -79,11 +86,11 @@ public class MappingRule {
 	 * @param srcPath
 	 * @return 数组，[0]=原匹配串，[1]=转换串，[2]=mapping关键字名
 	 */
-	public String[] findSrcPath(final String srcPath) {
+	public Entry<String, String> findSrcPath(final String srcPath) {
 	
 		for (final String skey : sortaStr) { // 依次搜索
 	
-			Entry<String, String> xentry = ListUtil.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
+			Entry<String, String> xentry =  ListUtil.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
 				@Override
 				public boolean check(Entry<String, String> entry) {
 					return entry.getKey().indexOf(skey) == 0
@@ -92,23 +99,19 @@ public class MappingRule {
 	
 			});
 	
-			if (xentry != null) {
-				String[] apath = StringUtil.split(xentry.getValue(), "|");
-				return new String[] { apath[0], apath[1], xentry.getKey() };
-			}
+			if (xentry != null) return xentry;
 		}
 	
 		return findSrcPathX(srcPath);
 	}
-
-	public String[] findSrcPathX(final String srcPath) {
+	
+	public Entry<String, String> findSrcPathX(final String srcPath) {
 		for (final String skey : sortaStr) { // 依次搜索
 			
 			if(skey.equals("j."))   //如果是jar，保存jar名字 到 {JARName}
 			     lr.save_string(parserJarName(srcPath), XdeployBase.LIST_JARName);
 	
-			Entry<String, String> xentry = ListUtil.findMapEntry(mappingx,
-					new ICheck<Entry<String, String>>() {
+			Entry<String, String> xentry =  ListUtil.findMapEntry(mappingx,new ICheck<Entry<String, String>>() {
 						@Override
 						public boolean check(Entry<String, String> entry) {
 							if (entry.getKey().indexOf(skey) == 0) {
@@ -127,19 +130,52 @@ public class MappingRule {
 						}
 	
 					});
+			if (xentry!=null) return xentry;
 			
-			if (xentry != null) {
-				String[] apath = StringUtil.split(lr.eval_string(xentry.getValue()), "|");
-				return new String[] { apath[0], apath[1], lr.eval_string(xentry.getKey()) };
-			}
-	
-			
-	
 		}
-	
-		return new String[] {};
-	
+		
+		return null;
 	}
+
+//	public String[] findSrcPathX1(final String srcPath) {
+//		for (final String skey : sortaStr) { // 依次搜索
+//			
+//			if(skey.equals("j."))   //如果是jar，保存jar名字 到 {JARName}
+//			     lr.save_string(parserJarName(srcPath), XdeployBase.LIST_JARName);
+//	
+//			Entry<String, String> xentry = ListUtil.findMapEntry(mappingx,
+//					new ICheck<Entry<String, String>>() {
+//						@Override
+//						public boolean check(Entry<String, String> entry) {
+//							if (entry.getKey().indexOf(skey) == 0) {
+//								// 可能存在多个web工程
+//								for (String pak : filelistitem.getProjs()) { // StringUtil.split(packages,
+//																				// ",、，")){
+//									// 临时存放WEBProject
+//									lr.save_string(pak, XdeployBase.LIST_Project);
+//									
+//									return srcPath.contains(StringUtil.split(lr.eval_string(entry.getValue()), "|")[0]);
+//								}
+//	
+//							}
+//	
+//							return false;
+//						}
+//	
+//					});
+//			
+//			if (xentry != null) {
+//				String[] apath = StringUtil.split(lr.eval_string(xentry.getValue()), "|");
+//				return new String[] { apath[0], apath[1], lr.eval_string(xentry.getKey()) };
+//			}
+//	
+//			
+//	
+//		}
+//	
+//		return new String[] {};
+//	
+//	}
 
 	/**
 	 * 从路径中提取Jar包的名字

@@ -1,7 +1,6 @@
 package com.foresee.xdeploy.utils;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
@@ -11,10 +10,6 @@ import java.util.Map.Entry;
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.iterators.FilterIterator;
 
-import com.foresee.test.loadrunner.lrapi4j.lr;
-import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.file.ToZipFile;
-import com.foresee.xdeploy.file.ToZipFile.IHandlePackage;
 
 public class ListUtil {
 	/**
@@ -102,13 +97,6 @@ public class ListUtil {
     		if (check.check(entry)){
     			return entry;
     		}
-    		
-//    		// 分离源路径 和 目标路径
-//            String[] apath = StringUtil.split(entry.getValue(), "|");
-//            if (srcPath.contains(apath[0])) {
-//                // 如果路径中包含了“源路径”
-//                return new String[] { apath[0], apath[1], entry.getKey() };
-//            }
     	}
 		return null;
 		

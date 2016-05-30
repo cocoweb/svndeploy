@@ -17,6 +17,11 @@ import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
 import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
 
+/**
+ * 封装输出Excel相关逻辑
+ * @author allan
+ *
+ */
 public class ToExcelFile extends XdeployBase{
 	int iRowNum=0;
 	String excelFileName ="";
