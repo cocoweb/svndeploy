@@ -1,5 +1,7 @@
 package com.foresee.xdeploy.file;
 
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_FileName;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Man;
 import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Path;
 
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
+import com.foresee.xdeploy.file.base.VerEmptyException;
 import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.ListUtil;
 import com.foresee.xdeploy.utils.base.BaseSwitchIterator;
@@ -24,6 +27,7 @@ public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
     public FilesList() {
        
     }
+    
     /**
      * @param arg0
      * @return
@@ -35,7 +39,13 @@ public class FilesList extends XdeployBase implements Iterable<FilesListItem> {
     
     public ArrayList<String> addItem(String xver, String xpath, String xproj, String xman, String xfilename) {
         ArrayList<String> xrow = new ArrayList<String>();
-        xrow.add(handleVerNo(xver)); // 版本号
+        try {
+			xrow.add(handleVerNo(xver));
+		} catch (VerEmptyException e) {
+			System.err.println(">>> 版本号为空："+xpath+"\n    " +xfilename+"#"+xman);
+			e.printStackTrace();
+		} // 版本号
+        
         xrow.add(handlePath(xpath)); // 路径
         xrow.add(handleProjectName(xproj)); // 工程名
         xrow.add(handleProjectName(xman)); // 提交人

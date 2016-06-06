@@ -273,7 +273,7 @@ public class ExchangePath {
 	}
 
 	/**
-	 * @return svn主干URL，绝对路径
+	 * @return svn主干URL，绝对路径  TODO
 	 */
 	public String getTrunkURL() {
 		return getTrunkURL(SrcPath);
@@ -283,7 +283,21 @@ public class ExchangePath {
 	 * @return svn绝对路径，svn.url+相对路径
 	 */
 	public String getSvnURL() {
-		return propvalue.svnurl + PathUtils.autoPathRoot(SrcPath, propvalue.keyRootFolder);
+		return propvalue.svnurl + PathUtils.autoPathRoot(SrcPath, propvalue.svnkeyRoot);
+	}
+	
+	/**
+	 * @return svn export 的目标绝对路径
+	 */
+	public String getToFolderPath(){
+		return PathUtils.addFolderEnd(propvalue.svntofolder) + propvalue.svnkeyRoot;
+	}
+
+	/**
+	 * @return export ，copy 输出时的文件绝对路径
+	 */
+	public String getToFilePath() {
+		return PathUtils.autoUrlToPath(getSvnURL(), propvalue.svntofolder, propvalue.svnkeyRoot);
 	}
 
 	/**
@@ -312,13 +326,6 @@ public class ExchangePath {
 	 */
 	public String getToTempFilePath() {
 		return PathUtils.addFolderEnd(propvalue.tempPath) + getFileName();
-	}
-
-	/**
-	 * @return export ，copy 输出时的文件绝对路径
-	 */
-	public String getToFilePath() {
-		return PathUtils.autoUrlToPath(getSvnURL(), propvalue.svntofolder, propvalue.keyRootFolder);
 	}
 
 	/**

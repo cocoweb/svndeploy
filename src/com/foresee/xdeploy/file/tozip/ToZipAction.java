@@ -12,39 +12,24 @@ import com.foresee.xdeploy.file.WarFiles;
  * @author allan
  *
  */
-public class ToZipAction{
-	private FilesListItem ofilelistitem=null;
-	private ToZipFile otozipfile=null;
-	private WarFile owarfile=null;
+public class ToZipAction extends BaseAction{
 	
-	private  WarFiles owarlist=null;
-	private ToZipStrategy strategy;
-	
-	//构造函数，要你使用哪个妙计
-	protected ToZipAction(ToZipStrategy strategy){
-		this.strategy = strategy;
-	}
-	protected void init(FilesListItem oitem, WarFile warfile, ToZipFile tozipfile){
-		ofilelistitem = oitem;
-		otozipfile    = tozipfile;
-		owarfile      = warfile;
-	}
-	
-	public static ToZipAction Create(FilesListItem oitem,WarFile warfile, ToZipFile tozipfile,ToZipStrategy strategy){
-		ToZipAction ret =   new ToZipAction( strategy);
-		ret.init( oitem, warfile,tozipfile);
-		
-		return ret;
+	protected ToZipAction(ToZipStrategy strategy) {
+		super(strategy);
 		
 	}
-	
+	public static BaseAction Create(FilesListItem oitem, WarFile warfile, ToZipFile tozipfile, ToZipStrategy strategy) {
+		return    new ToZipAction( strategy).init( oitem, warfile,tozipfile);
+		
+	}
+
 	/**
 	 * 创建文件 压缩到 ZIP的策略对象
 	 * @param oitem
 	 * @param tozipfile
 	 * @return
 	 */
-	public static ToZipAction Create4File(FilesListItem oitem, ToZipFile tozipfile){
+	public static BaseAction Create4File(FilesListItem oitem, ToZipFile tozipfile){
 		return Create(oitem,null,tozipfile,new FileToZip());
 	}
 	
@@ -54,7 +39,7 @@ public class ToZipAction{
 	 * @param tozipfile
 	 * @return
 	 */
-	public static ToZipAction Create4Svn(FilesListItem oitem, ToZipFile tozipfile){		
+	public static BaseAction Create4Svn(FilesListItem oitem, ToZipFile tozipfile){		
 		return Create(oitem,null,tozipfile,new SvnToZip());
 		
 	}
@@ -66,7 +51,7 @@ public class ToZipAction{
 	 * @param tozipfile
 	 * @return
 	 */
-	public static ToZipAction Create4War(FilesListItem oitem, WarFile warfile, ToZipFile tozipfile){
+	public static BaseAction Create4War(FilesListItem oitem, WarFile warfile, ToZipFile tozipfile){
 		return Create(oitem,warfile,tozipfile,new WarCompositeToZip());		
 		
 	}
@@ -78,23 +63,10 @@ public class ToZipAction{
 	 * @param tozipfile
 	 * @return
 	 */
-	public static ToZipAction Create4WarList(FilesListItem oitem, WarFiles warlist, ToZipFile tozipfile){
-		ToZipAction ret =  Create(oitem,null,tozipfile,new WarCompositeToZip());
+	public static BaseAction Create4WarList(FilesListItem oitem, WarFiles warlist, ToZipFile tozipfile){
+		BaseAction ret =  Create(oitem,null,tozipfile,new WarCompositeToZip());
 		ret.owarlist = warlist;
 		return ret;
-	}
-	
-	/**
-	 * 执行Tozip策略
-	 * @return
-	 */
-	public int operate(){
-		return strategy.handleToZip(ofilelistitem, owarfile, otozipfile);
-	}
-	
-	public int operateList(){
-		return strategy.handleWarList(ofilelistitem, owarlist, otozipfile);
-		
 	}
 
 	

@@ -46,6 +46,12 @@
 	3、比对检查zip、excel
 
 ##Release Note
+    V0.39-201606
+    1、修改版本号为空时的检查提示
+    2、完善Keyroot逻辑
+    3、完善制动 commit逻辑
+    
+    
     V0.38-20160529
      分离出mapping.properties文件，减少误操作
     重构相关代码

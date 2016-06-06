@@ -3,7 +3,10 @@ package com.foresee.xdeploy.file.base;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.utils.CommonsUtil;
 import com.foresee.xdeploy.utils.PathUtils;
 
 public abstract class XdeployBase {
@@ -51,15 +54,20 @@ public abstract class XdeployBase {
 		// xname = xname.replaceAll( "[\\p{P}+~$`^=|<>～｀＄＾＋＝｜＜＞￥×^_]" , ",");
 		// //StringUtil.replaceAll(xname,"、",",");
 		xname = xname.replaceAll("[、，/]", ","); // StringUtil.replaceAll(xname,"、",",");
-		xname = xname.replaceAll("[_]", "-");
-		return StringUtil.trim(xname);
+		xname = StringUtil.trim(xname.replaceAll("[_]", "-"));
+		
+		
+		return xname;
 	}
 
-	public static String handleVerNo(String sVerNo) {
+	public static String handleVerNo(String sVerNo) throws VerEmptyException {
 		
 		String xstr = StringUtil.trim(StringUtil.trimStart(sVerNo, "#"));
+		xstr = CommonsUtil.toNumericString(xstr);
+		if(StringUtils.isEmpty(xstr))
+			throw new VerEmptyException();
 
-		return com.foresee.xdeploy.utils.CommonsUtil.toNumericString(xstr);
+		return xstr;
 	}
 
 

@@ -26,8 +26,6 @@ public class MappingRule {
 	
 
 	private Map<String, String> mappingx;
-
-
 	private Map<String, String> mapping;
 
 	public Map<String, String> getMappingx() {
@@ -69,6 +67,15 @@ public class MappingRule {
 		
 	}
 	
+	/**
+	 * 在过滤mapping列表中搜索匹配的转换串
+	 * 
+	 * @param srcPath
+	 * @param skey
+	 *            过滤mapping列表的key
+	 * @return 数组，[0]=原匹配串，[1]=转换串，[2]=mapping关键字名
+	 */
+
 	public String[] findSrcPath() {
 		Entry<String, String> xentry =  findSrcPath(filelistitem.getPath());
 		
@@ -105,6 +112,12 @@ public class MappingRule {
 		return findSrcPathX(srcPath);
 	}
 	
+	/**
+	 * 搜索mappingx 配置列表
+	 * 
+	 * @param srcPath
+	 * @return
+	 */
 	public Entry<String, String> findSrcPathX(final String srcPath) {
 		for (final String skey : sortaStr) { // 依次搜索
 			
@@ -233,14 +246,6 @@ public class MappingRule {
 		// return new String[] {};
 	}
 
-	/**
-	 * 在过滤mapping列表中搜索匹配的转换串
-	 * 
-	 * @param srcPath
-	 * @param skey
-	 *            过滤mapping列表的key
-	 * @return 数组，[0]=原匹配串，[1]=转换串，[2]=mapping关键字名
-	 */
 	private  String[] findSrcPath2(final String srcPath, final String skey) {
 	
 		Entry<String, String> xentry = ListUtil.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
@@ -289,12 +294,6 @@ public class MappingRule {
 		return new String[] {};
 	}
 
-	/**
-	 * 搜索mappingx 配置列表
-	 * 
-	 * @param srcPath
-	 * @return
-	 */
 	private  String[] findSrcPathX2(String srcPath) {
 		for (String s : sortaStr) { // 依次搜索
 	

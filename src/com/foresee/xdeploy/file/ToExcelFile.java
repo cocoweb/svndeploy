@@ -3,17 +3,23 @@ package com.foresee.xdeploy.file;
 import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Path;
 import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_ROWNo;
 import static com.foresee.xdeploy.file.base.XdeployBase.ExcelCols.ColExcel_Ver;
+import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Path;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 
 import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.DateUtil;
 import com.foresee.xdeploy.file.base.XdeployBase;
+import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.excel.ExcelMoreUtil;
 import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
 
@@ -95,9 +101,38 @@ public class ToExcelFile extends XdeployBase{
 		}
 		
 	}
+	
+	
+	Workbook toworkbook=null;
+	Sheet toworksheet=null;
+	int rowsIndex = 0;
+	
+	public void openExcel(){
+		try {
+			toworkbook = ExcelMoreUtil.loadWorkbook(excelFileName);
+	        // 添加保存到file2中
+	         toworksheet= toworkbook.getSheet(sheetName);
+	         
+	         rowsIndex = toworksheet.getPhysicalNumberOfRows();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+ 
+	}
+	
+	public void copyRow(HSSFRow sourceRow, HSSFWorkbook sourceWork,int iExcelRowCount){
+		Row torow = toworksheet.createRow(rowsIndex + iExcelRowCount); // 创建一行to
+		
+		copyRow((HSSFRow)torow, sourceRow,  (HSSFWorkbook) toworkbook,  sourceWork,iExcelRowCount);
+		
+	}
 
 
 	public  void copyRow(HSSFRow targetRow, HSSFRow sourceRow, HSSFWorkbook targetWork, HSSFWorkbook sourceWork,int iExcelRowCount) {
+		iRowNum ++;
+		
+		
 	    for (int i = 0; i <= sourceRow.getLastCellNum(); i++) {
 		//for (int i = sourceRow.getFirstCellNum(); i <= sourceRow.getLastCellNum(); i++) {
 	        HSSFCell sourceCell = sourceRow.getCell(i);
@@ -113,7 +148,9 @@ public class ToExcelFile extends XdeployBase{
 	                targetCell.setCellValue(iRowNum);  //iExcelRowCount);
 	                break;
 	            case ColExcel_Path:
-	                targetCell.setCellValue(handlePath(sourceCell.getStringCellValue()));
+	            	
+	                targetCell.setCellValue(PathUtils.autoPathRoot(handlePath(sourceCell.getStringCellValue()), PropValue.getInstance().filekeyroot));
+	                		//handlePath(sourceCell.getStringCellValue()));
 	                break;
 	            default:
 	                // 拷贝单元格，包括内容和样式
@@ -126,9 +163,22 @@ public class ToExcelFile extends XdeployBase{
 	
 	}
 	
+	public void writeAndClose(){
+		ExcelMoreUtil.writeWorkbookToExcel(toworkbook, excelFileName);
+		close();
+	}
+	
 	public void close(){
-		if(poiExcelMaker!=null)
-			poiExcelMaker.writeAndClose();
+		try {
+			if(poiExcelMaker!=null)
+				poiExcelMaker.writeAndClose();
+			if (toworkbook != null)
+				toworkbook.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public static String getOutExcelFileName() {
@@ -141,26 +191,6 @@ public class ToExcelFile extends XdeployBase{
 	}
 	
 
-	
-//    protected  HSSFRow localrow;
-//    protected  String getValue(int col) {
-//        return com.foresee.xdeploy.utils.StringUtil.ChangeUTF8Space(getValue(localrow,col).toString());
-//    }
-//    
-//    protected  String getValue(HSSFRow xrow,int col) {
-//        return POIExcelMakerUtil.getCellValue(xrow.getCell(col)).toString();
-//    }
-//
-//
-//    public  void addRowToList(FilesList xsvnfiles, HSSFRow xlocalrow, String filename) {
-//        localrow = xlocalrow;
-//    
-//        for (String xfield : handlePathList(getValue(ColExcel_Path))) {
-////        	System.out.println("["+POIExcelMakerUtil.getCellValue(xlocalrow.getCell(ColExcel_Ver)).toString()+"]");
-////        	System.out.println("["+getValue(ColExcel_Ver)+"]");
-//            xsvnfiles.addItem(getValue(ColExcel_Ver), xfield, getValue(ColExcel_ProjPackage), getValue(ColExcel_Man), filename);
-//        }
-//    
-//    }
+
 
 }

@@ -12,7 +12,6 @@ import org.tmatesoft.svn.core.wc.SVNDiffStatus;
 import com.foresee.test.util.io.FileCopyUtil;
 import com.foresee.xdeploy.file.FilesListItem;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.utils.PathUtils;
 
 public class SVNRepo {
     
@@ -22,11 +21,13 @@ public class SVNRepo {
     String svn_BaseURL="";
     
     SvnClient svnclient=null;
+    PropValue pv;
 
 
     private  SVNRepo() {
-        svn_UserName=PropValue.getInstance().getProperty("svn.username");
-        svn_password=PropValue.getInstance().getProperty("svn.password");
+    	pv = PropValue.getInstance();
+        svn_UserName=pv.getProperty("svn.username");
+        svn_password=pv.getProperty("svn.password");
         
         svnclient = SvnClient.getInstance(svn_UserName, svn_password);
     }
@@ -53,22 +54,24 @@ public class SVNRepo {
 
     
     /**
-     * @param xUrl
-     * @param xVersion
-     * @param xPath
-     * @param keyRootFolder
+     * 
+     * 	 svnkeyRoot
+	 *            svn库保存路径时的关键字，即根目录
+	 *            如：https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB
+	 *            /branch/20150812
+	 *            /engineering/src/gt3nf/web/gt3nf-skin/WebContent
+	 *            /etax/script/module/sbzs/init/sbInit_ccstool.js keyFolder =
+	 *            branch or engineering or src
+
+     * @param oItem
      * @return
      * @throws SVNException
-     * @see com.foresee.xdeploy.utils.svn.SvnClient#svnExport(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
      */
-    public long Export(String xUrl, String xVersion, String xPath, String keyRootFolder) throws SVNException {
-        return svnclient.svnExport(xUrl, xVersion, xPath, keyRootFolder);
-    }
-    
     public long Export(FilesListItem oItem) throws SVNException{
         
-        String toPath = PathUtils.autoUrlToPath(oItem.getExchange().getSvnURL()
-                , PropValue.getInstance().svntofolder, PropValue.getInstance().keyRootFolder);
+        String toPath = oItem.getExchange().getToFilePath();
+//        		PathUtils.autoUrlToPath(oItem.getExchange().getSvnURL()
+//                , PropValue.getInstance().svntofolder, PropValue.getInstance().svnkeyRoot);
         
         return Export(oItem,toPath);
     }
@@ -80,11 +83,25 @@ public class SVNRepo {
         String sVer = oItem.getVer(); // aRow.get(ColList_Ver);
         //String toPath = PathUtils.autoUrlToPath(sUrl, PropValue.getInstance().svntofolder, PropValue.getInstance().keyRootFolder);
         
-        return Export(sUrl, sVer, toFilePath, PropValue.getInstance().keyRootFolder);
+        return svnclient.svnExport(sUrl, sVer, toFilePath);
+        //return Export(sUrl, sVer, toFilePath, PropValue.getInstance().svnkeyRoot);
         
     }
 
     /**
+	 * @param xUrl
+	 * @param xVersion
+	 * @param xPath
+	 * @param keyRootFolder
+	 * @return
+	 * @throws SVNException
+	 * @see com.foresee.xdeploy.utils.svn.SvnClient#svnExport(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	public long Export(String xUrl, String xVersion, String xPath ) throws SVNException {
+	    return svnclient.svnExport(xUrl, xVersion, xPath );
+	}
+
+	/**
      * @param xUrl
      * @param startVersion
      * @return
@@ -135,8 +152,7 @@ public class SVNRepo {
     }
     
     public ArrayList<SVNDiffStatus> Diff(){
-        PropValue pv =PropValue.getInstance();
-        
+                
         String svnurl = pv.getProperty("svndiff.url");
         String startversion = pv.getProperty("svndiff.startversion");
         String endversion = pv.getProperty("svndiff.endversion");
@@ -159,8 +175,7 @@ public class SVNRepo {
     }
     
 	public List<SvnResource> LogPathList(){
-		PropValue pv = PropValue.getInstance();
-
+		
 		String svnurl = pv.getProperty("svndiff.url");
 		String startversion = pv.getProperty("svndiff.startversion");
 		String endversion = pv.getProperty("svndiff.endversion");

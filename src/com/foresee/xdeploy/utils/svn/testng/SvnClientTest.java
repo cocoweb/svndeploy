@@ -29,7 +29,7 @@ public class SvnClientTest {
         try {
             sc.svnExport(
                     fileurl,
-                    "6112", "p:/tmp/d", "branch");
+                    "6112", "p:/tmp/d");
         } catch (SVNException e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -67,7 +67,7 @@ public class SvnClientTest {
     	try {
     		ArrayList<SVNDiffStatus> ll = sc.svnDiff1(xurl, "5000", endver, "");
     		for(SVNDiffStatus s : ll){
-    			long v = sc.svnExport(s.getURL().toString(), endver, "p:/yy"+PathUtils.autoPathRoot(s.getPath(),""), "");
+    			long v = sc.svnExport(s.getURL().toString(), endver, "p:/yy"+PathUtils.autoPathRoot(s.getPath(),""));
     			
     			System.out.println("ver:"+Long.toString(v)+ " | "+ s.getURL().toString());
     			

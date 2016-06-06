@@ -3,8 +3,6 @@ package com.foresee.xdeploy.file;
 import java.util.Arrays;
 import java.util.List;
 
-import com.foresee.test.util.lang.DateUtil;
-import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.base.ParamPropValue;
 
 public class PropValue extends ParamPropValue  {
@@ -19,8 +17,13 @@ public class PropValue extends ParamPropValue  {
     public String excelfiletemplate = "";
     public String svnurl = "";
     public String svntofolder = "";
-    public String keyRootFolder = "";
+    
+    
+    public String svnkeyRoot = "";
     public String filekeyroot = "";
+    public String svnworkspacekeyRoot = "";
+    
+    
     public String excelFolderFilter = "";
     public String scanOption = ""; // 清单文件选项 默认BATCH为file.excel.folder目录下的批量，
     
@@ -53,7 +56,7 @@ public class PropValue extends ParamPropValue  {
 
         svnurl = getProperty("svn.url");
         svntofolder = getProperty("svn.tofolder");
-        keyRootFolder = getProperty("svn.keyroot");
+        svnkeyRoot = getProperty("svn.keyroot");
 
         excelfile = getProperty("file.excel");
         excelFolder = getProperty("file.excel.folder");
@@ -61,34 +64,14 @@ public class PropValue extends ParamPropValue  {
         filekeyroot = getProperty("file.keyroot");
         excelfiletemplate = getProperty("file.excel.template");
         
+        svnworkspacekeyRoot=getProperty("svn.workspace.keyroot");
+        
         pkgList = Arrays.asList(getProperty("package.list").split(","));     
 
         ExchangePath.InitExchangePath(this);   //初始化路径转换器
 
     }
 
-    private static String outexcelfilename="";
-    @Deprecated
-    public String genOutExcelFileName(){
-        if(outexcelfilename==""){
-            outexcelfilename= excelfiletemplate.substring(0,  excelfiletemplate.indexOf(".")) 
-                + "-" + DateUtil.getCurrentDate("yyyyMMdd-HHmm")
-                + "-产品线-合并.xls";
-        }
-        return outexcelfilename;
-    }
-    
-    private static String outzipfilename ="";
-    @Deprecated
-    public String genOutZipFileName(){
-        if(outzipfilename==""){
-       // return PathUtils.addFolderEnd(pv.getProperty("zip.tofolder")) + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm") + ".zip";
-            outzipfilename= PathUtils.addFolderEnd( getProperty("zip.tofolder")) 
-                + "QGTG-YHCS." + DateUtil.getCurrentDate("yyyyMMdd-HHmm")
-                + ".zip";
-        }
-        return outzipfilename;
-    }
 
     public static void main(String[] args) {
        PropValue         pv = PropValue.getInstance("/svntools.properties");

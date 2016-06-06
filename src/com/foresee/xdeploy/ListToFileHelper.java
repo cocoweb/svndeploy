@@ -194,7 +194,7 @@ public class ListToFileHelper {
         }
 
         System.out.println("\nTotal " + Integer.toString(fileCount) + " Files, Exported to path ="
-                + PathUtils.addFolderEnd(exportToPath) + pv.keyRootFolder);
+                + PathUtils.addFolderEnd(exportToPath) + pv.svnkeyRoot);
 
         tozipfile.FileInfo();
 
@@ -304,7 +304,7 @@ public class ListToFileHelper {
         	String spath = pv.getProperty("svn.tofolder") + sr.getPath();
         	
         	try {
-				long v = svnrepo.Export(surl, sr.getVersion(), spath, "");
+				long v = svnrepo.Export(surl, sr.getVersion(), spath );
 	            System.out.println("ver:"+Long.toString(v)+ " | "+ sr.getPath());
 			} catch (SVNException e) {
 				// TODO Auto-generated catch block

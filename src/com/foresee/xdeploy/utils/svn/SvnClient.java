@@ -81,16 +81,9 @@ public class SvnClient {
 	 *            版本号
 	 * @param xPath
 	 *            输出的路径
-	 * @param keyRootFolder
-	 *            svn库保存路径时的关键字，即根目录
-	 *            如：https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB
-	 *            /branch/20150812
-	 *            /engineering/src/gt3nf/web/gt3nf-skin/WebContent
-	 *            /etax/script/module/sbzs/init/sbInit_ccstool.js keyFolder =
-	 *            branch or engineering or src
 	 * @throws SVNException
 	 */
-	public long svnExport(String xUrl, String xVersion, String xPath, String keyRootFolder) throws SVNException {
+	public long svnExport(String xUrl, String xVersion, String xPath) throws SVNException {
 
 		SVNURL url = SVNURL.parseURIEncoded(xUrl);
 

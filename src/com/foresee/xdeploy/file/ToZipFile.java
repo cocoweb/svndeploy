@@ -75,11 +75,11 @@ public class ToZipFile extends XdeployBase {
 
 
 
-    public int exportSvnToZip(final FilesListItem sf) {
-    	
-    	return ToZipAction.Create4Svn(sf, this).operate();
-
-    }
+//    public int exportSvnToZip(final FilesListItem sf) {
+//    	
+//    	return ToZipAction.Create4Svn(sf, this).operate();
+//
+//    }
     
     
 
