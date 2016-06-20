@@ -12,8 +12,8 @@ import org.apache.commons.collections4.iterators.FilterIterator;
 import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.base.XdeployBase;
-import com.foresee.xdeploy.utils.ListUtil;
-import com.foresee.xdeploy.utils.ListUtil.ICheck;
+import com.foresee.xdeploy.utils.ConditionHashMap;
+import com.foresee.xdeploy.utils.ICheck;
 import com.foresee.xdeploy.utils.base.ParamPropValue;
 
 public class MappingRule {
@@ -97,7 +97,7 @@ public class MappingRule {
 	
 		for (final String skey : sortaStr) { // 依次搜索
 	
-			Entry<String, String> xentry =  ListUtil.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
+			Entry<String, String> xentry =  ConditionHashMap.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
 				@Override
 				public boolean check(Entry<String, String> entry) {
 					return entry.getKey().indexOf(skey) == 0
@@ -124,7 +124,7 @@ public class MappingRule {
 			if(skey.equals("j."))   //如果是jar，保存jar名字 到 {JARName}
 			     lr.save_string(parserJarName(srcPath), XdeployBase.LIST_JARName);
 	
-			Entry<String, String> xentry =  ListUtil.findMapEntry(mappingx,new ICheck<Entry<String, String>>() {
+			Entry<String, String> xentry =  ConditionHashMap.findMapEntry(mappingx,new ICheck<Entry<String, String>>() {
 						@Override
 						public boolean check(Entry<String, String> entry) {
 							if (entry.getKey().indexOf(skey) == 0) {
@@ -143,6 +143,7 @@ public class MappingRule {
 						}
 	
 					});
+			
 			if (xentry!=null) return xentry;
 			
 		}
@@ -248,7 +249,7 @@ public class MappingRule {
 
 	private  String[] findSrcPath2(final String srcPath, final String skey) {
 	
-		Entry<String, String> xentry = ListUtil.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
+		Entry<String, String> xentry = ConditionHashMap.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
 			@Override
 			public boolean check(Entry<String, String> entry) {
 				return entry.getKey().indexOf(skey) == 0

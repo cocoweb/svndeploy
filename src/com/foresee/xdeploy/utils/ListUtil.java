@@ -5,7 +5,6 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.collections4.Predicate;
 import org.apache.commons.collections4.iterators.FilterIterator;
@@ -81,25 +80,6 @@ public class ListUtil {
 		}
 		return ret;
 
-	}
-	
-	public interface ICheck<T>  {
-		
-		public boolean check(T c);
-	
-	}
-
-	public static <K,V> Entry<K,V> findMapEntry(Map<K,V> omap,ICheck<Entry<K, V>> check){
-        for(Iterator<Entry<K, V>> xiter = omap.entrySet().iterator();xiter.hasNext();){	
-    		
-     		Entry<K, V> entry = xiter.next();
-    		
-    		if (check.check(entry)){
-    			return entry;
-    		}
-    	}
-		return null;
-		
 	}
 	
 	@SuppressWarnings("rawtypes")

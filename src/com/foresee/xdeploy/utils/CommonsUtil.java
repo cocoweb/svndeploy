@@ -10,10 +10,9 @@ public class CommonsUtil{
 	 */
 	public static String toNumericString(String str) {
 	
-		return filterCharToString(str,new ICheck(){
-
+		return filterCharToString(str,new ICheck<Character>(){
 			@Override
-			public boolean check(char c) {
+			public boolean check(Character c) {
 				
 				return Character.isDigit(c);
 			}
@@ -21,19 +20,13 @@ public class CommonsUtil{
 		});
 	}
 	
-	public interface ICheck  {
-		
-		public boolean check(char c);
-	
-	}
-
 	/**
 	 * 转换数字串，去除其中不满足 check条件的字符
 	 * @param str
 	 * @param chk
 	 * @return
 	 */
-	public static String filterCharToString(String str ,ICheck  chk){
+	public static String filterCharToString(String str ,ICheck<Character>  chk){
 		if (str == null) {
 			return null;
 		}

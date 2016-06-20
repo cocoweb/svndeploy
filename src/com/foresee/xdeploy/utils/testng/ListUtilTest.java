@@ -1,15 +1,13 @@
 package com.foresee.xdeploy.utils.testng;
 
+import java.util.Map.Entry;
+
+import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.PropValue;
-import com.foresee.xdeploy.utils.ListUtil;
-import com.foresee.xdeploy.utils.ListUtil.ICheck;
-
-import java.util.Map.Entry;
-
-import org.testng.annotations.BeforeClass;
+import com.foresee.xdeploy.utils.ConditionHashMap;
 
 public class ListUtilTest {
 	PropValue pv;
@@ -21,7 +19,7 @@ public class ListUtilTest {
 	
 	
 	public Entry<String, String> findMapEntry(final String srcPath){
-		return ListUtil.findMapEntry(pv.getSectionItems("mapping"), new ICheck<Entry<String, String>>(){
+		return ConditionHashMap.findMapEntry(pv.getSectionItems("mapping"), new  com.foresee.xdeploy.utils.ICheck<Entry<String, String>>(){
 
 			@Override
 			public boolean check(Entry<String, String> entry) {
