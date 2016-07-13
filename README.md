@@ -44,12 +44,15 @@
 	1、svn自动迁移基线，update，export，checkin
 	2、日志、输出文件优化
 	3、比对检查zip、excel
+    4、完善Keyroot逻辑
+    5、完善自动 commit逻辑
 
 ##Release Note
+    v0.40-20160713
+            修改抽取war文件bug
+
     V0.39-201606
     1、修改版本号为空时的检查提示
-    2、完善Keyroot逻辑
-    3、完善自动 commit逻辑
     
     
     V0.38-20160529

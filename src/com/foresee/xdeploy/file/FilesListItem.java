@@ -50,7 +50,7 @@ public class FilesListItem extends XdeployBase {
     }
     
     public String[] getProjs(){
-    	return StringUtil.split(getProj(), ",、，");
+    	return StringUtil.split(getProj(),",");//, ",、，");
     }
     
     public String getPath(String filekeyroot){
@@ -77,7 +77,7 @@ public class FilesListItem extends XdeployBase {
         boolean bret = false;
         ExchangePath ep = getExchange();
         
-        String[] packages =StringUtil.split(getProj(),",、，"); 
+        String[] packages =getProjs();//StringUtil.split(getProj(),",、，"); 
         //判断web工程名是否在清单中
         for (String pak : packages) {
             if (alist.indexOf(pak)<0){
@@ -87,7 +87,7 @@ public class FilesListItem extends XdeployBase {
                 //判断web工程名与mapping中是否一致
                 if(ep.inWar() && !ep.MappingKey.contains(getProj())){
                     bret = false;
-                    throw new Exception("无效的web工程名："+getProj()+" | "+ep.MappingKey);
+                    throw new Exception("无效的web工程名-："+getProj()+" | "+ep.MappingKey);
                 }else{
                    bret =true;
                     

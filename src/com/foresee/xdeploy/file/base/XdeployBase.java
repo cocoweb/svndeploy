@@ -53,7 +53,7 @@ public abstract class XdeployBase {
 	public static String handleProjectName(String xname) {
 		// xname = xname.replaceAll( "[\\p{P}+~$`^=|<>～｀＄＾＋＝｜＜＞￥×^_]" , ",");
 		// //StringUtil.replaceAll(xname,"、",",");
-		xname = xname.replaceAll("[、，/]", ","); // StringUtil.replaceAll(xname,"、",",");
+		xname = xname.replaceAll("[、，;；/\n]", ",");//.replaceAll("[、，/]", ","); // StringUtil.replaceAll(xname,"、",",");
 		xname = StringUtil.trim(xname.replaceAll("[_]", "-"));
 		
 		

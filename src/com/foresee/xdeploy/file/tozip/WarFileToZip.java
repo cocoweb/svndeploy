@@ -16,7 +16,7 @@ public class WarFileToZip extends WarBaseToZip {
 
 	@Override
 	public int handleToZip(FilesListItem oitem, WarFile warfile, ToZipFile tozipfile) {
-	    sPath = oitem.getExchange().SrcPath;
+	    sPath = oitem.getExchange().FromPath;  //SrcPath;
 		return super.handleToZip(oitem, warfile, tozipfile);
 	}
 
