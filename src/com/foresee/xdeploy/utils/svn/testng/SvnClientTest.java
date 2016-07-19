@@ -3,11 +3,16 @@ package com.foresee.xdeploy.utils.svn.testng;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.testng.annotations.BeforeClass;
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNLogEntry;
+import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.wc.SVNDiffStatus;
 
+import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.svn.SvnClient;
@@ -49,11 +54,37 @@ public class SvnClientTest {
 
     }
     
+    public List<String> toLogMessage(List<SVNLogEntry> loglist){
+    	List<String> retlist = new ArrayList();
+    	for(SVNLogEntry entry:loglist){
+    		retlist.add(entry.getRevision()+ " | "+StringUtil.trim(entry.getMessage())+"\n");
+    	}
+    	
+    	return retlist;
+    	
+    }
+    
     @Test
     public void svnLogRead(){
     	String xurl = "https://nfsvn.foresee.com.cn/svn/GT3-NF-QGTGB/trunk/engineering/src/gt3nf/java/com.foresee.gt3nf.service/src/com/foresee/gt3nf/service/outerservice/backcaller/service/gt3/hxqz/sb/impl";
     	try {
-			System.out.println(sc.getLogPathList(xurl, "8000", "10000", ""));
+    		List<SVNLogEntry> loglist = new ArrayList<SVNLogEntry>();
+			System.out.println(sc.getLogPathList(xurl, "8000", "10000", "",loglist));
+			System.out.println(toLogMessage(loglist ));
+	    	for(SVNLogEntry entry:loglist){
+	    		for(SVNLogEntryPath entryPath: entry.getChangedPaths().values()){
+	    			try {
+						System.out.println(ExchangePath.exchange(entryPath.getPath()));
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+	    			
+	    		}
+
+	    	}
+			
+			
 		} catch (SVNException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

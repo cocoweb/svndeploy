@@ -238,19 +238,26 @@ public class SvnClient {
 		System.out.println(sB);
 
 	}
-	
 	public List<SvnResource> getLogPathList(final String xUrl, String startVersion, String endVersion,final String svndiffkeyroot) throws SVNException{
+		return getLogPathList(xUrl, startVersion, endVersion, svndiffkeyroot,null);
+	}
+	
+	public List<SvnResource> getLogPathList(final String xUrl, String startVersion, String endVersion,final String svndiffkeyroot,final List<SVNLogEntry> logList) throws SVNException{
 		SVNURL url = SVNURL.parseURIEncoded(xUrl);
 		SVNRevision startRevision = SVNRevision.create(autoRevision(startVersion));
 		SVNRevision endRevision = SVNRevision.create(autoRevision(endVersion));
 		
 		final List<SvnResource> list = new ArrayList<SvnResource>();
+		
+		
 		clientManager.getLogClient().doLog(url, null, startRevision, startRevision, endRevision, false, true, 1000,
 				new ISVNLogEntryHandler(){
 
 					@Override
 					public void handleLogEntry(SVNLogEntry logEntry) throws SVNException {
 						long ver =logEntry.getRevision();
+						if (logList!=null )  logList.add(logEntry);  //保存到列表
+						
 						for(SVNLogEntryPath entryPath: logEntry.getChangedPaths().values()){
 							if (entryPath.getKind() == SVNNodeKind.FILE
 									&& (entryPath.getType() == SVNLogEntryPath.TYPE_ADDED

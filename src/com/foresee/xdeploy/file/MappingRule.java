@@ -18,7 +18,7 @@ import com.foresee.xdeploy.utils.base.ParamPropValue;
 
 public class MappingRule {
 	// 顺序搜索：c-w.META-INF-w-j
-	private static String[] sortaStr = { "c.", "w.META-INF", "w.", "j." };
+	private static String[] sortaStr = { "w.META-INF", "w.", "j.","c." };
 	
 	private FilesListItem filelistitem=null;
 	
@@ -121,7 +121,7 @@ public class MappingRule {
 	public Entry<String, String> findSrcPathX(final String srcPath) {
 		for (final String skey : sortaStr) { // 依次搜索
 			
-			if(skey.equals("j."))   //如果是jar，保存jar名字 到 {JARName}
+			if(skey.equals("j.")||skey.equals("c."))   //如果是jar，保存jar名字 到 {JARName}
 			     lr.save_string(parserJarName(srcPath), XdeployBase.LIST_JARName);
 	
 			Entry<String, String> xentry =  ConditionHashMap.findMapEntry(mappingx,new ICheck<Entry<String, String>>() {

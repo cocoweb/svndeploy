@@ -46,8 +46,14 @@
 	3、比对检查zip、excel
     4、完善Keyroot逻辑
     5、完善自动 commit逻辑
+    6、svndiff 输出清单、export excel、export path、export log
 
 ##Release Note
+    v0.41-20160714
+            开放c. mappingx; 兼容ivy导出
+            mappingx.c.{JARName}			 ={JARName}|{JARName}
+
+
     v0.40-20160713
             修改抽取war文件bug
 
