@@ -31,7 +31,7 @@
           [FROMSVN]:从svn库svn.tofolder导出到临时目录svn.tofolder，或者workspace
           [FROMZIP]:从指定压缩文件war、zip、jar 导出到临时目录
           [FROMCI] :从指定目录ci.workspace 导出到临时目录ci.tofolder;  其中的.java 将替换为.class
-          [DIFFVER]: 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单；从指定目录ci.workspace 导出到输出目录ci.tofolder;  其中的.java 将替换为.class
+          [DIFFVER]: 根据起始版本号 svndiff.startversion  svndiff.endversion，获取文件清单；从指定目录ci.workspace 导出到输出目录ci.tofolder;  其中的.java 将替换为.class
           [help]   :显示这里的信息
     args2 = []|[BATCH]|[FILE]
           []       :默认批量BATCH处理excel，扫描目录file.excel.folder下的所有
@@ -49,6 +49,8 @@
     6、svndiff 输出清单、export excel、export path、export log
 
 ##Release Note
+    v0.42-20160724
+            修改合并excel文件BUG
     v0.41-20160714
             开放c. mappingx; 兼容ivy导出
             mappingx.c.{JARName}			 ={JARName}|{JARName}

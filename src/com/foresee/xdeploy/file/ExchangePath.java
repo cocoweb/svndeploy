@@ -92,7 +92,6 @@ public class ExchangePath {
 	 * @return
 	 * @throws Exception
 	 */
-	@Deprecated
 	public static ExchangePath exchange(String srcPath) throws Exception {
 		if (propvalue == null)
 			throw new Exception("PropValue 没有初始化！");

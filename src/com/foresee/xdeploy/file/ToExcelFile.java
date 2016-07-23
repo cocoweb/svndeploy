@@ -29,7 +29,11 @@ import com.foresee.xdeploy.utils.excel.POIExcelMakerUtil;
  *
  */
 public class ToExcelFile extends XdeployBase{
-	int iRowNum=0;
+	/**
+	 * 行号
+	 */
+	int iRowNum=0; 
+	
 	String excelFileName ="";
 	String sheetName =SheetName;
 	POIExcelMakerUtil poiExcelMaker =null;
@@ -105,6 +109,9 @@ public class ToExcelFile extends XdeployBase{
 	
 	Workbook toworkbook=null;
 	Sheet toworksheet=null;
+	/**
+	 * 当前行索引
+	 */
 	int rowsIndex = 0;
 	
 	public void openExcel(){
@@ -122,7 +129,7 @@ public class ToExcelFile extends XdeployBase{
 	}
 	
 	public void copyRow(HSSFRow sourceRow, HSSFWorkbook sourceWork,int iExcelRowCount){
-		Row torow = toworksheet.createRow(rowsIndex + iExcelRowCount); // 创建一行to
+		Row torow = toworksheet.createRow(rowsIndex +iRowNum ); // 创建一行to
 		
 		copyRow((HSSFRow)torow, sourceRow,  (HSSFWorkbook) toworkbook,  sourceWork,iExcelRowCount);
 		

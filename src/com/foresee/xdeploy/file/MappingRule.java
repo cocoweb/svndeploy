@@ -18,7 +18,7 @@ import com.foresee.xdeploy.utils.base.ParamPropValue;
 
 public class MappingRule {
 	// 顺序搜索：c-w.META-INF-w-j
-	private static String[] sortaStr = { "w.META-INF", "w.", "j.","c." };
+	private static String[] sortaStr = { "c." ,"w.META-INF", "w.", "j."};
 	
 	private FilesListItem filelistitem=null;
 	
@@ -51,6 +51,11 @@ public class MappingRule {
 
 	}
 	private static MappingRule mappingrule=null;
+	/**
+	 * 工厂构造函数
+	 * @param oitem
+	 * @return
+	 */
 	public  static MappingRule getMappingRule(FilesListItem oitem){
 		
 		if (mappingrule==null){
@@ -91,7 +96,7 @@ public class MappingRule {
 	 * 在mapping列表中搜索转换串
 	 * 
 	 * @param srcPath
-	 * @return 数组，[0]=原匹配串，[1]=转换串，[2]=mapping关键字名
+	 * @return Entry
 	 */
 	public Entry<String, String> findSrcPath(final String srcPath) {
 	
@@ -116,7 +121,7 @@ public class MappingRule {
 	 * 搜索mappingx 配置列表
 	 * 
 	 * @param srcPath
-	 * @return
+	 * @return  Entry
 	 */
 	public Entry<String, String> findSrcPathX(final String srcPath) {
 		for (final String skey : sortaStr) { // 依次搜索
