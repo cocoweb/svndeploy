@@ -5,7 +5,7 @@
 	<property file="build.properties"/>
 	
 	<property name="out_path" value="${project_path}workspace/" />
-	<property name="jar.version" value="0.42" />
+	<property name="jar.version" value="0.44" />
 	<property name="jar.name" value="listcopy_${jar.version}.jar" />
 	
 	<!--定义一次，多个地方使用jar包路径                            -->
@@ -77,12 +77,24 @@
 
     <target name="create_listcopy_jar">
        <echo message="${jarlists}"/>
+    	  <!-- create timestamp with tstamp -->  
+	        <tstamp>  
+	            <format property="touch.time" pattern="yyyy/MM/dd hh:mm" />  
+	        </tstamp>  
+	        <echo message="${touch.time}" /> 
+    	
        <jar destfile="${out_path}${jar.name}">
             <manifest>
                 <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
                 <attribute name="Rsrc-Main-Class" value="com.foresee.xdeploy.ListToFile"/>
                 <attribute name="Class-Path" value="."/>
                 <attribute name="Rsrc-Class-Path" value="./ ${mf.classpath}"/>
+            	
+            	<section name ="common">
+	            	<attribute name="Specification-Title" value="Foresee SVN deploy list tools"/>
+	            	<attribute name="Specification-Version" value="${jar.version}"/>
+            		<attribute name="Specification-Time" value="${touch.time}" />
+            	</section>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip" />
             <fileset dir="${project_path}bin" >

@@ -49,6 +49,9 @@
     6、svndiff 输出清单、export excel、export path、export log
 
 ##Release Note
+    v0.43-20161027
+            修改清单路径不一致，无法检测重复文件
+
     v0.42-20160724
             修改合并excel文件BUG
     v0.41-20160714

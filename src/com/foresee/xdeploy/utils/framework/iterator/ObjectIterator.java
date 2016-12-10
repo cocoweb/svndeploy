@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.framework.iterator;
+package com.foresee.xdeploy.utils.framework.iterator;
 
 public abstract class ObjectIterator  implements IObjectIterator{
     protected int nextIndex = -1;

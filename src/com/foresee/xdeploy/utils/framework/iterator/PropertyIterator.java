@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.framework.iterator;
+package com.foresee.xdeploy.utils.framework.iterator;
 
 import java.beans.BeanInfo;
 import java.beans.Introspector;

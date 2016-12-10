@@ -9,6 +9,8 @@ import static com.foresee.xdeploy.file.base.XdeployBase.ListCols.ColList_Ver;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.ArrayUtils;
+
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.PathUtils;
@@ -49,10 +51,21 @@ public class FilesListItem extends XdeployBase {
         return svnfileDefList.get(ColList_ProjPackage);
     }
     
-    public String[] getProjs(){
+    public String[] getProjs1(){
     	return StringUtil.split(getProj(),",");//, ",、，");
     }
-    
+    public String[] getProjs(){
+        //清除空的数组项
+        String[] astr = StringUtil.split(getProj(),",");
+        
+        for(int ii=astr.length-1;ii>=0 ;ii--){
+            if(astr[ii].isEmpty()){
+                astr = (String[] )ArrayUtils.removeElement(astr, ii); 
+            }
+        }
+        return astr;//, ",、，");
+    }
+
     public String getPath(String filekeyroot){
  
         return PathUtils.autoPathRoot(svnfileDefList.get(ColList_Path), filekeyroot);

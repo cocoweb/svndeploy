@@ -170,7 +170,7 @@ public class ExcelListHelper extends XdeployBase {
 		for (String xfield : handlePathList(localrow.getValue(ColExcel_Path))) {
 			// System.out.println("["+POIExcelMakerUtil.getCellValue(xlocalrow.getCell(ColExcel_Ver)).toString()+"]");
 			// System.out.println("["+getValue(ColExcel_Ver)+"]");
-			xsvnfiles.addItem(localrow.getValue(ColExcel_Ver), xfield, localrow.getValue(ColExcel_ProjPackage),
+			xsvnfiles.addItem(localrow.getValue(ColExcel_Ver), handlePath(xfield), localrow.getValue(ColExcel_ProjPackage),
 					localrow.getValue(ColExcel_Man), filename);
 		}
 

@@ -1,7 +1,6 @@
 /**
+ * 对象iterator 框架
  * 
- */
-/**
  * @author allan
  *
  */

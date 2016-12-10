@@ -1,8 +1,8 @@
-package com.foresee.xdeploy.framework.iterator.testng;
+package com.foresee.xdeploy.utils.framework.iterator.testng;
 
 import org.testng.annotations.Test;
 
-import com.foresee.xdeploy.framework.iterator.ArrayIterator;
+import com.foresee.xdeploy.utils.framework.iterator.ArrayIterator;
 
 public class ArrayIteratorTest {
 

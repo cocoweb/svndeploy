@@ -86,7 +86,8 @@ public class MappingRule {
 		
 		if (xentry != null) {
 			String[] apath = StringUtil.split(lr.eval_string(xentry.getValue()), "|");
-			return new String[] { apath[0], apath[1], lr.eval_string(xentry.getKey()) };
+			if(Array.getLength(apath)==2)
+			    return new String[] { apath[0], apath[1], lr.eval_string(xentry.getKey()) };
 		}
 		
 		return new String[] {};

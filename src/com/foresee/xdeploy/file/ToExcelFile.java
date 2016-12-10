@@ -156,8 +156,9 @@ public class ToExcelFile extends XdeployBase{
 	                break;
 	            case ColExcel_Path:
 	            	
-	                targetCell.setCellValue(PathUtils.autoPathRoot(handlePath(sourceCell.getStringCellValue()), PropValue.getInstance().filekeyroot));
-	                		//handlePath(sourceCell.getStringCellValue()));
+	                targetCell.setCellValue(handlePath(sourceCell.getStringCellValue()));
+	                        //PathUtils.autoPathRoot(handlePath(sourceCell.getStringCellValue()), PropValue.getInstance().filekeyroot));
+	                		
 	                break;
 	            default:
 	                // 拷贝单元格，包括内容和样式
