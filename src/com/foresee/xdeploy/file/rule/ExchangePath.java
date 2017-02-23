@@ -52,6 +52,7 @@ public class ExchangePath {
 	public static final String Type_WAR = "WAR";
 	public static final String Type_JAR = "JAR";
 	public static final String Type_CHG = "CHG";
+	public static final String Type_NON = "NON";    //加入不发布类型（只进入基线，不发布版本）
 
 	public String JARName = "";
 	public String FromPath = "";
@@ -111,7 +112,12 @@ public class ExchangePath {
 			// PathUtils.addFolderEnd(xpath[1]) + fromPath;
 
 			ep = new ExchangePath(jarName, fromPath, toPath, srcPath, xpath[2]);
-
+		
+        } else if(srcPath.lastIndexOf(".project") > 0) {
+            ep = new ExchangePath("",PathUtils
+                    .trimFolderStart(srcPath)
+                    , "", PathUtils.trimFolderStart(srcPath));
+            //throw new Exception(">>> 注意！！非发布路径:\n" + ep);
 		} else {
 			ep = new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath));
 			throw new Exception(">>> 注意！！路径转换失败，可能mapping配置有问题，或者该文件路径特别:\n" + ep);
@@ -202,6 +208,8 @@ public class ExchangePath {
 			return Type_WAR;
 		else if (SrcPath.lastIndexOf(".java") > 0 || inJar())
 			return Type_JAR;
+		else if (SrcPath.lastIndexOf(".project") > 0)
+		    return Type_NON;
 		else
 			return Type_CHG;
 	}

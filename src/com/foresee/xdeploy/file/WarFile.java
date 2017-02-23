@@ -86,6 +86,8 @@ public class WarFile {
             
         }else if(sf.isType(ExchangePath.Type_WAR)){
             retstr = warZipFile.getFile().getName();
+        }else if(sf.isType(ExchangePath.Type_NON)){
+            retstr =sf.getPath();
         }else
             retstr = " SVN <<"+sf.getExchange().getSvnURL();
         

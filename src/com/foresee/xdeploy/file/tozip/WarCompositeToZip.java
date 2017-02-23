@@ -99,6 +99,8 @@ public class WarCompositeToZip extends BaseToZip {
 				ret = new WarInfToZip();
 			} else // w.类型
 				ret = new WarFileToZip();
+		}else if(oitem.isType(ExchangePath.Type_NON)){
+		    ret = new NothingToZip();     //啥都不干对象
 
 		} else {
 			ret = new SvnToZip();
