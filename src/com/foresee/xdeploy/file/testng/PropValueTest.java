@@ -3,8 +3,8 @@ package com.foresee.xdeploy.file.testng;
 import org.testng.annotations.Test;
 
 import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.file.MappingRule;
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.file.rule.MappingRule;
 import com.foresee.xdeploy.utils.ListUtil;
 
 import java.util.Collection;

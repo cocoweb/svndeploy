@@ -5,10 +5,10 @@ package com.foresee.xdeploy.file.tozip;
 
 import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.io.FileUtil;
-import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.FilesListItem;
 import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.WarFile;
+import com.foresee.xdeploy.file.rule.ExchangePath;
 import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 
 /**

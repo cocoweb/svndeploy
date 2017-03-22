@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.file;
+package com.foresee.xdeploy.file.rule;
 
 import com.foresee.xdeploy.utils.svn.SvnResource;
 
@@ -55,7 +55,7 @@ public class ResourceRule {
      * @return 获取该文件转换器的路径类型 war、jar、chg
      */
     public String getPathType() {
-        if (getPath().lastIndexOf(".java") > 0 ||getPath().lastIndexOf("-java") > 0 )
+        if (getPath().lastIndexOf(".java") > 0 ||getPath().indexOf("-java") > 0 )
             return PackageType.Type_JAR;
         else if (getPath().lastIndexOf(".project") > 0)
             return PackageType.Type_NON;

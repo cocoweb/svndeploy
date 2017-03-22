@@ -8,13 +8,14 @@ import com.foresee.test.util.io.FileUtil;
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.ExcelFiles;
 import com.foresee.xdeploy.file.ExcelListHelper;
-import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.FilesList;
 import com.foresee.xdeploy.file.FilesListItem;
 import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.ToExcelFile;
 import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.WarFiles;
+import com.foresee.xdeploy.file.rule.ExchangePath;
+import com.foresee.xdeploy.file.rule.ResourceRule;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.svn.SVNRepo;
 import com.foresee.xdeploy.utils.svn.SvnResource;
@@ -325,5 +326,85 @@ public class ListToFileHelper {
 //        System.out.println(">>>===变动文件数=" + Integer.toString(xlist.size()));
 
     }
+    /**
+     * 根据起始版本号，获取文件清单
+     */
 
+    public void svnDiffToExcel() {
+        System.out.println("=========== -x 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单=================");
+
+        SVNRepo svnrepo = SVNRepo.getInstance();
+
+        List<SvnResource> alist = svnrepo.LogPathList();
+        
+        ToExcelFile toExcelFile = ToExcelFile.createToExcelFile(true);
+        
+        int i=2;
+
+        for (SvnResource sr : alist) {
+//            String surl = sr.getUrl();
+//            String spath = pv.getProperty("svn.tofolder") + sr.getPath();
+            
+            //long v = svnrepo.Export(surl, sr.getVersion(), spath );
+            
+            
+            
+            System.out.println("ver:"+sr.getVersion()+ " | "+ sr.getPath());
+
+            if (toExcelFile != null) {
+                toExcelFile.addRow(i++, sr.getSVNVersion(), sr.getPath());
+            }
+        }
+        
+        if (toExcelFile != null) {
+            toExcelFile.close();
+        }
+
+        System.out.println(">>>变动文件数=" + Integer.toString(alist.size()));
+        System.out.println("   Excel文件保存在："+toExcelFile.getOutExcelFileName() );
+        
+
+    }
+
+    /**
+     * 根据起始版本号，获取文件清单
+     */
+
+    public void svnDiffToList() {
+        System.out.println("=========== -x 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单=================");
+
+        SVNRepo svnrepo = SVNRepo.getInstance();
+
+        List<SvnResource> alist = svnrepo.LogPathList();
+        
+        //ToExcelFile toExcelFile = ToExcelFile.createToExcelFile(true);
+        
+        int i=2;
+
+        for (SvnResource sr : alist) {
+            String surl = sr.getUrl();
+            String spath = pv.getProperty("svn.tofolder") + sr.getPath();
+            
+            //long v = svnrepo.Export(surl, sr.getVersion(), spath );
+            
+            ResourceRule rr=ResourceRule.getResourceRule(sr);
+            
+            
+            System.out.println("ver:"+sr.getVersion()+" | Module:"+ rr.getModuleName()+" | Package:"+ rr.getPackageName() +" | "+ sr.getPath());
+
+//            if (toExcelFile != null) {
+//                toExcelFile.addRow(i++, sr.getSVNVersion(), sr.getPath());
+//            }
+        }
+        
+//        if (toExcelFile != null) {
+//            toExcelFile.close();
+//        }
+
+        System.out.println(">>>变动文件数=" + Integer.toString(alist.size()));
+        //System.out.println("   Excel文件保存在："+toExcelFile.getOutExcelFileName() );
+        
+
+    }
+    
 }

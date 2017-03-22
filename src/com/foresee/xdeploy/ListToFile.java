@@ -26,7 +26,7 @@ public class ListToFile {
         
         helpPrint(cmdCLIOptions());
 
-        System.out.println("Mode II -> We need some arguments!");
+        System.out.println("\n Mode II -> We need some arguments!");
         System.out.println("Example：java ListToFile.class FROMSVN");
         System.out.println("  args1 = []|[LIST]|[FROMSVN]|[FROMCI][DIFFVER][help]");
         System.out.println("          []       :无参数时,会进入窗口模式");
@@ -101,11 +101,16 @@ public class ListToFile {
                 .longOpt("fordiffver")
                 .desc("for version diffrent; 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单；从指定目录ci.workspace 导出到输出目录ci.tofolder;  其中的.java 将替换为.class")
                 .hasArg(false).required(false).build());
+        og1.addOption(Option
+                .builder("x")
+                .longOpt("difftoexcel")
+                .desc("version diffrent toExcel; 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单")
+                .hasArg(false).required(false).build());
         options.addOptionGroup(og1);
 
         OptionGroup og0 = new OptionGroup();
         og0.setRequired(false);
-        og0.addOption(Option.builder("P").desc("Use value for given property: -Pp1=v1 -Pp2=v2 ...").argName("name=value")
+        og0.addOption(Option.builder("P").desc("Use value for given property: -Pp1=v1 -Pp2=v2 ...| 配置文件 svntools.properties中的配置项，可在这里优先指定").argName("name=value")
                 .valueSeparator().hasArgs().optionalArg(false).required(false).build());
         og0.addOption(Option.builder().longOpt("propfile").desc("Properties File Name, Default is [svntools.properties]")
                 .hasArg(true).argName("PropertiesFile").optionalArg(false).required(false).build());
@@ -196,6 +201,8 @@ public class ListToFile {
                 listTofileHelper.scanPrintList();
             } else if (cmds.hasOption('s')) {
                 listTofileHelper.scanSvnToPath();
+            } else if (cmds.hasOption('x')) {
+                listTofileHelper.svnDiffToExcel();
             } else if (cmds.hasOption('z')) {
                 listTofileHelper.scanWarToZip();
             }

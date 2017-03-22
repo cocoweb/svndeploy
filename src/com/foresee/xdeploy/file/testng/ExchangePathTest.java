@@ -2,9 +2,9 @@ package com.foresee.xdeploy.file.testng;
 
 import org.testng.annotations.Test;
 
-import com.foresee.xdeploy.file.ExchangePath;
-import com.foresee.xdeploy.file.MappingRule;
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.file.rule.ExchangePath;
+import com.foresee.xdeploy.file.rule.MappingRule;
 
 import org.testng.annotations.BeforeClass;
 

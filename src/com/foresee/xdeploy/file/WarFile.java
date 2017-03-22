@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.foresee.test.util.PathUtils;
+import com.foresee.xdeploy.file.rule.PackageType;
 import com.foresee.xdeploy.utils.zip.Zip4jUtils;
 
 import net.lingala.zip4j.core.ZipFile;
@@ -81,12 +82,12 @@ public class WarFile {
      */
     public String getSource(FilesListItem sf){
         String retstr = "";
-        if(sf.isType(ExchangePath.Type_JAR)){
+        if(sf.isType(PackageType.Type_JAR)){
             retstr = PathUtils.getFileNameWithExt(getJarPath(sf.getExchange().JARName)) +" @ " +warZipFile.getFile().getName();
             
-        }else if(sf.isType(ExchangePath.Type_WAR)){
+        }else if(sf.isType(PackageType.Type_WAR)){
             retstr = warZipFile.getFile().getName();
-        }else if(sf.isType(ExchangePath.Type_NON)){
+        }else if(sf.isType(PackageType.Type_NON)){
             retstr =sf.getPath();
         }else
             retstr = " SVN <<"+sf.getExchange().getSvnURL();

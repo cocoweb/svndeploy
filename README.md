@@ -9,6 +9,7 @@
     -h,--help                      显示这里的参数信息
     -z,--fromzip                   from zip to; 从指定压缩文件war、zip、jar 导出到临时目录
     -l,--list                      for list; 显示待处理文件清单和版本
+    -x,--difftoexcel               version diffrent toExcel; 根据起始版本号svndiff.startversion  svndiff.endversion，获取文件清单
     -P <name=value>                Use value for given property: -Pp1=v1 -Pp2=v2 ...
        --propfile <PropertiesFile> Properties File Name, Default is [svntools.properties]
     -B,--bebatch                   [默认]批量处理excel，扫描目录file.excel.folder下的所有
@@ -49,6 +50,9 @@
     6、svndiff 输出清单、export excel、export path、export log
 
 ##Release Note
+    v0.45-20170322
+            增加.project .settings 判断识别，忽略对该类文件的转换
+    
     v0.43-20161027
             修改清单路径不一致，无法检测重复文件
 

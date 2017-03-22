@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.file;
+package com.foresee.xdeploy.file.rule;
 
 import java.lang.reflect.Array;
 import java.util.Collection;
@@ -11,6 +11,8 @@ import org.apache.commons.collections4.iterators.FilterIterator;
 
 import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.lang.StringUtil;
+import com.foresee.xdeploy.file.FilesListItem;
+import com.foresee.xdeploy.file.PropValue;
 import com.foresee.xdeploy.file.base.XdeployBase;
 import com.foresee.xdeploy.utils.ConditionHashMap;
 import com.foresee.xdeploy.utils.ICheck;
@@ -213,7 +215,8 @@ public class MappingRule {
 			//获取结束位置
 			int jarEndIndex = srcPath.indexOf("/", jarStartIndex);
 			
-			return srcPath.substring(jarStartIndex, jarEndIndex);
+			return jarEndIndex>0 ?srcPath.substring(jarStartIndex, jarEndIndex)
+			        :srcPath.substring(jarStartIndex);
 			
 		}
 		

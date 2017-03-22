@@ -12,8 +12,8 @@ import org.tmatesoft.svn.core.SVNLogEntryPath;
 import org.tmatesoft.svn.core.wc.SVNDiffStatus;
 
 import com.foresee.test.util.lang.StringUtil;
-import com.foresee.xdeploy.file.ExchangePath;
 import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.file.rule.ExchangePath;
 import com.foresee.xdeploy.utils.PathUtils;
 import com.foresee.xdeploy.utils.svn.SvnClient;
 

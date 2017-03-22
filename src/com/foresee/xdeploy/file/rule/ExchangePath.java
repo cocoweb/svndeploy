@@ -1,4 +1,4 @@
-package com.foresee.xdeploy.file;
+package com.foresee.xdeploy.file.rule;
 
 import java.lang.reflect.Array;
 import java.util.HashMap;
@@ -9,7 +9,12 @@ import org.apache.commons.lang.builder.ToStringBuilder;
 import com.foresee.test.loadrunner.lrapi4j.lr;
 import com.foresee.test.util.PathUtils;
 import com.foresee.test.util.io.FileUtil;
+import com.foresee.xdeploy.file.FilesListItem;
+import com.foresee.xdeploy.file.PropValue;
+import com.foresee.xdeploy.file.ToExcelFile;
+import com.foresee.xdeploy.file.ToZipFile;
 import com.foresee.xdeploy.file.base.XdeployBase;
+import com.foresee.xdeploy.file.rule.PackageType;
 
 /**
  * 路径转换器
@@ -49,10 +54,10 @@ import com.foresee.xdeploy.file.base.XdeployBase;
 public class ExchangePath {
 	private static PropValue propvalue = null;
 
-	public static final String Type_WAR = "WAR";
-	public static final String Type_JAR = "JAR";
-	public static final String Type_CHG = "CHG";
-	public static final String Type_NON = "NON";    //加入不发布类型（只进入基线，不发布版本）
+//	public static final String Type_WAR = "WAR";
+//	public static final String Type_JAR = "JAR";
+//	public static final String Type_CHG = "CHG";
+//	public static final String Type_NON = "NON";    //加入不发布类型（只进入基线，不发布版本）
 
 	public String JARName = "";
 	public String FromPath = "";
@@ -113,7 +118,7 @@ public class ExchangePath {
 
 			ep = new ExchangePath(jarName, fromPath, toPath, srcPath, xpath[2]);
 		
-        } else if(srcPath.lastIndexOf(".project") > 0) {
+        } else if(srcPath.lastIndexOf(".project") > 0|| srcPath.contains(".settings")) {
             ep = new ExchangePath("",PathUtils
                     .trimFolderStart(srcPath)
                     , "", PathUtils.trimFolderStart(srcPath));
@@ -205,13 +210,13 @@ public class ExchangePath {
 	 */
 	public String getPathType() {
 		if (inWar())
-			return Type_WAR;
+			return PackageType.Type_WAR;
 		else if (SrcPath.lastIndexOf(".java") > 0 || inJar())
-			return Type_JAR;
+			return PackageType.Type_JAR;
 		else if (SrcPath.lastIndexOf(".project") > 0)
-		    return Type_NON;
+		    return PackageType.Type_NON;
 		else
-			return Type_CHG;
+			return PackageType.Type_CHG;
 	}
 
 	/**

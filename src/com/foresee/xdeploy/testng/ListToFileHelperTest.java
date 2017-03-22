@@ -1,10 +1,13 @@
 package com.foresee.xdeploy.testng;
 
+import java.util.Properties;
+
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.ListToFileHelper;
+import com.foresee.xdeploy.file.PropValue;
 
 public class ListToFileHelperTest {
     ListToFileHelper listTofileHelper;
@@ -36,5 +39,23 @@ public class ListToFileHelperTest {
     @Test
     public void svnDiffToPath() {
     	listTofileHelper.svnDiffToPath();
+    	
+    	
+    }
+    
+    @Test
+    public void svnDiffToExcel() {
+        
+        
+        Properties prop =new Properties();
+        prop.setProperty("svndiff.url", "https://svn.foresee.com.cn/svn/taxcp/trunk/engineering/src");
+        prop.setProperty("svndiff.startversion", "5700");
+        prop.setProperty("svndiff.endversion", "5800");
+        prop.setProperty("svn.username", "xieying@foresee.cn");
+        prop.setProperty("svn.password", "xieying,1");
+        
+        PropValue.setArgsProp(prop);
+        
+        listTofileHelper.svnDiffToList();
     }
 }

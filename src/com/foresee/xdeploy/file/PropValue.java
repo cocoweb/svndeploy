@@ -3,6 +3,7 @@ package com.foresee.xdeploy.file;
 import java.util.Arrays;
 import java.util.List;
 
+import com.foresee.xdeploy.file.rule.ExchangePath;
 import com.foresee.xdeploy.utils.base.ParamPropValue;
 
 public class PropValue extends ParamPropValue  {

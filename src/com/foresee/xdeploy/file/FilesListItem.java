@@ -13,6 +13,7 @@ import org.apache.commons.lang.ArrayUtils;
 
 import com.foresee.test.util.lang.StringUtil;
 import com.foresee.xdeploy.file.base.XdeployBase;
+import com.foresee.xdeploy.file.rule.ExchangePath;
 import com.foresee.xdeploy.utils.PathUtils;
 
 public class FilesListItem extends XdeployBase {
