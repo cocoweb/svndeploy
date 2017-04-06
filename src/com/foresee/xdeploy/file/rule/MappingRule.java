@@ -22,6 +22,10 @@ public class MappingRule {
 	// 顺序搜索：c-w.META-INF-w-j
 	private static String[] sortaStr = { "c." ,"w.META-INF", "w.", "j."};
 	
+	private static String[] jarNamePrefix = { "com.foresee." ,"gov.chinatax."};
+	
+	private static String[] ignoreFilter ={"/.project","/.settings/"};
+	
 	private FilesListItem filelistitem=null;
 	
 	private ParamPropValue ppv;
@@ -37,6 +41,22 @@ public class MappingRule {
 	public Map<String, String> getMapping() {
 		return mapping;
 	}
+	
+//	private void setPropToArray(String[] toStrArray,String sKey,String sDefault){
+//	    
+//	    String ss = ppv.getProperty(sKey, sDefault);
+//        if (!ss.isEmpty()) {
+//            toStrArray = ss.split(",");
+//        }
+//	}
+    private String[]  getPropToArray(String sKey,String sDefault){
+        String[] toStrArray={};
+        String ss = ppv.getProperty(sKey, sDefault);
+        if (!ss.isEmpty()) {
+            toStrArray = ss.split(",");
+        }
+        return toStrArray;
+    }
 
 	private MappingRule() {
 		super();
@@ -45,32 +65,48 @@ public class MappingRule {
 
 		mappingx = ppv.getSectionItems("mappingx");
 		mapping  = ppv.getSectionItems("mapping");
+		
+//        setPropToArray(sortaStr,"sortmapping", "c.,w.META-INF,w.,j.");
+//        setPropToArray(jarNamePrefix,"jarname.prefix", "com.foresee.,gov.chinatax.");
+//		setPropToArray(ignoreFilter,"ignore.filter","/.project,/.settings/");
+		
+		sortaStr=getPropToArray("sortmapping", "c.,w.META-INF,w.,j.");
+		jarNamePrefix=getPropToArray("jarname.prefix", "com.foresee.,gov.chinatax.");
+		ignoreFilter=getPropToArray("ignore.filter","/.project,/.settings/");
 
-		String sortmapping = ppv.getProperty("sortmapping", "c.,w.META-INF,w.,j.");
-		if (!sortmapping.isEmpty()) {
-			sortaStr = sortmapping.split(",");
-		}
-
+//		String sortmapping = ppv.getProperty("sortmapping", "c.,w.META-INF,w.,j.");
+//		if (!sortmapping.isEmpty()) {
+//			sortaStr = sortmapping.split(",");
+//		}
+//		
+//		
+//		String jarnameprefix = ppv.getProperty("jarname.prefix", "com.foresee.,gov.chinatax.");
+//        if (!jarnameprefix.isEmpty()) {
+//            jarNamePrefix = jarnameprefix.split(",");
+//        }
 	}
 	private static MappingRule mappingrule=null;
-	/**
+	public static MappingRule getMappingrule() {
+	    if (mappingrule==null){
+            mappingrule = new MappingRule();
+            
+        }
+        return mappingrule;
+    }
+
+    /**
 	 * 工厂构造函数
 	 * @param oitem
 	 * @return
 	 */
 	public  static MappingRule getMappingRule(FilesListItem oitem){
 		
-		if (mappingrule==null){
-			mappingrule = new MappingRule();
-			
-        }
-        
-		mappingrule.filelistitem = oitem;
+	    getMappingrule().filelistitem = oitem;
 		
 		// 保存工程名，作为项目参数
 		lr.save_string(oitem.getProj(), XdeployBase.LIST_Project);
 
-        return mappingrule;
+        return getMappingrule();
 		
 	}
 	
@@ -103,7 +139,7 @@ public class MappingRule {
 	 */
 	public Entry<String, String> findSrcPath(final String srcPath) {
 	
-		for (final String skey : sortaStr) { // 依次搜索
+		for (final String skey : getMappingrule().sortaStr) { // 依次搜索
 	
 			Entry<String, String> xentry =  ConditionHashMap.findMapEntry(mapping, new ICheck<Entry<String, String>>() {
 				@Override
@@ -127,7 +163,7 @@ public class MappingRule {
 	 * @return  Entry
 	 */
 	public Entry<String, String> findSrcPathX(final String srcPath) {
-		for (final String skey : sortaStr) { // 依次搜索
+		for (final String skey : getMappingrule().sortaStr) { // 依次搜索
 			
 			if(skey.equals("j.")||skey.equals("c."))   //如果是jar，保存jar名字 到 {JARName}
 			     lr.save_string(parserJarName(srcPath), XdeployBase.LIST_JARName);
@@ -199,6 +235,24 @@ public class MappingRule {
 //	
 //	}
 
+//	public static String parserJarName1(String srcPath){
+//		//获取起始位置
+//		int jarStartIndex = srcPath.indexOf("com.foresee.");
+//		if(jarStartIndex <0) jarStartIndex = srcPath.indexOf("gov.chinatax.");
+//		
+//		if(jarStartIndex >= 0){
+//			//获取结束位置
+//			int jarEndIndex = srcPath.indexOf("/", jarStartIndex);
+//			
+//			return jarEndIndex>0 ?srcPath.substring(jarStartIndex, jarEndIndex)
+//			        :srcPath.substring(jarStartIndex);
+//			
+//		}
+//		
+//		return "";
+//		
+//	}
+	
 	/**
 	 * 从路径中提取Jar包的名字
 	 *    形如：com.foresee.xxxx
@@ -207,24 +261,47 @@ public class MappingRule {
 	 * @return
 	 */
 	public static String parserJarName(String srcPath){
-		//获取起始位置
-		int jarStartIndex = srcPath.indexOf("com.foresee.");
-		if(jarStartIndex <0) jarStartIndex = srcPath.indexOf("gov.chinatax.");
-		
-		if(jarStartIndex >= 0){
-			//获取结束位置
-			int jarEndIndex = srcPath.indexOf("/", jarStartIndex);
-			
-			return jarEndIndex>0 ?srcPath.substring(jarStartIndex, jarEndIndex)
-			        :srcPath.substring(jarStartIndex);
-			
-		}
-		
-		return "";
-		
+	    
+	    for(String sprefix : getMappingrule().jarNamePrefix){
+	        int jarStartIndex = srcPath.indexOf(StringUtil.trim(sprefix));
+	        if(jarStartIndex >= 0){
+	            //获取结束位置
+	            int jarEndIndex = srcPath.indexOf("/", jarStartIndex);
+	            
+	            return jarEndIndex>0 ?srcPath.substring(jarStartIndex, jarEndIndex)
+	                    :srcPath.substring(jarStartIndex);
+	        }
+	    }
+	    
+	    
+	    return "";
 	}
+	
+//     public static boolean checkIgnore0(String spath){
+//        
+//        
+//        return spath.lastIndexOf("/.project") > 0|| spath.contains("/.settings/");
+//    }
 
-	/**
+    /**
+     * 检查该路径是否可以忽略转换
+     * 
+     * @param spath
+     * @return
+     */
+    public static boolean checkIgnore(String spath){
+       
+        for(String sfilter : getMappingrule().ignoreFilter){
+            if(spath.contains(StringUtil.trim(sfilter))) 
+                return true;
+            
+        }
+        
+        return false;
+        //spath.lastIndexOf("/.project") > 0|| spath.contains("/.settings/");
+    }
+
+    /**
 	 * 获取集合中满足条件的iterator
 	 * 
 	 * @param skey

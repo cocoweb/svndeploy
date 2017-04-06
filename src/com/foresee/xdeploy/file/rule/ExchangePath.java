@@ -103,33 +103,35 @@ public class ExchangePath {
 			throw new Exception("PropValue 没有初始化！");
 
 		ExchangePath ep = null;
-
-		// 搜索mapping转换路径
-		String[] xpath = MappingRule.getMappingRule(filelistitem).findSrcPath();
-		if (Array.getLength(xpath) > 1) {
-
-			String jarName = xpath[1];
-			String fromPath = PathUtils
-					.trimFolderStart(srcPath.substring(srcPath.indexOf(xpath[0]) + xpath[0].length()))
-					.replace(".java", ".class");
-
-			String toPath = parserToPath(fromPath, xpath[1]);
-			// PathUtils.addFolderEnd(xpath[1]) + fromPath;
-
-			ep = new ExchangePath(jarName, fromPath, toPath, srcPath, xpath[2]);
 		
-        } else if(srcPath.lastIndexOf(".project") > 0|| srcPath.contains(".settings")) {
-            ep = new ExchangePath("",PathUtils
-                    .trimFolderStart(srcPath)
+		if(MappingRule.checkIgnore(srcPath)) {    //检查该路径是否可以忽略转换规则
+            ep = new ExchangePath("",PathUtils.trimFolderStart(srcPath)
                     , "", PathUtils.trimFolderStart(srcPath));
-            //throw new Exception(">>> 注意！！非发布路径:\n" + ep);
-		} else {
-			ep = new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath));
-			throw new Exception(">>> 注意！！路径转换失败，可能mapping配置有问题，或者该文件路径特别:\n" + ep);
+		}else{
+
+    		// 搜索mapping转换路径
+    		String[] xpath = MappingRule.getMappingRule(filelistitem).findSrcPath();
+    		if (Array.getLength(xpath) > 1) {
+    
+    			String jarName = xpath[1];
+    			String fromPath = PathUtils
+    					.trimFolderStart(srcPath.substring(srcPath.indexOf(xpath[0]) + xpath[0].length()))
+    					.replace(".java", ".class");
+    
+    			String toPath = parserToPath(fromPath, xpath[1]);
+    			// PathUtils.addFolderEnd(xpath[1]) + fromPath;
+    
+    			ep = new ExchangePath(jarName, fromPath, toPath, srcPath, xpath[2]);
+    		
+            }  else {
+    			ep = new ExchangePath("", "", "", PathUtils.trimFolderStart(srcPath));
+    			throw new Exception(">>> 注意！！路径转换失败，可能mapping配置有问题，或者该文件路径特别:\n" + ep);
+    		}
 		}
 
 		return ep;
 	}
+	
 
 	private static FilesListItem filelistitem;
 
