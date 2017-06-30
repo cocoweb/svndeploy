@@ -50,6 +50,11 @@
     6、svndiff 输出清单、export excel、export path、export log
 
 ##Release Note
+    v0.46-20170425
+           增加 -x 版本差异清单 ，可输出excel文件 
+    
+    -x -Psvndiff.url=https://svn.foresee.com.cn/svn/taxcp/branch/BR_TAXCPSRC_20170413 -Psvndiff.startversion=11414 -Psvndiff.endversion=11950 -Psvn.username=xieying@foresee.cn -Psvn.password=
+
     v0.45-20170322
             增加.project .settings 判断识别，忽略对该类文件的转换
     

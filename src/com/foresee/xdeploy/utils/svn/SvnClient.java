@@ -259,13 +259,15 @@ public class SvnClient {
 						if (logList!=null )  logList.add(logEntry);  //保存到列表
 						
 						for(SVNLogEntryPath entryPath: logEntry.getChangedPaths().values()){
+						    if(!entryPath.getPath().contains(svndiffkeyroot)) continue;
+						    
 							if (entryPath.getKind() == SVNNodeKind.FILE
 									&& (entryPath.getType() == SVNLogEntryPath.TYPE_ADDED
 											|| entryPath.getType() == SVNLogEntryPath.TYPE_MODIFIED)) {
 			        		
 				        		
 				        		SvnResource sr =new SvnResource();
-				        		sr.setPath(PathUtils.autoPathRoot(entryPath.getPath(),svndiffkeyroot));
+				        		sr.setPath(PathUtils.autoPathRoot(entryPath.getPath(),svndiffkeyroot,"NOROOT"));
 				        		sr.setUrl(PathUtils.addFolderEnd(xUrl)
 				        				+PathUtils.autoPathRoot(entryPath.getPath(),svndiffkeyroot,"NOROOT"));
 				        		sr.setSVNVersion(ver);
