@@ -50,6 +50,7 @@
     6、svndiff 输出清单、export excel、export path、export log
 
 ##Release Note
+
     v0.46-20170425
            增加 -x 版本差异清单 ，可输出excel文件 
     
