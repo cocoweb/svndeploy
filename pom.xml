@@ -90,5 +90,10 @@
   		<artifactId>jira-client</artifactId>
   		<version>0.6-SNAPSHOT</version>
   	</dependency>
+  	<dependency>
+  		<groupId>com.jgoodies</groupId>
+  		<artifactId>jgoodies-forms</artifactId>
+  		<version>1.9.0</version>
+  	</dependency>
   </dependencies>
 </project>
