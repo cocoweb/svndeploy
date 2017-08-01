@@ -35,7 +35,7 @@
 	
 	<!--定义一次，多个地方使用jar包路径                            -->
     <path id="Lib.jarSets">
-    	<fileset id="fileset001" dir="F:\OpenSource\poi-bin-3.11-20141221\poi-3.11">
+    	<!--fileset id="fileset001" dir="F:\OpenSource\poi-bin-3.11-20141221\poi-3.11">
     		<include name="poi-3.11-20141221.jar"/>
     		<include name="poi-ooxml-3.11-20141221.jar"/>
     	</fileset>
@@ -45,7 +45,7 @@
     	<fileset id="fileset003" dir="F:/OpenSource/zip4j_1.3.1">
     		<include name="zip4j_1.3.2.jar"/>
     	</fileset>
-        <!--fileset id="fileset004" dir="${project_path}lib">
+        <fileset id="fileset004" dir="${project_path}lib">
             <include name="loadtestools-1.4.jar"/>
         	<include name="bsh-1.3.0.jar"/>
             <include name="log4j-1.2.15.jar"/>
@@ -68,17 +68,17 @@
         	<include name="commons-cli-1.3.1.jar"/>
         	<include name="commons-codec-1.6.jar"/>
         	<include name="jira-client-0.6-SNAPSHOT.jar"/>
-        </fileset-->
+        </fileset>
     	<fileset id="fileset005" dir="F:/OpenSource/apache-commons/commons-collections">
     		<include name="commons-collections4-4.1.jar"/>
     	</fileset>
     	<fileset id="fileset006" dir="F:/OpenSource/apache-commons/commons-lang">
     		<include name="commons-lang-2.6.jar"/>
-    	</fileset>
+    	</fileset-->
     	<fileset refid="deps.fileset.compile"/>
     </path>
 	
-	<fileset id="fileset-properties" dir="${project_path}/bin">
+	<fileset id="fileset-properties" dir="${project_path}/target/classes">
 		<include name="**/svntools.properties" />
 		<include name="**/mapping.properties" />
 		<include name="**/log4j.properties" />
@@ -125,21 +125,17 @@
             	</section>
             </manifest>
             <zipfileset src="jar-in-jar-loader.zip" />
-            <fileset dir="${project_path}bin" >
+            <fileset dir="${project_path}target/classes" >
             	<exclude name="**/*.properties"/>
             	<exclude name="tmp/"/>
             	<exclude name="**/testng/"/>
             	<exclude name="**/tmp/"/>
             </fileset>
-        	<!--zipfileset src="${jarlists}"/-->
-			<!--fileset refid="fileset001"/>
-	   	    <fileset refid="fileset002"/>
-	   	    <fileset refid="fileset003"/>
-	   	    <fileset refid="fileset004"/>
-	   	    <fileset refid="fileset005"/>
-   	        <fileset refid="fileset006"/-->
-       	
-       	    <fileset refid="deps.fileset.compile"/>
+        	
+       	    <mappedresources>
+       			<fileset refid="deps.fileset.compile"/>
+       	        <mapper type="flatten" />
+       	    </mappedresources>
 
  
         </jar>

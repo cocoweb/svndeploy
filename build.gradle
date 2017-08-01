@@ -1,0 +1,105 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+group = 'fsSvnDeploy'
+version =  getVersionCode()  //'0.0.1-SNAPSHOT'
+
+description = """"""
+
+//sourceCompatibility = 1.6
+//targetCompatibility = 1.6
+
+ext{
+	//BuildPropFile = file('build.properties')
+	jarName ='listcopy_'+version+'.jar'
+}
+
+ant {
+    property(file: 'build.properties')
+}
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+     mavenLocal()   
+     //maven { url "http://repo.maven.apache.org/maven2" }
+}
+
+dependencies {
+    compile group: 'org.apache.poi', name: 'poi-ooxml', version:'3.16'
+    compile group: 'net.lingala.zip4j', name: 'zip4j', version:'1.3.2'
+    compile group: 'commons-lang', name: 'commons-lang', version:'2.6'
+    compile group: 'commons-io', name: 'commons-io', version:'2.5'
+    compile group: 'commons-cli', name: 'commons-cli', version:'1.4'
+    compile group: 'log4j', name: 'log4j', version:'1.2.17'
+    compile group: 'args4j', name: 'args4j', version:'2.33'
+    compile group: 'bsh', name: 'bsh', version:'1.3.0'
+    compile group: 'commons-codec', name: 'commons-codec', version:'1.10'
+    compile group: 'org.tmatesoft.svnkit', name: 'svnkit', version:'1.8.14'
+    compile group: 'fsLRTools', name: 'fsLRTools', version:'0.0.1-SNAPSHOT'
+    compile group: 'org.testng', name: 'testng', version:'6.8'
+    compile group: 'net.rcarz', name: 'jira-client', version:'0.6-SNAPSHOT'
+    compile group: 'com.jgoodies', name: 'jgoodies-forms', version:'1.9.0'
+}
+
+
+task zip(type: Zip) {
+    from 'target/classes'
+    into('ttt') {
+        from configurations.runtime
+    }
+    
+    //println configurations.runtime.
+}
+
+
+
+
+jar {
+    archiveName jarName
+    
+	from( 'build/classes/java/main'){
+	    exclude '**/*.properties', '**/testng/', '**/tmp/'  
+	}
+	into('/'){
+		from configurations.runtime, zipTree('jar-in-jar-loader.zip')
+	}
+	
+	//获取jar 路径classpath
+	def xpath =configurations.runtimeClasspath.files.collect { it.getName() }.join(' ')
+	println xpath
+	
+	//println 
+	
+	manifest {
+		attributes( 'Main-Class':'org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader',
+					'Rsrc-Main-Class':'com.foresee.xdeploy.ListToFile',
+					'Class-Path':'.',
+					'Rsrc-Class-Path':'./ '+xpath,
+					'Implementation-Title': 'Gradle Quickstart', 
+					'Implementation-Version': version
+					)
+	    //section()
+	}
+	
+}
+
+def getVersionCode() {    
+	def versionFile = file('build.properties')    
+	if (versionFile.canRead()){        
+		def Properties versionProps = new Properties()
+        versionProps.load(new FileInputStream(versionFile))
+ 
+        def versionCode = versionProps['VERSION_CODE'].toInteger()        
+        //def runTasks = gradle.startParameter.taskNames        //仅在assembleRelease任务是增加版本号
+        //if ('assembleRelease' in runTasks) {
+            versionProps['VERSION_CODE'] = (++versionCode).toString()
+            versionProps.store(versionFile.newWriter(), null)
+        //}        
+        return versionProps['jar_version'] +'.'+ versionCode
+    } else {
+         throw new GradleException("Could not find version.properties!")
+    }
+}
